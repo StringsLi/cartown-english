@@ -1,0 +1,16 @@
+{
+  "name": "Little English Book",
+  "appid": "",
+  "description": "Little English Book | 亲子英语绘本馆",
+  "versionName": "0.1.0",
+  "versionCode": "1",
+  "transformPx": false,
+  "mp-weixin": {
+    "appid": "",
+    "setting": {
+      "urlCheck": false,
+      "es6": true
+    },
+    "usingComponents": true
+  }
+}

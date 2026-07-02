@@ -1,0 +1,117 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "Little English Book"
+      }
+    },
+    {
+      "path": "pages/books/index",
+      "style": {
+        "navigationBarTitleText": "绘本馆"
+      }
+    },
+    {
+      "path": "pages/vehicles/index",
+      "style": {
+        "navigationBarTitleText": "车车英语"
+      }
+    },
+    {
+      "path": "pages/car-learn/index",
+      "style": {
+        "navigationBarTitleText": "认识车辆"
+      }
+    },
+    {
+      "path": "pages/car-logos/index",
+      "style": {
+        "navigationBarTitleText": "50 个车标"
+      }
+    },
+    {
+      "path": "pages/car-colors/index",
+      "style": {
+        "navigationBarTitleText": "颜色汽车"
+      }
+    },
+    {
+      "path": "pages/car-count/index",
+      "style": {
+        "navigationBarTitleText": "数字数车"
+      }
+    },
+    {
+      "path": "pages/car-traffic/index",
+      "style": {
+        "navigationBarTitleText": "红绿灯动作"
+      }
+    },
+    {
+      "path": "pages/car-stories/index",
+      "style": {
+        "navigationBarTitleText": "小汽车故事"
+      }
+    },
+    {
+      "path": "pages/car-garage/index",
+      "style": {
+        "navigationBarTitleText": "奖励车库"
+      }
+    },
+    {
+      "path": "pages/world/index",
+      "style": {
+        "navigationBarTitleText": "地图和国家"
+      }
+    },
+    {
+      "path": "pages/book-detail/index",
+      "style": {
+        "navigationBarTitleText": "绘本详情"
+      }
+    },
+    {
+      "path": "pages/reader/index",
+      "style": {
+        "navigationBarTitleText": "绘本阅读"
+      }
+    },
+    {
+      "path": "pages/point-read/index",
+      "style": {
+        "navigationBarTitleText": "点一点图片"
+      }
+    },
+    {
+      "path": "pages/repeat/index",
+      "style": {
+        "navigationBarTitleText": "跟我读"
+      }
+    },
+    {
+      "path": "pages/game/index",
+      "style": {
+        "navigationBarTitleText": "小游戏"
+      }
+    },
+    {
+      "path": "pages/parent/index",
+      "style": {
+        "navigationBarTitleText": "家长中心"
+      }
+    },
+    {
+      "path": "pages/profile/index",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarBackgroundColor": "#FFF8EC",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FFF8EC"
+  }
+}
