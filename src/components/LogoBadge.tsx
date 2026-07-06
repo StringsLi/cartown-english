@@ -1,5 +1,13 @@
-import { useMemo, useState } from 'react';
+/// <reference types="vite/client" />
+
+import { useEffect, useMemo, useState } from 'react';
 import type { CarLogo } from '../data/lessons';
+
+const localLogoModules = import.meta.glob('../static/cartown-logos/*.png', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+}) as Record<string, string>;
 
 type LogoBadgeProps = {
   logo: CarLogo;
@@ -98,6 +106,11 @@ const simpleIconSlugs: Record<string, string> = {
   smart: 'smart',
 };
 
+function localLogoUrl(logo: CarLogo) {
+  const match = Object.entries(localLogoModules).find(([path]) => path.endsWith(`/${logo.id}.png`));
+  return match?.[1];
+}
+
 function googleLogoUrl(logo: CarLogo) {
   const domain = brandDomains[logo.id];
   return domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=256` : undefined;
@@ -111,9 +124,16 @@ function simpleIconUrl(logo: CarLogo) {
 
 export function LogoBadge({ logo, size = 'lg', className = '' }: LogoBadgeProps) {
   const [sourceIndex, setSourceIndex] = useState(0);
-  const sources = useMemo(() => [googleLogoUrl(logo), simpleIconUrl(logo)].filter(Boolean) as string[], [logo]);
+  const sources = useMemo(
+    () => [localLogoUrl(logo), googleLogoUrl(logo), simpleIconUrl(logo)].filter(Boolean) as string[],
+    [logo],
+  );
   const compact = size === 'sm';
   const src = sources[sourceIndex];
+
+  useEffect(() => {
+    setSourceIndex(0);
+  }, [logo.id]);
 
   if (src) {
     return (
@@ -125,10 +145,10 @@ export function LogoBadge({ logo, size = 'lg', className = '' }: LogoBadgeProps)
         role="img"
       >
         <div className="absolute inset-x-4 top-3 h-5 rounded-full bg-white/80 blur-sm" />
-        <div className={`relative z-10 flex items-center justify-center rounded-[24px] bg-white/80 ${compact ? 'h-16 w-16' : 'h-36 w-36 sm:h-44 sm:w-44'}`}>
+        <div className={`relative z-10 flex items-center justify-center rounded-[24px] bg-white/85 ${compact ? 'h-16 w-16' : 'h-36 w-36 sm:h-44 sm:w-44'}`}>
           <img
             alt={`${logo.name} logo`}
-            className="max-h-[82%] max-w-[82%] object-contain"
+            className="max-h-[84%] max-w-[84%] object-contain"
             draggable={false}
             src={src}
             onError={() => setSourceIndex((current) => current + 1)}
