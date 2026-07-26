@@ -13,7 +13,7 @@
 
     <view class="choice-grid">
       <view v-for="car in choices" :key="car.id" class="choice-card soft-card" @tap="choose(car.id)">
-        <CartownVehicle :color="car.hex" accent="#FFD66B" kind="color-car" />
+        <CartownVehicle :color="car.hex" accent="#eadfca" kind="color-car" />
         <text class="choice-card__word">{{ car.label }}</text>
         <text class="choice-card__zh">{{ car.zh }}</text>
       </view>

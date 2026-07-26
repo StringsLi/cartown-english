@@ -2,7 +2,13 @@
   <view class="page detail-page">
     <view class="detail-hero">
       <view class="detail-cover soft-card">
-        <image v-if="!coverFailed" class="detail-cover__image" :src="book.cover" mode="aspectFill" @error="coverFailed = true" />
+        <VehicleStoryArt
+          v-if="book.vehicleStoryId"
+          class="detail-cover__image"
+          :story-id="book.vehicleStoryId"
+          :page-index="0"
+        />
+        <image v-else-if="!coverFailed" class="detail-cover__image" :src="book.cover" mode="aspectFill" @error="coverFailed = true" />
         <view v-else class="detail-cover__fallback">
           <text class="detail-cover__fallback-label">Picture Book</text>
           <text class="detail-cover__fallback-title">{{ book.title }}</text>
@@ -36,7 +42,7 @@
     <ParentTipCard class="detail-tip" :title="parentTip.title" :questions="parentTip.questions" :activity="parentTip.activity" compact />
 
     <view class="detail-footer">
-      <BigButton label="开始阅读" @tap="startReading" />
+      <BigButton :label="readingButtonLabel" @tap="startReading" />
       <BigButton label="家长陪读卡" variant="ghost" @tap="goParent" />
     </view>
   </view>
@@ -47,8 +53,11 @@ import { computed, ref, watch } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import BigButton from "@/components/BigButton.vue";
 import ParentTipCard from "@/components/ParentTipCard.vue";
+import VehicleStoryArt from "@/components/VehicleStoryArt.vue";
 import WordChip from "@/components/WordChip.vue";
 import { getBookById, getBookWords, getParentTip, getThemeLabel, getTodayBook } from "@/services/bookService";
+import { getProgress } from "@/services/progressService";
+import type { UserProgress } from "@/types/book";
 
 const bookId = ref(getTodayBook().id);
 const coverFailed = ref(false);
@@ -56,6 +65,9 @@ const book = computed(() => getBookById(bookId.value) ?? getTodayBook());
 const words = computed(() => getBookWords(book.value.id));
 const parentTip = computed(() => getParentTip(book.value.id));
 const themeLabel = computed(() => getThemeLabel(book.value.theme));
+const savedProgress = computed(() => getProgress(book.value.id) as UserProgress | undefined);
+const resumePage = computed(() => savedProgress.value?.readStatus === "reading" ? savedProgress.value.currentPage : 1);
+const readingButtonLabel = computed(() => resumePage.value > 1 ? `继续阅读 · 第 ${resumePage.value} 页` : "开始阅读");
 
 onLoad((query) => {
   const params = query as Record<string, string | undefined>;
@@ -71,7 +83,7 @@ watch(
 
 function startReading() {
   uni.navigateTo({
-    url: `/pages/reader/index?bookId=${book.value.id}&pageIndex=1`
+    url: `/pages/reader/index?bookId=${book.value.id}&pageIndex=${resumePage.value}`
   });
 }
 
@@ -95,22 +107,9 @@ function goParent() {
 
 .detail-cover {
   position: relative;
-  height: 492rpx;
+  height: 440rpx;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 82% 18%, rgba(255, 214, 107, 0.42), transparent 32%),
-    linear-gradient(135deg, #ffffff 0%, #eaf6ff 55%, #fff0dd 100%);
-}
-
-.detail-cover::after {
-  position: absolute;
-  right: 28rpx;
-  bottom: 26rpx;
-  width: 120rpx;
-  height: 18rpx;
-  border-radius: $radius-pill;
-  background: rgba(47, 58, 74, 0.08);
-  content: "";
+  background: #e4ebe5;
 }
 
 .detail-cover__image,
@@ -131,15 +130,16 @@ function goParent() {
   padding: 10rpx 18rpx;
   border-radius: $radius-pill;
   font-size: 22rpx;
-  font-weight: 900;
+  font-weight: 800;
   color: $color-primary-dark;
   background: rgba(255, 214, 107, 0.64);
 }
 
 .detail-cover__fallback-title {
   margin-top: 28rpx;
-  font-size: 58rpx;
-  font-weight: 900;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 52rpx;
+  font-weight: 700;
   color: $color-primary-dark;
   text-align: center;
   letter-spacing: 0;
@@ -161,15 +161,15 @@ function goParent() {
   padding: 10rpx 18rpx;
   border-radius: $radius-pill;
   font-size: 23rpx;
-  font-weight: 900;
+  font-weight: 800;
   color: $color-primary-dark;
-  background: rgba(221, 240, 255, 0.82);
+  background: #eef2ef;
 }
 
 .detail-description {
   display: block;
   margin-top: 20rpx;
-  font-size: 29rpx;
+  font-size: 26rpx;
   color: $color-muted;
   letter-spacing: 0;
   line-height: 1.58;
@@ -178,15 +178,13 @@ function goParent() {
 .goal-card {
   margin-top: 34rpx;
   padding: 30rpx;
-  background:
-    radial-gradient(circle at 92% 14%, rgba(145, 216, 168, 0.22), transparent 34%),
-    #ffffff;
+  background: #f7eee8;
 }
 
 .goal-card__label {
   display: block;
   font-size: 24rpx;
-  font-weight: 900;
+  font-weight: 800;
   color: $color-coral;
   letter-spacing: 0;
 }
@@ -194,8 +192,9 @@ function goParent() {
 .goal-card__sentence {
   display: block;
   margin-top: 14rpx;
-  font-size: 42rpx;
-  font-weight: 900;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 40rpx;
+  font-weight: 700;
   color: $color-primary-dark;
   letter-spacing: 0;
   line-height: 1.25;
@@ -228,10 +227,10 @@ function goParent() {
   grid-template-columns: 1.35fr 1fr;
   gap: 16rpx;
   width: 100%;
-  max-width: 900px;
+  max-width: 820px;
   padding: 22rpx 32rpx calc(22rpx + env(safe-area-inset-bottom));
-  border-top: 1rpx solid rgba(107, 175, 232, 0.16);
-  background: rgba(255, 248, 236, 0.94);
+  border-top: 1rpx solid $color-line;
+  background: rgba(251, 247, 239, 0.96);
   backdrop-filter: blur(14rpx);
   transform: translateX(-50%);
 }

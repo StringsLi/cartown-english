@@ -2,9 +2,9 @@
   <view class="page garage-page">
     <view class="garage-hero soft-card">
       <view>
-        <text class="section-kicker">Sticker Garage</text>
+        <text class="section-kicker">Premium Garage</text>
         <text class="page-title">奖励车库</text>
-        <text class="page-subtitle">每 2 颗星星解锁一辆贴纸车。</text>
+        <text class="page-subtitle">每 2 颗星星解锁一辆收藏车。</text>
       </view>
       <view class="garage-hero__stars">
         <text class="garage-hero__value">{{ progress.stars }}</text>

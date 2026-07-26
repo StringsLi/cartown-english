@@ -39,11 +39,11 @@ function handleTap() {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 92rpx;
-  padding: 0 38rpx;
+  min-height: 82rpx;
+  padding: 0 30rpx;
   border-radius: $radius-pill;
-  font-size: 31rpx;
-  font-weight: 900;
+  font-size: 28rpx;
+  font-weight: 800;
   color: #ffffff;
   letter-spacing: 0;
   box-shadow: $shadow-button;
@@ -55,19 +55,19 @@ function handleTap() {
 }
 
 .big-button--primary {
-  background: linear-gradient(135deg, $color-primary 0%, #83c6f4 100%);
+  background: $color-primary;
 }
 
 .big-button--warm {
-  color: $color-primary-dark;
-  background: linear-gradient(135deg, $color-warm 0%, #ffe58e 100%);
-  box-shadow: 0 12rpx 24rpx rgba(255, 159, 122, 0.18);
+  color: #ffffff;
+  background: #c48a28;
+  box-shadow: 0 10rpx 20rpx rgba(150, 101, 28, 0.18);
 }
 
 .big-button--ghost {
   color: $color-primary-dark;
-  border: 1rpx solid rgba(107, 175, 232, 0.28);
-  background: rgba(221, 240, 255, 0.68);
+  border: 1rpx solid rgba(38, 61, 89, 0.16);
+  background: #f3eee6;
   box-shadow: 0 10rpx 22rpx rgba(47, 58, 74, 0.04);
 }
 

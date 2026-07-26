@@ -1,139 +1,201 @@
 <template>
-  <view class="page story-page">
-    <view class="story-hero soft-card">
-      <text class="section-kicker">Car Story</text>
-      <text class="page-title">小汽车故事</text>
-      <text class="page-subtitle">两本来自 CarTown 的车主题小绘本。</text>
+  <view class="page vehicle-books-page">
+    <view class="vehicle-books-header">
+      <view>
+        <text class="section-kicker">VEHICLE STORIES</text>
+        <text class="page-title">汽车工程车绘本</text>
+        <text class="page-subtitle">从短句开始，跟着喜欢的车读一个完整故事。</text>
+      </view>
+      <text class="vehicle-books-count">{{ vehicleBooks.length }} 本</text>
     </view>
 
-    <view v-if="choosing" class="story-book-grid">
-      <view v-for="(book, index) in storyBooks" :key="book.id" class="story-book soft-card" @tap="chooseBook(index)">
-        <CartownVehicle :color="index === 0 ? '#f95757' : '#ffd447'" :accent="index === 0 ? '#FFD66B' : '#48cae4'" :kind="index === 0 ? 'car' : 'bus'" />
-        <text class="story-book__title">{{ book.title }}</text>
-        <text class="story-book__zh">{{ book.zh }}</text>
+    <view class="vehicle-books-hero soft-card">
+      <VehicleStoryArt class="vehicle-books-hero__art" story-id="red-car" :page-index="0" />
+      <view class="vehicle-books-hero__copy">
+        <text class="vehicle-books-hero__eyebrow">本周推荐</text>
+        <text class="vehicle-books-hero__title">Red Car Comes Home</text>
+        <text class="vehicle-books-hero__desc">认识 go、stop、slow，学习安全又温柔地开车。</text>
       </view>
     </view>
 
-    <view v-else>
-      <view class="story-card soft-card">
-        <view class="story-card__scene">
-          <CartownVehicle :color="book.id === 'little-red-car' ? '#f95757' : '#ffd447'" :accent="book.id === 'little-red-car' ? '#FFD66B' : '#48cae4'" :kind="book.id === 'little-red-car' ? 'car' : 'bus'" />
-        </view>
-        <text class="story-card__page">Page {{ page.id }} / {{ book.pages.length }}</text>
-        <text class="story-card__sentence">{{ page.sentence }}</text>
-        <text class="story-card__zh">{{ page.zh }}</text>
-      </view>
+    <view class="vehicle-books-tags">
+      <text class="vehicle-books-tag">小汽车</text>
+      <text class="vehicle-books-tag">工程车</text>
+      <text class="vehicle-books-tag">消防车</text>
+      <text class="vehicle-books-tag">城市巴士</text>
+    </view>
 
-      <view class="story-actions">
-        <BigButton label="选书" variant="ghost" @tap="choosing = true" />
-        <BigButton label="听一听" @tap="playPage" />
-        <BigButton label="下一页" variant="warm" @tap="nextPage" />
-      </view>
+    <view class="section-head">
+      <text class="section-title">选择一本故事</text>
+      <text class="section-link" @tap="goLibrary">全部绘本</text>
+    </view>
+
+    <view class="vehicle-books-grid">
+      <BookCard v-for="book in vehicleBooks" :key="book.id" :book="book" @select="goBookDetail" />
+    </view>
+
+    <view class="vehicle-books-tip soft-card">
+      <text class="vehicle-books-tip__title">陪读小提示</text>
+      <text class="vehicle-books-tip__desc">每页先听一遍，再让孩子指着车说关键词。五页读完就足够啦。</text>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import BigButton from "@/components/BigButton.vue";
-import CartownVehicle from "@/components/CartownVehicle.vue";
-import { storyBooks } from "@/mock/cartown";
-import { speakEnglish } from "@/services/audioService";
-import { getCartownProgress, saveCartownProgress } from "@/services/cartownProgressService";
+import BookCard from "@/components/BookCard.vue";
+import VehicleStoryArt from "@/components/VehicleStoryArt.vue";
+import { getBooks } from "@/services/bookService";
+import type { Book } from "@/types/book";
 
-const progress = getCartownProgress();
-const choosing = ref(true);
-const bookIndex = ref(Math.min(progress.storyBookIndex, storyBooks.length - 1));
-const pageIndex = ref(Math.min(progress.storyPageIndex, storyBooks[0].pages.length - 1));
-const book = computed(() => storyBooks[bookIndex.value]);
-const page = computed(() => book.value.pages[pageIndex.value] ?? book.value.pages[0]);
+const vehicleBooks = getBooks({ theme: "Vehicles" });
 
-function chooseBook(index: number) {
-  bookIndex.value = index;
-  pageIndex.value = 0;
-  choosing.value = false;
-  saveCartownProgress({ storyBookIndex: index, storyPageIndex: 0 });
-  playPage();
+function goBookDetail(book: Book) {
+  uni.navigateTo({ url: `/pages/book-detail/index?bookId=${book.id}` });
 }
 
-function playPage() {
-  speakEnglish(page.value.sentence);
-}
-
-function nextPage() {
-  pageIndex.value = (pageIndex.value + 1) % book.value.pages.length;
-  saveCartownProgress({ storyBookIndex: bookIndex.value, storyPageIndex: pageIndex.value });
-  playPage();
+function goLibrary() {
+  uni.navigateTo({ url: "/pages/books/index" });
 }
 </script>
 
 <style scoped lang="scss">
-.story-page {
+.vehicle-books-page {
   padding-bottom: 56rpx;
 }
 
-.story-hero {
-  padding: 32rpx;
-  background:
-    radial-gradient(circle at 92% 20%, rgba(255, 214, 107, 0.34), transparent 34%),
-    linear-gradient(135deg, #ffffff 0%, #eaf6ff 58%, #fff0dd 100%);
+.vehicle-books-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 22rpx;
 }
 
-.story-book-grid {
+.vehicle-books-count {
+  flex: 0 0 auto;
+  padding: 10rpx 17rpx;
+  border: 1rpx solid $color-line;
+  border-radius: $radius-pill;
+  font-size: 21rpx;
+  font-weight: 800;
+  color: $color-primary;
+  background: #fffdf9;
+}
+
+.vehicle-books-hero {
+  position: relative;
+  min-height: 242rpx;
+  margin-top: 24rpx;
+  overflow: hidden;
+  background: #e6ece3;
+}
+
+.vehicle-books-hero__art {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 48%;
+  height: 100%;
+}
+
+.vehicle-books-hero__copy {
+  position: relative;
+  z-index: 1;
+  width: 59%;
+  min-height: 242rpx;
+  padding: 28rpx;
+  background: rgba(239, 243, 235, 0.94);
+}
+
+.vehicle-books-hero__eyebrow,
+.vehicle-books-hero__title,
+.vehicle-books-hero__desc {
+  display: block;
+}
+
+.vehicle-books-hero__eyebrow {
+  font-size: 20rpx;
+  font-weight: 800;
+  color: #5e7559;
+}
+
+.vehicle-books-hero__title {
+  margin-top: 11rpx;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: $color-primary-dark;
+  line-height: 1.22;
+}
+
+.vehicle-books-hero__desc {
+  margin-top: 10rpx;
+  font-size: 21rpx;
+  color: $color-muted;
+  line-height: 1.48;
+}
+
+.vehicle-books-tags {
+  display: flex;
+  gap: 10rpx;
+  margin-top: 18rpx;
+  overflow: hidden;
+}
+
+.vehicle-books-tag {
+  flex: 0 0 auto;
+  padding: 9rpx 16rpx;
+  border-radius: $radius-pill;
+  font-size: 20rpx;
+  font-weight: 700;
+  color: $color-primary-dark;
+  background: #eeeae2;
+}
+
+.vehicle-books-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18rpx;
-  margin-top: 28rpx;
+  gap: 16rpx;
 }
 
-.story-book {
-  min-height: 330rpx;
-  padding: 22rpx;
-  text-align: center;
+.vehicle-books-grid :deep(.book-card__cover) {
+  height: 220rpx;
 }
 
-.story-book__title,
-.story-card__sentence {
-  display: block;
-  font-size: 36rpx;
-  font-weight: 900;
-  color: $color-primary-dark;
-  line-height: 1.2;
+.vehicle-books-grid :deep(.book-card__body) {
+  padding: 18rpx;
 }
 
-.story-book__zh,
-.story-card__zh {
-  display: block;
-  margin-top: 10rpx;
-  font-size: 26rpx;
-  color: $color-muted;
+.vehicle-books-grid :deep(.book-card__description) {
+  min-height: 64rpx;
 }
 
-.story-card {
-  margin-top: 28rpx;
-  padding: 30rpx;
-  text-align: center;
-}
-
-.story-card__scene {
-  height: 260rpx;
-}
-
-.story-card__page {
-  display: inline-block;
-  margin: 8rpx 0 20rpx;
-  padding: 10rpx 18rpx;
-  border-radius: $radius-pill;
-  font-size: 23rpx;
-  font-weight: 900;
-  color: $color-primary-dark;
-  background: rgba(255, 214, 107, 0.72);
-}
-
-.story-actions {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14rpx;
+.vehicle-books-tip {
   margin-top: 24rpx;
+  padding: 24rpx;
+  background: #f3ece5;
+}
+
+.vehicle-books-tip__title,
+.vehicle-books-tip__desc {
+  display: block;
+}
+
+.vehicle-books-tip__title {
+  font-size: 24rpx;
+  font-weight: 800;
+  color: $color-primary-dark;
+}
+
+.vehicle-books-tip__desc {
+  margin-top: 8rpx;
+  font-size: 21rpx;
+  color: $color-muted;
+  line-height: 1.5;
+}
+
+@media (min-width: 900px) {
+  .vehicle-books-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 </style>

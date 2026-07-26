@@ -1,119 +1,134 @@
 <template>
-  <view class="page home-page">
-    <view class="home-hero">
-      <view class="home-hero__copy">
-        <text class="section-kicker">今天一起读一本</text>
-        <text class="home-hero__title">Hello, little reader!</text>
-        <text class="home-hero__desc">和孩子一起听一句、指一个词、读完一小页。</text>
-      </view>
-      <view class="home-hero__scene" aria-hidden="true">
-        <view class="home-hero__sun" />
-        <view class="home-hero__book">
-          <text class="home-hero__book-mark">ABC</text>
-          <text class="home-hero__book-line">story time</text>
-        </view>
-      </view>
-    </view>
-
-    <view class="home-section-head">
-      <view>
-        <text class="section-kicker">Today Book</text>
-        <text class="section-title home-section-title">今日绘本</text>
-      </view>
-      <text class="home-section-head__hint">约 {{ todayBook.pageCount }} 页</text>
-    </view>
-
-    <BookCard :book="todayBook" :is-read="isTodayBookRead" @select="goBookDetail" />
-
-    <view class="home-page__main-action">
-      <BigButton label="开始今天的绘本" @tap="goBookDetail(todayBook)" />
-    </view>
-
-    <view class="home-words soft-card">
-      <view class="home-words__head">
+  <view class="page home-page screen-with-nav">
+    <view class="home-header">
+      <view class="child-profile">
+        <view class="child-profile__avatar">{{ childInitial }}</view>
         <view>
-          <text class="section-kicker">3 Words</text>
-          <text class="home-words__title">先认识这 3 个词</text>
+          <text class="child-profile__name">{{ childName }}</text>
+          <text class="child-profile__age">3-6 岁亲子阅读</text>
         </view>
-        <text class="home-words__badge">轻松跟读</text>
       </view>
-      <view class="home-words__chips">
-        <WordChip v-for="word in todayWords" :key="word.id" :word="word.word" :meaning="word.meaning" />
-      </view>
-      <text class="home-words__sentence">{{ todayBook.targetSentence }}</text>
-    </view>
-
-    <view class="home-stats soft-card">
-      <view class="home-stat">
-        <text class="home-stat__value">{{ stats.streakDays }}</text>
-        <text class="home-stat__label">连续天数</text>
-      </view>
-      <view class="home-stat">
-        <text class="home-stat__value">{{ stats.readBookCount }}</text>
-        <text class="home-stat__label">已读绘本</text>
-      </view>
-      <view class="home-stat">
-        <text class="home-stat__value">{{ stats.learnedWordCount }}</text>
-        <text class="home-stat__label">已学单词</text>
+      <view class="home-header__actions">
+        <view class="header-action">
+          <text class="header-action__icon">✓</text>
+          <text>打卡</text>
+        </view>
+        <view class="header-action">
+          <text class="header-action__icon">•</text>
+          <text>消息</text>
+        </view>
       </view>
     </view>
 
-    <text class="section-title">继续探索</text>
-    <view class="topic-entry-grid">
-      <view class="topic-entry topic-entry--vehicles soft-card" @tap="goVehicles">
-        <text class="topic-entry__eyebrow">Vehicles</text>
-        <text class="topic-entry__title">车车英语</text>
-        <text class="topic-entry__desc">工程车、小汽车、救援车</text>
-      </view>
-      <view class="topic-entry topic-entry--world soft-card" @tap="goWorld">
-        <text class="topic-entry__eyebrow">World Map</text>
-        <text class="topic-entry__title">地图和国家</text>
-        <text class="topic-entry__desc">map、flag、China、Canada</text>
+    <view class="daily-card soft-card">
+      <image class="daily-card__art" :src="todayBook.cover" mode="aspectFill" />
+      <view class="daily-card__shade" />
+      <view class="daily-card__copy">
+        <view class="daily-card__label-row">
+          <text class="daily-card__label">每日一句</text>
+          <button class="daily-card__audio" aria-label="播放每日一句" @tap="playDailySentence">▶</button>
+        </view>
+        <text class="daily-card__en">You are so brave!</text>
+        <text class="daily-card__cn">你真勇敢！</text>
       </view>
     </view>
 
-    <view class="home-nav">
-      <BigButton label="绘本馆" variant="ghost" @tap="goBooks" />
-      <BigButton label="小游戏" variant="warm" @tap="goGame" />
-      <BigButton label="家长中心" variant="ghost" @tap="goParent" />
+    <view class="section-head">
+      <text class="section-title">今日绘本</text>
+      <text class="section-link" @tap="goBooks">全部绘本</text>
     </view>
+
+    <view class="today-book soft-card" @tap="goBookDetail(todayBook)">
+      <image class="today-book__cover" :src="todayBook.cover" mode="aspectFill" />
+      <view class="today-book__content">
+        <view class="today-book__meta-row">
+          <text class="today-book__eyebrow">TODAY'S STORY</text>
+          <text class="today-book__level">L{{ todayBook.level }}</text>
+        </view>
+        <text class="today-book__title">{{ todayBook.title }}</text>
+        <text class="today-book__subtitle">{{ todayBook.description }}</text>
+        <button class="today-book__button" @tap.stop="goBookDetail(todayBook)">开始阅读</button>
+      </view>
+    </view>
+
+    <view class="star-card soft-card">
+      <view>
+        <text class="star-card__title">学习之星</text>
+        <text class="star-card__desc">今天再完成一本，就能点亮一颗星</text>
+      </view>
+      <view class="star-card__progress">
+        <text v-for="star in stars" :key="star" class="star-card__star" :class="{ 'star-card__star--on': star <= earnedStars }">★</text>
+        <text class="star-card__count">{{ earnedStars }}/5</text>
+      </view>
+    </view>
+
+    <view class="module-grid">
+      <view class="module-item" @tap="goBooks">
+        <view class="module-item__icon module-item__icon--book">▤</view>
+        <text class="module-item__title">绘本馆</text>
+        <text class="module-item__desc">丰富绘本</text>
+      </view>
+      <view class="module-item" @tap="goVehicles">
+        <view class="module-item__icon module-item__icon--learn">ABC</view>
+        <text class="module-item__title">主题学习</text>
+        <text class="module-item__desc">词汇分类</text>
+      </view>
+      <view class="module-item" @tap="goWorld">
+        <view class="module-item__icon module-item__icon--world">◎</view>
+        <text class="module-item__title">国家英语</text>
+        <text class="module-item__desc">认识世界</text>
+      </view>
+      <view class="module-item" @tap="goParent">
+        <view class="module-item__icon module-item__icon--parent">⌂</view>
+        <text class="module-item__title">家长中心</text>
+        <text class="module-item__desc">成长报告</text>
+      </view>
+    </view>
+
+    <BottomNav active="home" />
   </view>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import BigButton from "@/components/BigButton.vue";
-import BookCard from "@/components/BookCard.vue";
-import WordChip from "@/components/WordChip.vue";
-import { getTodayBook, getTodayWords } from "@/services/bookService";
-import { getHomeStats } from "@/services/progressService";
+import { computed, ref } from "vue";
+import { onShow } from "@dcloudio/uni-app";
+import BottomNav from "@/components/BottomNav.vue";
+import { getTodayBook } from "@/services/bookService";
+import { getHomeStats, getLearningState } from "@/services/progressService";
+import { speakEnglish } from "@/services/audioService";
 import type { Book } from "@/types/book";
 
 const todayBook = getTodayBook();
-const todayWords = getTodayWords();
-const stats = computed(() => getHomeStats());
-const isTodayBookRead = computed(() => stats.value.readBookCount > 0);
+const stats = ref(getHomeStats());
+const learningState = ref(getLearningState());
+const childName = computed(() => learningState.value.childNickname || "宝贝");
+const childInitial = computed(() => childName.value.slice(0, 1).toUpperCase());
+const stars = [1, 2, 3, 4, 5];
+const earnedStars = computed(() => Math.min(5, stats.value.readBookCount));
+
+onShow(() => {
+  stats.value = getHomeStats();
+  learningState.value = getLearningState();
+});
+
+function playDailySentence() {
+  speakEnglish("You are so brave!");
+}
 
 function goBookDetail(book: Book) {
-  uni.navigateTo({
-    url: `/pages/book-detail/index?bookId=${book.id}`
-  });
+  uni.navigateTo({ url: `/pages/book-detail/index?bookId=${book.id}` });
 }
 
 function goBooks() {
-  uni.navigateTo({ url: "/pages/books/index" });
-}
-
-function goGame() {
-  uni.navigateTo({ url: `/pages/game/index?bookId=${todayBook.id}` });
+  uni.reLaunch({ url: "/pages/books/index" });
 }
 
 function goParent() {
-  uni.navigateTo({ url: `/pages/parent/index?bookId=${todayBook.id}` });
+  uni.reLaunch({ url: `/pages/parent/index?bookId=${todayBook.id}` });
 }
 
 function goVehicles() {
-  uni.navigateTo({ url: "/pages/vehicles/index" });
+  uni.reLaunch({ url: "/pages/vehicles/index" });
 }
 
 function goWorld() {
@@ -122,264 +137,304 @@ function goWorld() {
 </script>
 
 <style scoped lang="scss">
-.home-page {
-  padding-bottom: 56rpx;
-}
-
-.home-hero {
-  position: relative;
+.home-header {
   display: flex;
-  min-height: 328rpx;
-  padding: 36rpx 30rpx;
-  overflow: hidden;
-  border-radius: 36rpx;
-  background:
-    radial-gradient(circle at 84% 18%, rgba(255, 214, 107, 0.42), transparent 32%),
-    linear-gradient(135deg, #ffffff 0%, #eaf6ff 52%, #fff0dd 100%);
-  box-shadow: $shadow-soft;
-}
-
-.home-hero__copy {
-  position: relative;
-  z-index: 2;
-  width: 58%;
-}
-
-.home-hero__title {
-  display: block;
-  font-size: 54rpx;
-  font-weight: 900;
-  color: $color-primary-dark;
-  letter-spacing: 0;
-  line-height: 1.12;
-}
-
-.home-hero__desc {
-  display: block;
-  margin-top: 18rpx;
-  font-size: 28rpx;
-  color: $color-muted;
-  letter-spacing: 0;
-  line-height: 1.5;
-}
-
-.home-hero__scene {
-  position: absolute;
-  right: 18rpx;
-  bottom: 18rpx;
-  width: 246rpx;
-  height: 246rpx;
-}
-
-.home-hero__sun {
-  position: absolute;
-  top: 4rpx;
-  right: 8rpx;
-  width: 88rpx;
-  height: 88rpx;
-  border-radius: 50%;
-  background: $color-warm;
-  box-shadow: 0 10rpx 24rpx rgba(255, 214, 107, 0.32);
-}
-
-.home-hero__book {
-  position: absolute;
-  right: 24rpx;
-  bottom: 18rpx;
-  width: 156rpx;
-  height: 184rpx;
-  padding: 26rpx 22rpx;
-  border-radius: 26rpx 18rpx 18rpx 26rpx;
-  border: 6rpx solid rgba(255, 255, 255, 0.78);
-  background: linear-gradient(160deg, $color-coral 0%, #ffbd9f 100%);
-  box-shadow: 0 18rpx 32rpx rgba(255, 159, 122, 0.2);
-  transform: rotate(-6deg);
-}
-
-.home-hero__book-mark,
-.home-hero__book-line {
-  display: block;
-  color: #ffffff;
-  letter-spacing: 0;
-}
-
-.home-hero__book-mark {
-  font-size: 34rpx;
-  font-weight: 900;
-}
-
-.home-hero__book-line {
-  margin-top: 52rpx;
-  font-size: 21rpx;
-  font-weight: 800;
-}
-
-.home-section-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-top: 40rpx;
-  margin-bottom: 18rpx;
-}
-
-.home-section-title {
-  margin: 0;
-}
-
-.home-section-head__hint {
-  padding: 10rpx 18rpx;
-  border-radius: $radius-pill;
-  font-size: 23rpx;
-  font-weight: 900;
-  color: $color-primary-dark;
-  background: rgba(255, 214, 107, 0.58);
-}
-
-.home-page__main-action {
-  margin-top: 22rpx;
-}
-
-.home-words {
-  margin-top: 34rpx;
-  padding: 28rpx;
-}
-
-.home-words__head {
-  display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 20rpx;
+  padding: 2rpx 0 22rpx;
 }
 
-.home-words__title {
-  display: block;
-  font-size: 32rpx;
-  font-weight: 900;
-  color: $color-primary-dark;
-  letter-spacing: 0;
-}
-
-.home-words__badge {
-  flex: 0 0 auto;
-  padding: 10rpx 16rpx;
-  border-radius: $radius-pill;
-  font-size: 22rpx;
-  font-weight: 900;
-  color: $color-primary-dark;
-  background: rgba(145, 216, 168, 0.42);
-}
-
-.home-words__chips {
+.child-profile {
   display: flex;
-  flex-wrap: wrap;
-  gap: 16rpx;
-  margin-top: 24rpx;
+  align-items: center;
+  gap: 14rpx;
 }
 
-.home-words__sentence {
-  display: block;
-  margin-top: 22rpx;
-  padding: 20rpx 22rpx;
-  border-radius: 22rpx;
-  font-size: 32rpx;
-  font-weight: 900;
-  color: $color-primary-dark;
-  letter-spacing: 0;
-  background: rgba(255, 248, 236, 0.9);
-}
-
-.home-stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16rpx;
-  margin-top: 28rpx;
-  padding: 18rpx;
-}
-
-.home-stat {
-  min-height: 128rpx;
-  padding: 18rpx 8rpx;
-  border-radius: 24rpx;
-  text-align: center;
-  background: rgba(221, 240, 255, 0.5);
-}
-
-.home-stat__value {
-  display: block;
-  font-size: 48rpx;
-  font-weight: 900;
-  color: $color-primary;
-  letter-spacing: 0;
-}
-
-.home-stat__label {
-  display: block;
-  margin-top: 8rpx;
-  font-size: 23rpx;
+.child-profile__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 66rpx;
+  height: 66rpx;
+  border: 2rpx solid #dfc8ad;
+  border-radius: 50%;
+  font-size: 27rpx;
   font-weight: 800;
-  color: $color-muted;
-  letter-spacing: 0;
+  color: #6f472f;
+  background: #f1dcc4;
 }
 
-.topic-entry-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.child-profile__name,
+.child-profile__age {
+  display: block;
+}
+
+.child-profile__name {
+  font-size: 28rpx;
+  font-weight: 800;
+  color: $color-primary-dark;
+}
+
+.child-profile__age {
+  margin-top: 4rpx;
+  font-size: 20rpx;
+  color: $color-muted;
+}
+
+.home-header__actions {
+  display: flex;
   gap: 18rpx;
 }
 
-.topic-entry {
-  min-height: 212rpx;
-  padding: 26rpx;
+.header-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rpx;
+  font-size: 19rpx;
+  color: $color-muted;
+}
+
+.header-action__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36rpx;
+  height: 36rpx;
+  border: 1rpx solid $color-line;
+  border-radius: 50%;
+  font-size: 19rpx;
+  color: $color-primary;
+  background: #fffdf9;
+}
+
+.daily-card {
+  position: relative;
+  height: 246rpx;
   overflow: hidden;
-  transition: transform 0.16s ease;
+  background: #dce7df;
 }
 
-.topic-entry:active {
-  transform: scale(0.99);
+.daily-card__art,
+.daily-card__shade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
-.topic-entry--vehicles {
-  background:
-    radial-gradient(circle at 86% 20%, rgba(255, 159, 122, 0.28), transparent 32%),
-    linear-gradient(135deg, #ffffff 0%, #fff3e8 100%);
+.daily-card__art {
+  opacity: 0.62;
 }
 
-.topic-entry--world {
-  background:
-    radial-gradient(circle at 82% 18%, rgba(107, 175, 232, 0.24), transparent 34%),
-    linear-gradient(135deg, #ffffff 0%, #eaf6ff 100%);
+.daily-card__shade {
+  background: linear-gradient(90deg, rgba(255, 253, 249, 0.98) 0%, rgba(255, 253, 249, 0.82) 50%, rgba(255, 253, 249, 0.05) 100%);
 }
 
-.topic-entry__eyebrow {
-  display: block;
-  font-size: 22rpx;
-  font-weight: 900;
-  color: $color-coral;
-  letter-spacing: 0;
+.daily-card__copy {
+  position: relative;
+  z-index: 1;
+  width: 68%;
+  padding: 30rpx;
 }
 
-.topic-entry__title {
-  display: block;
-  margin-top: 20rpx;
-  font-size: 34rpx;
-  font-weight: 900;
+.daily-card__label-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.daily-card__label {
+  font-size: 23rpx;
+  font-weight: 800;
   color: $color-primary-dark;
-  letter-spacing: 0;
 }
 
-.topic-entry__desc {
+.daily-card__audio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38rpx;
+  height: 38rpx;
+  border-radius: 50%;
+  font-size: 16rpx;
+  color: $color-primary;
+  background: #f7e6d8;
+}
+
+.daily-card__en {
+  display: block;
+  margin-top: 18rpx;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #1f2f43;
+  line-height: 1.18;
+}
+
+.daily-card__cn {
   display: block;
   margin-top: 12rpx;
-  font-size: 24rpx;
-  color: $color-muted;
-  letter-spacing: 0;
-  line-height: 1.45;
+  font-size: 25rpx;
+  color: #5e5952;
 }
 
-.home-nav {
+.today-book {
+  overflow: hidden;
+}
+
+.today-book__cover {
+  width: 100%;
+  height: 300rpx;
+}
+
+.today-book__content {
+  padding: 24rpx 26rpx 26rpx;
+}
+
+.today-book__meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.today-book__eyebrow {
+  font-size: 19rpx;
+  font-weight: 800;
+  color: $color-primary;
+}
+
+.today-book__level {
+  padding: 5rpx 11rpx;
+  border-radius: $radius-pill;
+  font-size: 19rpx;
+  font-weight: 800;
+  color: #587258;
+  background: #e5ecdf;
+}
+
+.today-book__title {
+  display: block;
+  margin-top: 8rpx;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 36rpx;
+  font-weight: 700;
+  color: $color-primary-dark;
+}
+
+.today-book__subtitle {
+  display: block;
+  margin-top: 6rpx;
+  font-size: 23rpx;
+  color: $color-muted;
+}
+
+.today-book__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 66rpx;
+  margin-top: 20rpx;
+  padding: 0 28rpx;
+  border-radius: $radius-pill;
+  font-size: 24rpx;
+  font-weight: 800;
+  color: #ffffff;
+  background: $color-primary;
+}
+
+.star-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24rpx;
+  margin-top: 22rpx;
+  padding: 24rpx 26rpx;
+}
+
+.star-card__title,
+.star-card__desc {
+  display: block;
+}
+
+.star-card__title {
+  font-size: 27rpx;
+  font-weight: 800;
+  color: $color-primary-dark;
+}
+
+.star-card__desc {
+  margin-top: 5rpx;
+  font-size: 20rpx;
+  color: $color-muted;
+}
+
+.star-card__progress {
+  display: flex;
+  align-items: center;
+  gap: 3rpx;
+  white-space: nowrap;
+}
+
+.star-card__star {
+  font-size: 30rpx;
+  color: #d8d4cc;
+}
+
+.star-card__star--on {
+  color: $color-warm;
+}
+
+.star-card__count {
+  margin-left: 8rpx;
+  font-size: 19rpx;
+  color: $color-muted;
+}
+
+.module-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14rpx;
-  margin-top: 34rpx;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12rpx;
+  margin-top: 24rpx;
+}
+
+.module-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  padding: 14rpx 4rpx;
+  text-align: center;
+}
+
+.module-item__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 68rpx;
+  height: 68rpx;
+  border-radius: 14rpx;
+  font-size: 22rpx;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.module-item__icon--book { background: #7f9b76; }
+.module-item__icon--learn { background: #9a75a1; }
+.module-item__icon--world { background: #668aa3; }
+.module-item__icon--parent { background: #be9140; }
+
+.module-item__title {
+  margin-top: 10rpx;
+  font-size: 22rpx;
+  font-weight: 800;
+  color: $color-primary-dark;
+}
+
+.module-item__desc {
+  margin-top: 3rpx;
+  font-size: 18rpx;
+  color: $color-muted;
 }
 </style>

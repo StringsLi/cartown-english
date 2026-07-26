@@ -8,7 +8,10 @@ export type BookTheme =
   | "Toys"
   | "Actions"
   | "Bedtime"
-  | "Daily Life";
+  | "Daily Life"
+  | "Vehicles";
+
+export type VehicleStoryId = "red-car" | "digger" | "fire-truck" | "city-bus";
 
 export type ReadStatus = "not_started" | "reading" | "completed";
 
@@ -25,6 +28,7 @@ export interface Book {
   pageCount: number;
   isPublished: boolean;
   sort: number;
+  vehicleStoryId?: VehicleStoryId;
 }
 
 export interface Hotspot {
@@ -47,6 +51,7 @@ export interface BookPage {
   sentenceCn: string;
   audio: string;
   hotspots: Hotspot[];
+  vehicleStoryId?: VehicleStoryId;
 }
 
 export interface Word {
@@ -75,6 +80,7 @@ export interface RepeatRecord {
   bookId: string;
   sentence: string;
   audioUrl: string;
+  durationSeconds?: number;
   createdAt: string;
 }
 

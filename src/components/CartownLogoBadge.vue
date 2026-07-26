@@ -68,15 +68,15 @@ watch(
   width: 188rpx;
   height: 148rpx;
   border: 1rpx solid rgba(47, 58, 74, 0.1);
-  border-radius: 42rpx;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 12rpx 0 rgba(47, 58, 74, 0.06);
+  border-radius: $radius-card;
+  background: #fffdf9;
+  box-shadow: 0 8rpx 18rpx rgba(47, 58, 74, 0.05);
 }
 
 .logo-badge--small .logo-badge__image-wrap {
   width: 118rpx;
   height: 94rpx;
-  border-radius: 28rpx;
+  border-radius: $radius-small;
 }
 
 .logo-badge__image {

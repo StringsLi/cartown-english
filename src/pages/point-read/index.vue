@@ -9,7 +9,13 @@
     </view>
 
     <view v-if="currentPage" class="point-scene soft-card">
-      <image v-if="!imageFailed" class="point-scene__image" :src="currentPage.image" mode="aspectFill" @error="imageFailed = true" />
+      <VehicleStoryArt
+        v-if="currentPage.vehicleStoryId"
+        class="point-scene__image"
+        :story-id="currentPage.vehicleStoryId"
+        :page-index="currentPage.pageIndex"
+      />
+      <image v-else-if="!imageFailed" class="point-scene__image" :src="currentPage.image" mode="aspectFill" @error="imageFailed = true" />
       <view v-else class="point-art">
         <view class="point-art__sun" />
         <view class="point-art__card">
@@ -37,7 +43,7 @@
       <text class="word-card__word">{{ selectedHotspot.word }}</text>
       <text class="word-card__phonetic">{{ selectedHotspot.phonetic }}</text>
       <text class="word-card__meaning">{{ selectedHotspot.wordCn }}</text>
-      <AudioButton label="再听一次" :src="selectedHotspot.audio" size="large" />
+      <AudioButton label="再听一次" :src="selectedHotspot.audio" :fallback-text="selectedHotspot.word" size="large" />
     </view>
 
     <view v-if="currentPage" class="sentence-card soft-card">
@@ -58,6 +64,7 @@ import { computed, ref, watch } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import AudioButton from "@/components/AudioButton.vue";
 import BigButton from "@/components/BigButton.vue";
+import VehicleStoryArt from "@/components/VehicleStoryArt.vue";
 import { playAudio } from "@/services/audioService";
 import { getBookById, getBookPages, getTodayBook } from "@/services/bookService";
 import type { Hotspot } from "@/types/book";
@@ -110,7 +117,7 @@ function hotspotStyle(hotspot: Hotspot) {
 
 function selectHotspot(hotspot: Hotspot) {
   selectedHotspot.value = hotspot;
-  playAudio(hotspot.audio);
+  playAudio(hotspot.audio, hotspot.word);
 }
 
 function previousPage() {

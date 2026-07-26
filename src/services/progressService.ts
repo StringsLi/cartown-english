@@ -15,6 +15,8 @@ export interface LearningState {
   progressMap: Record<string, UserProgress>;
   repeatRecords: RepeatRecord[];
   gameRecords: GameRecord[];
+  studyDates: string[];
+  readingSecondsByDate: Record<string, number>;
 }
 
 export interface HomeStats {
@@ -23,6 +25,15 @@ export interface HomeStats {
   readBookCount: number;
   learnedWordCount: number;
   lastReadAt?: string;
+  weeklyReadingSeconds: number;
+  previousWeeklyReadingSeconds: number;
+}
+
+export interface WeekActivityDay {
+  dateKey: string;
+  label: string;
+  done: boolean;
+  isToday: boolean;
 }
 
 const defaultState: LearningState = {
@@ -33,7 +44,9 @@ const defaultState: LearningState = {
   readBookIds: [],
   progressMap: {},
   repeatRecords: [],
-  gameRecords: []
+  gameRecords: [],
+  studyDates: [],
+  readingSecondsByDate: {}
 };
 
 export function getLearningState(): LearningState {
@@ -45,7 +58,9 @@ export function getLearningState(): LearningState {
     readBookIds: stored?.readBookIds ?? [],
     progressMap: stored?.progressMap ?? {},
     repeatRecords: stored?.repeatRecords ?? [],
-    gameRecords: stored?.gameRecords ?? []
+    gameRecords: stored?.gameRecords ?? [],
+    studyDates: stored?.studyDates ?? [],
+    readingSecondsByDate: stored?.readingSecondsByDate ?? {}
   };
 }
 
@@ -73,6 +88,8 @@ export function saveProgress(params: {
   const now = formatDateTime();
   const existing = state.progressMap[params.bookId];
 
+  markStudy(state);
+
   const nextProgress: UserProgress = {
     userId: state.userId,
     bookId: params.bookId,
@@ -95,7 +112,7 @@ export function completeBook(bookId: string): UserProgress {
   const book = mockBooks.find((item) => item.id === bookId);
   const existing = state.progressMap[bookId];
 
-  touchStudyStreak(state);
+  markStudy(state);
 
   if (!state.readBookIds.includes(bookId)) {
     state.readBookIds.push(bookId);
@@ -119,6 +136,7 @@ export function completeBook(bookId: string): UserProgress {
 
 export function saveRepeatRecord(record: Omit<RepeatRecord, "userId" | "createdAt">): RepeatRecord {
   const state = getLearningState();
+  markStudy(state);
   const nextRecord: RepeatRecord = {
     userId: state.userId,
     createdAt: formatDateTime(),
@@ -133,6 +151,7 @@ export function saveRepeatRecord(record: Omit<RepeatRecord, "userId" | "createdA
 
 export function saveGameRecord(record: Omit<GameRecord, "userId" | "createdAt">): GameRecord {
   const state = getLearningState();
+  markStudy(state);
   const nextRecord: GameRecord = {
     userId: state.userId,
     createdAt: formatDateTime(),
@@ -166,8 +185,35 @@ export function getHomeStats(): HomeStats {
     streakDays: state.streakDays,
     readBookCount: state.readBookIds.length,
     learnedWordCount: learnedWords.size,
-    lastReadAt: latest
+    lastReadAt: latest,
+    weeklyReadingSeconds: sumReadingSeconds(state, weekDateKeys(0)),
+    previousWeeklyReadingSeconds: sumReadingSeconds(state, weekDateKeys(-7))
   };
+}
+
+export function addReadingDuration(durationSeconds: number): void {
+  const seconds = Math.min(60 * 60, Math.max(0, Math.round(durationSeconds)));
+  if (seconds < 1) return;
+
+  const state = getLearningState();
+  const dateKey = todayKey();
+  state.readingSecondsByDate[dateKey] = (state.readingSecondsByDate[dateKey] ?? 0) + seconds;
+  markStudy(state);
+  saveLearningState(state);
+}
+
+export function getCurrentWeekActivity(): WeekActivityDay[] {
+  const state = getLearningState();
+  const today = new Date();
+  const todayDateKey = todayKey(today);
+  const labels = ["一", "二", "三", "四", "五", "六", "日"];
+
+  return weekDateKeys(0).map((dateKey, index) => ({
+    dateKey,
+    label: labels[index],
+    done: state.studyDates.includes(dateKey),
+    isToday: dateKey === todayDateKey
+  }));
 }
 
 export function getRecentProgress(limit = 3): UserProgress[] {
@@ -190,4 +236,28 @@ function touchStudyStreak(state: LearningState): void {
 
   state.streakDays = isYesterday(state.lastStudyDate) ? state.streakDays + 1 : 1;
   state.lastStudyDate = today;
+}
+
+function markStudy(state: LearningState): void {
+  touchStudyStreak(state);
+  const dateKey = todayKey();
+  if (!state.studyDates.includes(dateKey)) {
+    state.studyDates = [...state.studyDates, dateKey].slice(-90);
+  }
+}
+
+function weekDateKeys(dayOffset: number): string[] {
+  const today = new Date();
+  const mondayOffset = ((today.getDay() + 6) % 7) * -1 + dayOffset;
+
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(today);
+    date.setHours(12, 0, 0, 0);
+    date.setDate(today.getDate() + mondayOffset + index);
+    return todayKey(date);
+  });
+}
+
+function sumReadingSeconds(state: LearningState, dateKeys: string[]): number {
+  return dateKeys.reduce((total, dateKey) => total + (state.readingSecondsByDate[dateKey] ?? 0), 0);
 }

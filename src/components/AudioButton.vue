@@ -12,11 +12,13 @@ const props = withDefaults(
   defineProps<{
     label?: string;
     src?: string;
+    fallbackText?: string;
     size?: "medium" | "large";
   }>(),
   {
     label: "播放",
     src: "",
+    fallbackText: "",
     size: "medium"
   }
 );
@@ -26,7 +28,7 @@ const emit = defineEmits<{
 }>();
 
 function handlePlay() {
-  playAudio(props.src);
+  playAudio(props.src, props.fallbackText);
   emit("play", props.src);
 }
 </script>
@@ -37,12 +39,13 @@ function handlePlay() {
   align-items: center;
   justify-content: center;
   gap: 14rpx;
-  min-height: 76rpx;
-  padding: 0 28rpx;
+  min-height: 70rpx;
+  padding: 0 24rpx;
   border-radius: $radius-pill;
-  color: $color-primary-dark;
-  background: rgba(221, 240, 255, 0.86);
-  box-shadow: 0 10rpx 22rpx rgba(107, 175, 232, 0.16);
+  color: $color-primary;
+  border: 1rpx solid rgba(185, 95, 61, 0.16);
+  background: #f8eee8;
+  box-shadow: 0 8rpx 18rpx rgba(72, 62, 49, 0.06);
   transition: transform 0.16s ease;
 }
 
@@ -53,7 +56,7 @@ function handlePlay() {
 .audio-button--large {
   min-height: 108rpx;
   padding: 0 42rpx;
-  background: linear-gradient(135deg, $color-primary 0%, #83c6f4 100%);
+  background: $color-primary;
   color: #ffffff;
   box-shadow: $shadow-button;
 }
@@ -65,7 +68,7 @@ function handlePlay() {
 
 .audio-button__label {
   font-size: 29rpx;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 0;
 }
 </style>

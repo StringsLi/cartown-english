@@ -4,7 +4,7 @@
       <view>
         <text class="section-kicker">Learn Cars</text>
         <text class="page-title">认识车辆</text>
-        <text class="page-subtitle">点车车，听英文。来自 CarTown English 的车辆词卡。</text>
+        <text class="page-subtitle">点车辆图标，听英文。来自 CarTown English 的车辆词卡。</text>
       </view>
       <text class="car-hero__count">{{ currentIndex + 1 }} / {{ vehicles.length }}</text>
     </view>

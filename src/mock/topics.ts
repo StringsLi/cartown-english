@@ -1,5 +1,5 @@
 import type { TopicGroup } from "@/types/topic";
-import { flagIcon, mapIcon, vehicleIcon } from "@/mock/topicAssets";
+import { flagIcon, vehicleIcon } from "@/mock/topicAssets";
 
 export const vehicleGroups: TopicGroup[] = [
   {
@@ -269,137 +269,9 @@ export const vehicleGroups: TopicGroup[] = [
 
 export const worldGroups: TopicGroup[] = [
   {
-    id: "map-words",
-    title: "地图词汇",
-    subtitle: "先认识地图上常见的英文。",
-    words: [
-      {
-        id: "world_map",
-        word: "map",
-        phonetic: "/mæp/",
-        meaning: "地图",
-        sentence: "This is a map.",
-        sentenceCn: "这是一张地图。",
-        image: mapIcon("map"),
-        audio: "/static/audio/words/map.wav",
-        group: "map-words"
-      },
-      {
-        id: "world_globe",
-        word: "globe",
-        phonetic: "/ɡloʊb/",
-        meaning: "地球仪",
-        sentence: "This is a globe.",
-        sentenceCn: "这是一个地球仪。",
-        image: mapIcon("globe"),
-        audio: "/static/audio/words/globe.wav",
-        group: "map-words"
-      },
-      {
-        id: "world_world",
-        word: "world",
-        phonetic: "/wɜːrld/",
-        meaning: "世界",
-        sentence: "We live in the world.",
-        sentenceCn: "我们生活在世界上。",
-        image: mapIcon("world"),
-        audio: "/static/audio/words/world.wav",
-        group: "map-words"
-      },
-      {
-        id: "world_country",
-        word: "country",
-        phonetic: "/ˈkʌntri/",
-        meaning: "国家",
-        sentence: "China is a country.",
-        sentenceCn: "中国是一个国家。",
-        image: mapIcon("country"),
-        audio: "/static/audio/words/country.wav",
-        group: "map-words"
-      },
-      {
-        id: "world_flag",
-        word: "flag",
-        phonetic: "/flæɡ/",
-        meaning: "国旗",
-        sentence: "I see a flag.",
-        sentenceCn: "我看见一面国旗。",
-        image: mapIcon("flag"),
-        audio: "/static/audio/words/flag.wav",
-        group: "map-words"
-      },
-      {
-        id: "world_compass",
-        word: "compass",
-        phonetic: "/ˈkʌmpəs/",
-        meaning: "指南针",
-        sentence: "A compass shows the way.",
-        sentenceCn: "指南针指方向。",
-        image: mapIcon("compass"),
-        audio: "/static/audio/words/compass.wav",
-        group: "map-words"
-      },
-      {
-        id: "world_continent",
-        word: "continent",
-        phonetic: "/ˈkɑːntɪnənt/",
-        meaning: "大陆",
-        sentence: "A continent is very big.",
-        sentenceCn: "大陆非常大。",
-        image: mapIcon("continent"),
-        audio: "/static/audio/words/continent.wav",
-        group: "map-words"
-      },
-      {
-        id: "world_ocean",
-        word: "ocean",
-        phonetic: "/ˈoʊʃn/",
-        meaning: "海洋",
-        sentence: "The ocean is blue.",
-        sentenceCn: "海洋是蓝色的。",
-        image: mapIcon("ocean"),
-        audio: "/static/audio/words/ocean.wav",
-        group: "map-words"
-      },
-      {
-        id: "world_river",
-        word: "river",
-        phonetic: "/ˈrɪvər/",
-        meaning: "河流",
-        sentence: "A river runs on the map.",
-        sentenceCn: "地图上有一条河。",
-        image: mapIcon("river"),
-        audio: "/static/audio/words/river.wav",
-        group: "map-words"
-      },
-      {
-        id: "world_mountain",
-        word: "mountain",
-        phonetic: "/ˈmaʊntn/",
-        meaning: "山",
-        sentence: "The mountain is high.",
-        sentenceCn: "山很高。",
-        image: mapIcon("mountain"),
-        audio: "/static/audio/words/mountain.wav",
-        group: "map-words"
-      },
-      {
-        id: "world_city",
-        word: "city",
-        phonetic: "/ˈsɪti/",
-        meaning: "城市",
-        sentence: "This city is on the map.",
-        sentenceCn: "这座城市在地图上。",
-        image: mapIcon("city"),
-        audio: "/static/audio/words/city.wav",
-        group: "map-words"
-      }
-    ]
-  },
-  {
     id: "countries",
-    title: "国家名称",
-    subtitle: "先学几个常见国家的英文说法。",
+    title: "国家图标",
+    subtitle: "点大图标听英文，先认识这些常见国家。",
     words: [
       {
         id: "country_china",

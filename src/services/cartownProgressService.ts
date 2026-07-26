@@ -1,4 +1,4 @@
-import { getStorage, setStorage } from "@/utils/storage";
+import { getStorage, removeStorage, setStorage } from "@/utils/storage";
 
 const STORAGE_KEY = "cartown_english_progress";
 
@@ -49,4 +49,8 @@ export function addCartownStar(count = 1): CartownProgress {
   return saveCartownProgress({
     stars: current.stars + count
   });
+}
+
+export function clearCartownProgress(): void {
+  removeStorage(STORAGE_KEY);
 }

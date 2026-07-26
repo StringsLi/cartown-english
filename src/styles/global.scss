@@ -26,19 +26,19 @@ button::after {
 }
 
 .page {
+  width: 100%;
   min-height: 100vh;
-  max-width: 900px;
+  max-width: 820px;
   margin: 0 auto;
-  padding: 32rpx;
-  background:
-    radial-gradient(circle at 84rpx 80rpx, rgba(255, 214, 107, 0.2), transparent 150rpx),
-    linear-gradient(180deg, #fff8ec 0%, #fffdf8 48%, #f6fbff 100%);
+  padding: 26rpx 28rpx;
+  overflow-x: hidden;
+  background: $color-cream;
 }
 
 .page-title {
   display: block;
-  font-size: 50rpx;
-  font-weight: 900;
+  font-size: 44rpx;
+  font-weight: 800;
   color: $color-primary-dark;
   letter-spacing: 0;
   line-height: 1.18;
@@ -46,8 +46,8 @@ button::after {
 
 .page-subtitle {
   display: block;
-  margin-top: 14rpx;
-  font-size: 28rpx;
+  margin-top: 10rpx;
+  font-size: 25rpx;
   color: $color-muted;
   letter-spacing: 0;
   line-height: 1.55;
@@ -55,9 +55,9 @@ button::after {
 
 .section-title {
   display: block;
-  margin: 40rpx 0 18rpx;
-  font-size: 32rpx;
-  font-weight: 900;
+  margin: 34rpx 0 16rpx;
+  font-size: 30rpx;
+  font-weight: 800;
   color: $color-primary-dark;
   letter-spacing: 0;
 }
@@ -65,8 +65,8 @@ button::after {
 .section-kicker {
   display: block;
   margin-bottom: 10rpx;
-  font-size: 23rpx;
-  font-weight: 900;
+  font-size: 21rpx;
+  font-weight: 800;
   color: $color-coral;
   letter-spacing: 0;
 }
@@ -74,11 +74,33 @@ button::after {
 .soft-card {
   border-radius: $radius-card;
   border: 1rpx solid $color-line;
-  background: rgba(255, 255, 255, 0.92);
+  background: #fffdf9;
   box-shadow: $shadow-soft;
 }
 
 .hairline-card {
   border: 1rpx solid $color-line;
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 253, 249, 0.78);
+}
+
+.screen-with-nav {
+  padding-bottom: calc(156rpx + env(safe-area-inset-bottom));
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+  margin: 34rpx 0 16rpx;
+}
+
+.section-head .section-title {
+  margin: 0;
+}
+
+.section-link {
+  font-size: 23rpx;
+  font-weight: 700;
+  color: $color-primary;
 }

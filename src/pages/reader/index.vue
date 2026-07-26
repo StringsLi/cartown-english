@@ -1,80 +1,99 @@
 <template>
   <view class="page reader-page">
-    <view class="reader-top soft-card">
-      <view class="reader-top__head">
-        <view>
-          <text class="section-kicker">Now reading</text>
-          <text class="reader-top__title">{{ book.title }}</text>
-        </view>
-        <text class="reader-top__page">Page {{ currentPageNumber }}</text>
+    <view class="reader-header">
+      <view>
+        <text class="reader-header__eyebrow">NOW READING</text>
+        <text class="reader-header__title">{{ book.title }}</text>
       </view>
-      <ProgressBar label="阅读进度" :current="currentPageNumber" :total="totalPages" />
+      <text class="reader-header__page">第 {{ currentPageNumber }} / {{ totalPages }} 页</text>
     </view>
 
     <view class="reader-illustration soft-card">
+      <VehicleStoryArt
+        v-if="currentPage?.vehicleStoryId"
+        class="reader-illustration__image"
+        :story-id="currentPage.vehicleStoryId"
+        :page-index="currentPage.pageIndex"
+      />
       <image
-        v-if="currentPage && !imageFailed"
+        v-else-if="currentPage && !imageFailed"
         class="reader-illustration__image"
         :src="currentPage.image"
         mode="aspectFill"
         @error="imageFailed = true"
       />
       <view v-else class="reader-art">
-        <view class="reader-art__sun" />
-        <view class="reader-art__book">
-          <text class="reader-art__book-title">{{ book.title }}</text>
-          <text class="reader-art__book-page">Page {{ currentPageNumber }}</text>
-        </view>
-        <view class="reader-art__ground" />
+        <text class="reader-art__title">{{ book.title }}</text>
+        <text class="reader-art__page">Page {{ currentPageNumber }}</text>
       </view>
+
+      <button class="page-arrow page-arrow--left" :disabled="isFirstPage" aria-label="上一页" @tap="previousPage">‹</button>
+      <button class="page-arrow page-arrow--right" aria-label="下一页" @tap="nextPage">›</button>
 
       <view v-if="currentPage?.hotspots.length" class="reader-hotspots">
-        <view v-for="hotspot in currentPage.hotspots" :key="hotspot.word" class="reader-hotspot" @tap="playHotspot(hotspot.audio)">
+        <button v-for="hotspot in currentPage.hotspots" :key="hotspot.word" class="reader-hotspot" @tap="playHotspot(hotspot)">
           <text class="reader-hotspot__word">{{ hotspot.word }}</text>
           <text class="reader-hotspot__cn">{{ hotspot.wordCn }}</text>
-        </view>
+        </button>
       </view>
-
-      <AudioButton v-if="currentPage" class="reader-illustration__audio" label="听一听" :src="currentPage.audio" size="large" />
     </view>
 
-    <view v-if="currentPage" class="reader-sentence soft-card">
-      <text class="reader-sentence__en">{{ currentPage.sentence }}</text>
-      <text class="reader-sentence__cn">{{ currentPage.sentenceCn }}</text>
+    <view v-if="currentPage" class="reader-copy">
+      <text class="reader-copy__en">{{ currentPage.sentence }}</text>
+      <text class="reader-copy__cn">{{ currentPage.sentenceCn }}</text>
+    </view>
+
+    <view class="reader-tools">
+      <button class="reader-tool" @tap="goRepeat">
+        <text class="reader-tool__icon">●</text>
+        <text class="reader-tool__label">跟读</text>
+      </button>
+      <button class="reader-tool reader-tool--play" @tap="playCurrentPage">
+        <text class="reader-tool__play">▶</text>
+      </button>
+      <button class="reader-tool" @tap="goPointRead">
+        <text class="reader-tool__icon">♫</text>
+        <text class="reader-tool__label">听原声</text>
+      </button>
+    </view>
+
+    <view class="page-dots">
+      <button
+        v-for="(_, index) in pages"
+        :key="index"
+        class="page-dot"
+        :class="{ 'page-dot--active': index === activePageIndex }"
+        :aria-label="`第 ${index + 1} 页`"
+        @tap="goPage(index)"
+      />
     </view>
 
     <view v-if="showCompletion" class="completion-card soft-card">
-      <text class="completion-card__en">You did it! Great reading!</text>
-      <text class="completion-card__cn">今天的绘本读完啦，可以再读一遍，或者去看陪读卡。</text>
+      <text class="completion-card__en">You did it!</text>
+      <text class="completion-card__cn">今天的绘本读完啦，已经记录到成长报告。</text>
       <view class="completion-card__actions">
         <BigButton label="再读一遍" variant="warm" @tap="restartReading" />
-        <BigButton label="回到详情" variant="ghost" @tap="goDetail" />
+        <BigButton label="返回详情" variant="ghost" @tap="goDetail" />
       </view>
-    </view>
-
-    <view class="reader-actions">
-      <BigButton label="上一页" variant="ghost" :disabled="isFirstPage" @tap="previousPage" />
-      <BigButton label="点读" variant="warm" @tap="goPointRead" />
-      <BigButton label="跟读" variant="ghost" @tap="goRepeat" />
-      <BigButton :label="nextButtonLabel" @tap="nextPage" />
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { onLoad } from "@dcloudio/uni-app";
-import AudioButton from "@/components/AudioButton.vue";
+import { onHide, onLoad, onShow, onUnload } from "@dcloudio/uni-app";
 import BigButton from "@/components/BigButton.vue";
-import ProgressBar from "@/components/ProgressBar.vue";
+import VehicleStoryArt from "@/components/VehicleStoryArt.vue";
 import { playAudio } from "@/services/audioService";
 import { getBookById, getBookPages, getTodayBook } from "@/services/bookService";
-import { completeBook } from "@/services/progressService";
+import { addReadingDuration, completeBook, getProgress, saveProgress } from "@/services/progressService";
+import type { Hotspot, UserProgress } from "@/types/book";
 
 const bookId = ref(getTodayBook().id);
 const activePageIndex = ref(0);
 const imageFailed = ref(false);
 const showCompletion = ref(false);
+let readingSessionStartedAt = 0;
 
 const book = computed(() => getBookById(bookId.value) ?? getTodayBook());
 const pages = computed(() => getBookPages(book.value.id));
@@ -83,13 +102,22 @@ const currentPage = computed(() => pages.value[activePageIndex.value] ?? pages.v
 const currentPageNumber = computed(() => Math.min(activePageIndex.value + 1, totalPages.value));
 const isFirstPage = computed(() => activePageIndex.value <= 0);
 const isLastPage = computed(() => activePageIndex.value >= totalPages.value - 1);
-const nextButtonLabel = computed(() => (isLastPage.value ? "完成阅读" : "下一页"));
 
 onLoad((query) => {
   const params = query as Record<string, string | undefined>;
   bookId.value = params.bookId || getTodayBook().id;
-  activePageIndex.value = normalizePageIndex(params.pageIndex);
+  const storedProgress = getProgress(bookId.value) as UserProgress | undefined;
+  const pageIndex = params.pageIndex || String(storedProgress?.currentPage ?? 1);
+  activePageIndex.value = normalizePageIndex(pageIndex);
+  persistCurrentPage();
 });
+
+onShow(() => {
+  readingSessionStartedAt = Date.now();
+});
+
+onHide(flushReadingDuration);
+onUnload(flushReadingDuration);
 
 watch(
   () => currentPage.value?.image,
@@ -107,111 +135,120 @@ watch(
 
 function normalizePageIndex(pageIndex?: string): number {
   const parsed = Number(pageIndex);
-
-  if (!Number.isFinite(parsed) || parsed < 1) {
-    return 0;
-  }
-
-  return parsed - 1;
+  return Number.isFinite(parsed) && parsed >= 1 ? parsed - 1 : 0;
 }
 
 function previousPage() {
-  if (isFirstPage.value) {
-    return;
-  }
-
+  if (isFirstPage.value) return;
   showCompletion.value = false;
   activePageIndex.value -= 1;
+  persistCurrentPage();
 }
 
 function nextPage() {
   if (isLastPage.value) {
-    if (!showCompletion.value) {
-      completeBook(book.value.id);
-    }
+    if (!showCompletion.value) completeBook(book.value.id);
     showCompletion.value = true;
     return;
   }
-
   showCompletion.value = false;
   activePageIndex.value += 1;
+  persistCurrentPage();
+}
+
+function goPage(index: number) {
+  showCompletion.value = false;
+  activePageIndex.value = index;
+  persistCurrentPage();
 }
 
 function restartReading() {
   showCompletion.value = false;
   activePageIndex.value = 0;
+  persistCurrentPage();
 }
 
-function playHotspot(audio: string) {
-  playAudio(audio);
+function persistCurrentPage() {
+  saveProgress({ bookId: book.value.id, currentPage: currentPageNumber.value });
+}
+
+function flushReadingDuration() {
+  if (!readingSessionStartedAt) return;
+  addReadingDuration((Date.now() - readingSessionStartedAt) / 1000);
+  readingSessionStartedAt = 0;
+}
+
+function playCurrentPage() {
+  if (currentPage.value) playAudio(currentPage.value.audio, currentPage.value.sentence);
+}
+
+function playHotspot(hotspot: Hotspot) {
+  playAudio(hotspot.audio, hotspot.word);
 }
 
 function goPointRead() {
-  uni.navigateTo({
-    url: `/pages/point-read/index?bookId=${book.value.id}&pageIndex=${currentPageNumber.value}`
-  });
+  uni.navigateTo({ url: `/pages/point-read/index?bookId=${book.value.id}&pageIndex=${currentPageNumber.value}` });
 }
 
 function goRepeat() {
   const sentence = encodeURIComponent(currentPage.value?.sentence ?? book.value.targetSentence);
-
-  uni.navigateTo({
-    url: `/pages/repeat/index?bookId=${book.value.id}&sentence=${sentence}`
-  });
+  uni.navigateTo({ url: `/pages/repeat/index?bookId=${book.value.id}&sentence=${sentence}` });
 }
 
 function goDetail() {
-  uni.redirectTo({
-    url: `/pages/book-detail/index?bookId=${book.value.id}`
-  });
+  uni.redirectTo({ url: `/pages/book-detail/index?bookId=${book.value.id}` });
 }
 </script>
 
 <style scoped lang="scss">
 .reader-page {
-  padding-bottom: 204rpx;
+  min-height: 100vh;
+  padding-bottom: 60rpx;
 }
 
-.reader-top {
-  padding: 26rpx;
-}
-
-.reader-top__head {
+.reader-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 20rpx;
-  margin-bottom: 22rpx;
+  gap: 24rpx;
+  padding: 2rpx 0 22rpx;
 }
 
-.reader-top__title {
+.reader-header__eyebrow,
+.reader-header__title {
   display: block;
-  font-size: 34rpx;
-  font-weight: 900;
-  color: $color-primary-dark;
-  letter-spacing: 0;
 }
 
-.reader-top__page {
-  flex: 0 0 auto;
-  padding: 10rpx 18rpx;
-  border-radius: $radius-pill;
-  font-size: 23rpx;
-  font-weight: 900;
+.reader-header__eyebrow {
+  font-size: 18rpx;
+  font-weight: 800;
+  color: $color-primary;
+}
+
+.reader-header__title {
+  margin-top: 5rpx;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 28rpx;
+  font-weight: 700;
   color: $color-primary-dark;
-  background: rgba(255, 214, 107, 0.58);
+}
+
+.reader-header__page {
+  padding: 9rpx 16rpx;
+  border: 1rpx solid $color-line;
+  border-radius: $radius-pill;
+  font-size: 20rpx;
+  color: $color-muted;
+  background: #fffdf9;
 }
 
 .reader-illustration {
   position: relative;
-  height: 54vh;
-  min-height: 520rpx;
-  max-height: 760rpx;
-  margin-top: 26rpx;
+  height: 57vh;
+  min-height: 560rpx;
+  max-height: 820rpx;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 86% 14%, rgba(255, 214, 107, 0.36), transparent 34%),
-    linear-gradient(180deg, #ffffff 0%, #eaf6ff 62%, #fff3e8 100%);
+  background: #e4e9e2;
 }
 
 .reader-illustration__image {
@@ -220,177 +257,198 @@ function goDetail() {
 }
 
 .reader-art {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
-}
-
-.reader-art__sun {
-  position: absolute;
-  top: 54rpx;
-  right: 62rpx;
-  width: 114rpx;
-  height: 114rpx;
-  border-radius: 50%;
-  background: $color-warm;
-  box-shadow: 0 14rpx 26rpx rgba(255, 214, 107, 0.3);
-}
-
-.reader-art__book {
-  position: absolute;
-  top: 18%;
-  left: 50%;
-  width: 360rpx;
-  min-height: 280rpx;
-  padding: 44rpx 38rpx;
-  border: 8rpx solid rgba(255, 255, 255, 0.78);
-  border-radius: 34rpx 22rpx 22rpx 34rpx;
-  background: linear-gradient(155deg, $color-coral 0%, #ffbd9f 100%);
-  box-shadow: 0 20rpx 38rpx rgba(255, 159, 122, 0.2);
-  transform: translateX(-50%) rotate(-4deg);
-}
-
-.reader-art__book-title {
-  display: block;
-  font-size: 44rpx;
-  font-weight: 900;
-  color: #ffffff;
+  padding: 40rpx;
   text-align: center;
-  letter-spacing: 0;
-  line-height: 1.18;
+  background: #dfe8df;
 }
 
-.reader-art__book-page {
-  display: block;
-  margin-top: 46rpx;
-  font-size: 26rpx;
-  font-weight: 900;
-  color: rgba(255, 255, 255, 0.9);
-  text-align: center;
-  letter-spacing: 0;
+.reader-art__title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 46rpx;
+  font-weight: 700;
+  color: $color-primary-dark;
 }
 
-.reader-art__ground {
+.reader-art__page {
+  margin-top: 18rpx;
+  font-size: 24rpx;
+  color: $color-muted;
+}
+
+.page-arrow {
   position: absolute;
-  right: -30rpx;
-  bottom: -70rpx;
-  left: -30rpx;
-  height: 180rpx;
-  border-radius: 50% 50% 0 0;
-  background: rgba(145, 216, 168, 0.38);
+  top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58rpx;
+  height: 74rpx;
+  border-radius: $radius-pill;
+  font-size: 48rpx;
+  color: $color-primary-dark;
+  background: rgba(255, 253, 249, 0.86);
+  box-shadow: 0 8rpx 20rpx rgba(38, 43, 48, 0.1);
+  transform: translateY(-50%);
 }
+
+.page-arrow--left { left: 18rpx; }
+.page-arrow--right { right: 18rpx; }
+.page-arrow[disabled] { opacity: 0.35; }
 
 .reader-hotspots {
   position: absolute;
-  right: 260rpx;
-  bottom: 24rpx;
-  left: 24rpx;
+  right: 20rpx;
+  bottom: 20rpx;
+  left: 20rpx;
   display: flex;
-  flex-wrap: wrap;
-  gap: 14rpx;
+  justify-content: center;
 }
 
 .reader-hotspot {
   display: inline-flex;
   align-items: center;
-  gap: 10rpx;
-  min-height: 62rpx;
-  padding: 0 20rpx;
+  gap: 9rpx;
+  min-height: 58rpx;
+  padding: 0 18rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.64);
   border-radius: $radius-pill;
-  background: rgba(255, 255, 255, 0.88);
-  box-shadow: 0 10rpx 20rpx rgba(47, 58, 74, 0.08);
+  background: rgba(255, 253, 249, 0.9);
+  box-shadow: 0 8rpx 18rpx rgba(38, 43, 48, 0.09);
 }
 
 .reader-hotspot__word {
-  font-size: 27rpx;
-  font-weight: 900;
+  font-size: 24rpx;
+  font-weight: 800;
   color: $color-primary-dark;
-  letter-spacing: 0;
 }
 
 .reader-hotspot__cn {
-  font-size: 23rpx;
+  font-size: 21rpx;
   color: $color-muted;
-  letter-spacing: 0;
 }
 
-.reader-illustration__audio {
-  position: absolute;
-  right: 24rpx;
-  bottom: 22rpx;
-}
-
-.reader-sentence {
-  margin-top: 26rpx;
-  padding: 28rpx 30rpx;
+.reader-copy {
+  padding: 28rpx 10rpx 12rpx;
   text-align: center;
 }
 
-.reader-sentence__en {
+.reader-copy__en {
   display: block;
-  font-size: 46rpx;
-  font-weight: 900;
-  color: $color-primary-dark;
-  letter-spacing: 0;
-  line-height: 1.22;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 42rpx;
+  font-weight: 700;
+  color: #1f2f43;
+  line-height: 1.32;
 }
 
-.reader-sentence__cn {
+.reader-copy__cn {
   display: block;
-  margin-top: 14rpx;
-  font-size: 27rpx;
+  margin-top: 10rpx;
+  font-size: 24rpx;
   color: $color-muted;
-  letter-spacing: 0;
-  line-height: 1.5;
+}
+
+.reader-tools {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 52rpx;
+  margin-top: 20rpx;
+}
+
+.reader-tool {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7rpx;
+  min-width: 86rpx;
+  color: $color-primary-dark;
+}
+
+.reader-tool__icon,
+.reader-tool--play {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 78rpx;
+  height: 78rpx;
+  border: 1rpx solid rgba(38, 61, 89, 0.14);
+  border-radius: 50%;
+  font-size: 31rpx;
+  color: #4e675d;
+  background: #fffdf9;
+}
+
+.reader-tool--play {
+  width: 98rpx;
+  height: 98rpx;
+  color: #ffffff;
+  background: $color-primary;
+  box-shadow: $shadow-button;
+}
+
+.reader-tool__play {
+  padding-left: 5rpx;
+  font-size: 34rpx;
+}
+
+.reader-tool__label {
+  font-size: 20rpx;
+  font-weight: 700;
+  color: $color-muted;
+}
+
+.page-dots {
+  display: flex;
+  justify-content: center;
+  gap: 12rpx;
+  margin-top: 22rpx;
+}
+
+.page-dot {
+  width: 11rpx;
+  height: 11rpx;
+  border-radius: 50%;
+  background: #d8d2c9;
+}
+
+.page-dot--active {
+  width: 28rpx;
+  border-radius: $radius-pill;
+  background: $color-primary;
 }
 
 .completion-card {
-  margin-top: 24rpx;
-  padding: 30rpx;
+  margin-top: 26rpx;
+  padding: 28rpx;
   text-align: center;
-  background:
-    radial-gradient(circle at 12% 12%, rgba(255, 214, 107, 0.28), transparent 34%),
-    #ffffff;
 }
 
 .completion-card__en {
   display: block;
-  font-size: 40rpx;
-  font-weight: 900;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 38rpx;
+  font-weight: 700;
   color: $color-primary-dark;
-  letter-spacing: 0;
-  line-height: 1.24;
 }
 
 .completion-card__cn {
   display: block;
-  margin-top: 14rpx;
-  font-size: 26rpx;
+  margin-top: 9rpx;
+  font-size: 23rpx;
   color: $color-muted;
-  letter-spacing: 0;
-  line-height: 1.5;
 }
 
 .completion-card__actions {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16rpx;
-  margin-top: 26rpx;
-}
-
-.reader-actions {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12rpx;
-  width: 100%;
-  max-width: 900px;
-  padding: 18rpx 24rpx calc(18rpx + env(safe-area-inset-bottom));
-  border-top: 1rpx solid rgba(107, 175, 232, 0.16);
-  background: rgba(255, 248, 236, 0.94);
-  backdrop-filter: blur(14rpx);
-  transform: translateX(-50%);
+  gap: 14rpx;
+  margin-top: 22rpx;
 }
 </style>

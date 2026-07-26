@@ -12,7 +12,7 @@
         <view class="traffic-light__dot traffic-light__dot--yellow" :class="{ 'traffic-light__dot--active': prompt.light === 'yellow' }" />
         <view class="traffic-light__dot traffic-light__dot--green" :class="{ 'traffic-light__dot--active': prompt.light === 'green' }" />
       </view>
-      <CartownVehicle color="#f95757" accent="#FFD66B" kind="car" />
+      <CartownVehicle color="#b94b45" accent="#d8b45a" kind="car" />
     </view>
 
     <view class="traffic-actions">

@@ -3,7 +3,7 @@
     {
       "path": "pages/index/index",
       "style": {
-        "navigationBarTitleText": "Little English Book"
+        "navigationBarTitleText": "小朋友英语绘本"
       }
     },
     {
@@ -13,10 +13,10 @@
       }
     },
     {
-      "path": "pages/vehicles/index",
-      "style": {
-        "navigationBarTitleText": "车车英语"
-      }
+        "path": "pages/vehicles/index",
+        "style": {
+          "navigationBarTitleText": "车辆英语"
+        }
     },
     {
       "path": "pages/car-learn/index",
@@ -61,10 +61,10 @@
       }
     },
     {
-      "path": "pages/world/index",
-      "style": {
-        "navigationBarTitleText": "地图和国家"
-      }
+        "path": "pages/world/index",
+        "style": {
+          "navigationBarTitleText": "国家图标"
+        }
     },
     {
       "path": "pages/book-detail/index",
@@ -110,8 +110,8 @@
     }
   ],
   "globalStyle": {
-    "navigationBarBackgroundColor": "#FFF8EC",
+    "navigationBarBackgroundColor": "#FBF7EF",
     "navigationBarTextStyle": "black",
-    "backgroundColor": "#FFF8EC"
+    "backgroundColor": "#FBF7EF"
   }
 }

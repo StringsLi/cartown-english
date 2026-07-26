@@ -34,6 +34,7 @@
     <view class="record-card soft-card">
       <text class="record-card__title">{{ isRecording ? "正在录音..." : recordedPath ? "录音已保存" : "准备好了吗？" }}</text>
       <text class="record-card__hint">{{ recordHint }}</text>
+      <text v-if="isRecording" class="record-card__timer">{{ recordTimeLabel }} / 00:10</text>
       <view class="record-card__actions">
         <BigButton :label="isRecording ? '停止录音' : '开始录音'" :variant="isRecording ? 'warm' : 'primary'" @tap="toggleRecord" />
         <BigButton label="播放我的录音" variant="ghost" :disabled="!recordedPath" @tap="playMyRecord" />
@@ -49,7 +50,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { onLoad } from "@dcloudio/uni-app";
+import { onLoad, onUnload } from "@dcloudio/uni-app";
 import AudioButton from "@/components/AudioButton.vue";
 import BigButton from "@/components/BigButton.vue";
 import { getBookById, getBookPages, getTodayBook } from "@/services/bookService";
@@ -59,6 +60,9 @@ const bookId = ref(getTodayBook().id);
 const sentence = ref("");
 const recordedPath = ref("");
 const isRecording = ref(false);
+const recordSeconds = ref(0);
+const isFinishing = ref(false);
+let recordTimer: ReturnType<typeof setInterval> | undefined;
 
 const book = computed(() => getBookById(bookId.value) ?? getTodayBook());
 const pages = computed(() => getBookPages(book.value.id));
@@ -67,6 +71,7 @@ const activeSentence = computed(() => sentence.value || matchedPage.value?.sente
 const activeSentenceCn = computed(() => matchedPage.value?.sentenceCn || "");
 const activeAudio = computed(() => matchedPage.value?.audio || "");
 const currentPageNumber = computed(() => matchedPage.value?.pageIndex ?? 1);
+const recordTimeLabel = computed(() => `00:${String(recordSeconds.value).padStart(2, "0")}`);
 const recordHint = computed(() => {
   if (isRecording.value) {
     return "读完这句话后点“停止录音”。";
@@ -85,6 +90,11 @@ onLoad((query) => {
   sentence.value = params.sentence ? decodeURIComponent(params.sentence) : "";
 });
 
+onUnload(() => {
+  clearRecordTimer();
+  if (isRecording.value) void stopRecord();
+});
+
 async function toggleRecord() {
   if (isRecording.value) {
     await finishRecord();
@@ -94,30 +104,53 @@ async function toggleRecord() {
   beginRecord();
 }
 
-function beginRecord() {
+async function beginRecord() {
   try {
-    startRecord();
+    await startRecord();
     isRecording.value = true;
+    recordSeconds.value = 0;
+    recordTimer = setInterval(() => {
+      recordSeconds.value += 1;
+      if (recordSeconds.value >= 10) void finishRecord();
+    }, 1000);
     uni.showToast({ title: "开始录音", icon: "none" });
   } catch (error) {
-    uni.showToast({ title: "当前环境暂不支持录音", icon: "none" });
+    uni.showModal({
+      title: "需要麦克风权限",
+      content: "跟读录音只用于本地回放，请在系统设置中允许使用麦克风。",
+      confirmText: "去设置",
+      success: (result) => {
+        if (result.confirm) uni.openSetting({});
+      }
+    });
   }
 }
 
 async function finishRecord() {
+  if (isFinishing.value || !isRecording.value) return;
+  isFinishing.value = true;
+  clearRecordTimer();
+
   try {
     recordedPath.value = await stopRecord();
     saveRepeatRecord({
       bookId: book.value.id,
       sentence: activeSentence.value,
-      audioUrl: recordedPath.value
+      audioUrl: recordedPath.value,
+      durationSeconds: Math.max(1, recordSeconds.value)
     });
     uni.showToast({ title: "录音已保存", icon: "none" });
   } catch (error) {
     uni.showToast({ title: "录音保存失败", icon: "none" });
   } finally {
     isRecording.value = false;
+    isFinishing.value = false;
   }
+}
+
+function clearRecordTimer() {
+  if (recordTimer) clearInterval(recordTimer);
+  recordTimer = undefined;
 }
 
 function playMyRecord() {
@@ -153,6 +186,14 @@ function goBack() {
   margin-top: 26rpx;
   padding: 34rpx 30rpx;
   text-align: center;
+}
+
+.record-card__timer {
+  display: block;
+  margin-top: 14rpx;
+  font-size: 30rpx;
+  font-weight: 800;
+  color: $color-primary;
 }
 
 .sentence-card__label {

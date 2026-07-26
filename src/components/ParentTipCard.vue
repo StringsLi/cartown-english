@@ -31,9 +31,7 @@ const props = withDefaults(
 <style scoped lang="scss">
 .parent-tip {
   padding: 30rpx;
-  background:
-    radial-gradient(circle at 92% 14%, rgba(255, 214, 107, 0.18), transparent 34%),
-    rgba(255, 255, 255, 0.92);
+  background: #fffdf9;
 }
 
 .parent-tip--compact {
@@ -43,7 +41,7 @@ const props = withDefaults(
 .parent-tip__title {
   display: block;
   font-size: 31rpx;
-  font-weight: 900;
+  font-weight: 800;
   color: $color-primary-dark;
   letter-spacing: 0;
 }
@@ -57,8 +55,8 @@ const props = withDefaults(
 
 .parent-tip__question {
   padding: 20rpx;
-  border-radius: 22rpx;
-  background: rgba(255, 248, 236, 0.78);
+  border-radius: $radius-small;
+  background: #f5f1ea;
 }
 
 .parent-tip__en {

@@ -1,7 +1,13 @@
 <template>
-  <view class="book-card soft-card" @tap="emit('select', props.book)">
+  <view class="book-card soft-card" :class="`book-card--${props.variant}`" @tap="emit('select', props.book)">
     <view class="book-card__cover" :class="`book-card__cover--${props.book.theme.toLowerCase().replace(' ', '-')}`">
-      <image v-if="!imageFailed" class="book-card__image" :src="props.book.cover" mode="aspectFill" @error="imageFailed = true" />
+      <VehicleStoryArt
+        v-if="props.book.vehicleStoryId"
+        class="book-card__image"
+        :story-id="props.book.vehicleStoryId"
+        :page-index="0"
+      />
+      <image v-else-if="!imageFailed" class="book-card__image" :src="props.book.cover" mode="aspectFill" @error="imageFailed = true" />
       <view v-else class="book-card__fallback">
         <text class="book-card__fallback-title">{{ props.book.title }}</text>
       </view>
@@ -10,7 +16,8 @@
 
     <view class="book-card__body">
       <text class="book-card__title">{{ props.book.title }}</text>
-      <text class="book-card__meta">Level {{ props.book.level }} · {{ themeLabel }}</text>
+      <text class="book-card__description">{{ props.book.description }}</text>
+      <text class="book-card__meta">L{{ props.book.level }} · {{ themeLabel }} · {{ props.book.pageCount }} 页</text>
       <view class="book-card__words">
         <text v-for="word in props.book.keywords" :key="word" class="book-card__word">{{ word }}</text>
       </view>
@@ -20,6 +27,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import VehicleStoryArt from "@/components/VehicleStoryArt.vue";
 import { getThemeLabel } from "@/services/bookService";
 import type { Book } from "@/types/book";
 
@@ -27,9 +35,11 @@ const props = withDefaults(
   defineProps<{
     book: Book;
     isRead?: boolean;
+    variant?: "grid" | "horizontal";
   }>(),
   {
-    isRead: false
+    isRead: false,
+    variant: "grid"
   }
 );
 
@@ -50,6 +60,8 @@ watch(
 
 <style scoped lang="scss">
 .book-card {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   transition: transform 0.16s ease;
 }
@@ -60,12 +72,10 @@ watch(
 
 .book-card__cover {
   position: relative;
-  height: 246rpx;
+  height: 228rpx;
   overflow: hidden;
   border-radius: $radius-card $radius-card 0 0;
-  background:
-    radial-gradient(circle at 84% 20%, rgba(255, 214, 107, 0.36), transparent 34%),
-    linear-gradient(135deg, $color-sky-soft 0%, #ffffff 58%, #fff0d8 100%);
+  background: $color-sky-soft;
 }
 
 .book-card__image {
@@ -104,13 +114,14 @@ watch(
 }
 
 .book-card__body {
-  padding: 24rpx;
+  flex: 1;
+  padding: 20rpx;
 }
 
 .book-card__title {
   display: block;
-  font-size: 33rpx;
-  font-weight: 900;
+  font-size: 30rpx;
+  font-weight: 800;
   color: $color-primary-dark;
   letter-spacing: 0;
 }
@@ -118,9 +129,21 @@ watch(
 .book-card__meta {
   display: block;
   margin-top: 8rpx;
-  font-size: 24rpx;
+  font-size: 22rpx;
   color: $color-muted;
   letter-spacing: 0;
+}
+
+.book-card__description {
+  display: block;
+  display: -webkit-box;
+  margin-top: 8rpx;
+  overflow: hidden;
+  font-size: 23rpx;
+  color: $color-muted;
+  line-height: 1.42;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .book-card__words {
@@ -136,6 +159,35 @@ watch(
   font-size: 22rpx;
   font-weight: 800;
   color: $color-primary-dark;
-  background: rgba(221, 240, 255, 0.72);
+  background: #eef2ef;
+}
+
+.book-card--horizontal {
+  display: grid;
+  grid-template-columns: 172rpx 1fr;
+  min-height: 184rpx;
+}
+
+.book-card--horizontal .book-card__cover {
+  height: 100%;
+  min-height: 184rpx;
+  border-radius: $radius-card 0 0 $radius-card;
+}
+
+.book-card--horizontal .book-card__body {
+  padding: 18rpx 20rpx;
+}
+
+.book-card--horizontal .book-card__title {
+  font-size: 28rpx;
+}
+
+.book-card--horizontal .book-card__words {
+  margin-top: 12rpx;
+}
+
+.book-card--horizontal .book-card__word {
+  padding: 6rpx 12rpx;
+  font-size: 20rpx;
 }
 </style>

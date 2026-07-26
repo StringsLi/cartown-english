@@ -1,123 +1,105 @@
 <template>
-  <view class="page topic-page">
-    <view class="topic-hero soft-card">
+  <view class="page vehicles-page screen-with-nav">
+    <view class="topic-header">
       <view>
-        <text class="section-kicker">CarTown English</text>
-        <text class="page-title">小汽车英语小镇</text>
-        <text class="page-subtitle">听一听，点一点，开车学英语。CarTown 的玩法已经合到这里。</text>
+        <text class="page-title">交通工具 Vehicles</text>
+        <text class="page-subtitle">看图认识车辆，点一下听自然英文发音。</text>
       </view>
-      <view class="topic-hero__stars">
-        <text class="topic-hero__star-value">{{ progress.stars }}</text>
-        <text class="topic-hero__star-label">stars</text>
-      </view>
+      <button class="header-audio" aria-label="播放示范句" @tap="playSentence">▶</button>
     </view>
 
-    <view class="sentence-card soft-card">
-      <text class="sentence-card__label">今天先会说</text>
-      <text class="sentence-card__en">I see a car.</text>
-      <text class="sentence-card__cn">我看见一辆小汽车。</text>
-      <BigButton class="sentence-card__audio" label="听句子" variant="warm" @tap="playSentence" />
+    <view class="vehicle-hero soft-card">
+      <view class="vehicle-hero__copy">
+        <text class="vehicle-hero__eyebrow">认识交通工具</text>
+        <text class="vehicle-hero__title">I see a car.</text>
+        <text class="vehicle-hero__desc">我看见一辆小汽车。</text>
+      </view>
+      <view class="vehicle-hero__image vehicle-art vehicle-art--car" aria-label="红色小汽车插图" />
     </view>
 
-    <view class="station-grid">
-      <view v-for="station in stations" :key="station.path" class="station-card soft-card" @tap="goStation(station.path)">
-        <view class="station-card__visual">
-          <CartownVehicle :color="station.color" :accent="station.accent" :kind="station.kind" />
+    <scroll-view class="station-scroll" scroll-x>
+      <view class="station-scroll__inner">
+        <button v-for="station in stations" :key="station.path" class="station-tab" @tap="goStation(station.path)">
+          <text class="station-tab__tag">{{ station.tag }}</text>
+          <text class="station-tab__title">{{ station.title }}</text>
+        </button>
+      </view>
+    </scroll-view>
+
+    <view class="section-head">
+      <text class="section-title">常用车辆</text>
+      <text class="section-link" @tap="goStation('/pages/car-learn/index')">查看全部</text>
+    </view>
+
+    <view class="vehicle-grid">
+      <button v-for="item in featuredWords" :key="item.id" class="vehicle-word soft-card" @tap="playWord(item)">
+        <view class="vehicle-word__image-wrap">
+          <view class="vehicle-word__image vehicle-art" :class="item.atlasClass" />
         </view>
-        <text class="station-card__tag">{{ station.tag }}</text>
-        <text class="station-card__title">{{ station.title }}</text>
-        <text class="station-card__desc">{{ station.desc }}</text>
+        <text class="vehicle-word__cn">{{ item.meaning }}</text>
+        <text class="vehicle-word__en">{{ item.word }}</text>
+        <text class="vehicle-word__listen">▶ 听发音</text>
+      </button>
+    </view>
+
+    <view class="brand-section soft-card" @tap="goStation('/pages/car-logos/index')">
+      <view class="brand-section__head">
+        <view>
+          <text class="brand-section__eyebrow">品牌认知</text>
+          <text class="brand-section__title">认识真实汽车品牌</text>
+        </view>
+        <text class="brand-section__more">50 个车标 ›</text>
+      </view>
+      <view class="brand-row">
+        <CartownLogoBadge v-for="logo in featuredLogos" :key="logo.id" :logo="logo" size="small" :show-name="false" />
       </view>
     </view>
+
+    <BottomNav active="learn" />
   </view>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import BigButton from "@/components/BigButton.vue";
-import CartownVehicle from "@/components/CartownVehicle.vue";
-import { getCartownProgress } from "@/services/cartownProgressService";
+import BottomNav from "@/components/BottomNav.vue";
+import CartownLogoBadge from "@/components/CartownLogoBadge.vue";
+import { carLogos } from "@/mock/cartown";
+import { vehicleGroups } from "@/mock/topics";
 import { speakEnglish } from "@/services/audioService";
-import type { Vehicle } from "@/mock/cartown";
+import type { TopicWord } from "@/types/topic";
 
-const progress = computed(() => getCartownProgress());
+const stationItems = [
+  ["词卡", "车辆词汇", "/pages/car-learn/index"],
+  ["车标", "品牌认知", "/pages/car-logos/index"],
+  ["颜色", "听音选车", "/pages/car-colors/index"],
+  ["数字", "1 到 5", "/pages/car-count/index"],
+  ["动作", "红绿灯", "/pages/car-traffic/index"],
+  ["故事", "汽车绘本", "/pages/car-stories/index"],
+  ["奖励", "我的车库", "/pages/car-garage/index"]
+] as const;
 
-const stations: Array<{
-  title: string;
-  desc: string;
-  tag: string;
-  path: string;
-  color: string;
-  accent: string;
-  kind: Vehicle["kind"] | "color-car";
-}> = [
-  {
-    title: "车辆词卡",
-    desc: "小汽车、工程车、帮忙的车",
-    tag: "Words",
-    path: "/pages/car-learn/index",
-    color: "#f95757",
-    accent: "#ffd166",
-    kind: "car"
-  },
-  {
-    title: "Brand Badges",
-    desc: "50 个车标认知",
-    tag: "Logos",
-    path: "/pages/car-logos/index",
-    color: "#49a6ff",
-    accent: "#ffd447",
-    kind: "race-car"
-  },
-  {
-    title: "Color Cars",
-    desc: "听颜色选小车",
-    tag: "Listen",
-    path: "/pages/car-colors/index",
-    color: "#3aa6ff",
-    accent: "#ffd447",
-    kind: "color-car"
-  },
-  {
-    title: "Count Cars",
-    desc: "1 到 5 数车车",
-    tag: "1-5",
-    path: "/pages/car-count/index",
-    color: "#49a6ff",
-    accent: "#ffe66d",
-    kind: "truck"
-  },
-  {
-    title: "Traffic Light",
-    desc: "红黄绿动作游戏",
-    tag: "Go",
-    path: "/pages/car-traffic/index",
-    color: "#43c66b",
-    accent: "#ffd447",
-    kind: "race-car"
-  },
-  {
-    title: "Car Story",
-    desc: "两本车车小绘本",
-    tag: "Books",
-    path: "/pages/car-stories/index",
-    color: "#ffd447",
-    accent: "#f95757",
-    kind: "bus"
-  },
-  {
-    title: "Garage",
-    desc: "星星奖励车库",
-    tag: "Stars",
-    path: "/pages/car-garage/index",
-    color: "#ff7a1a",
-    accent: "#ffffff",
-    kind: "van"
-  }
-];
+const stations = stationItems.map(([tag, title, path]) => ({ tag, title, path }));
+const allVehicleWords = vehicleGroups.flatMap((group) => group.words);
+const featuredVehicles = [
+  ["vehicle_car", "vehicle-art--car"],
+  ["vehicle_fire_truck", "vehicle-art--fire-truck"],
+  ["vehicle_excavator", "vehicle-art--excavator"],
+  ["vehicle_bus", "vehicle-art--bus"],
+  ["vehicle_train", "vehicle-art--train"],
+  ["vehicle_truck", "vehicle-art--truck"]
+] as const;
+
+const featuredWords = featuredVehicles.flatMap(([id, atlasClass]) => {
+  const item = allVehicleWords.find((word) => word.id === id);
+  return item ? [{ ...item, atlasClass }] : [];
+});
+const featuredLogos = carLogos.slice(0, 4);
 
 function playSentence() {
   speakEnglish("I see a car.");
+}
+
+function playWord(item: TopicWord) {
+  speakEnglish(`${item.word}. ${item.sentence}`);
 }
 
 function goStation(path: string) {
@@ -126,124 +108,243 @@ function goStation(path: string) {
 </script>
 
 <style scoped lang="scss">
-.topic-page {
-  padding-bottom: 48rpx;
-}
-
-.topic-hero {
+.topic-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 28rpx;
-  padding: 34rpx 30rpx;
-  background:
-    radial-gradient(circle at 88% 18%, rgba(255, 214, 107, 0.36), transparent 32%),
-    linear-gradient(135deg, #ffffff 0%, #eaf6ff 58%, #fff0dd 100%);
+  gap: 24rpx;
+  padding: 4rpx 0 20rpx;
 }
 
-.topic-hero__stars {
-  flex: 0 0 auto;
-  width: 126rpx;
-  min-height: 126rpx;
-  padding: 22rpx 8rpx;
-  border-radius: 34rpx;
-  text-align: center;
-  background: rgba(255, 214, 107, 0.72);
+.header-audio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64rpx;
+  height: 64rpx;
+  border: 1rpx solid rgba(185, 95, 61, 0.16);
+  border-radius: 50%;
+  font-size: 20rpx;
+  color: $color-primary;
+  background: #f8eee8;
 }
 
-.topic-hero__star-value {
-  display: block;
-  font-size: 42rpx;
-  font-weight: 900;
-  color: $color-primary-dark;
+.vehicle-hero {
+  position: relative;
+  min-height: 202rpx;
+  overflow: hidden;
+  background: #dce8e3;
 }
 
-.topic-hero__star-label {
-  display: block;
-  margin-top: 4rpx;
-  font-size: 22rpx;
-  font-weight: 900;
-  color: $color-muted;
-}
-
-.sentence-card {
-  margin-top: 28rpx;
+.vehicle-hero__copy {
+  position: relative;
+  z-index: 1;
+  width: 60%;
   padding: 30rpx;
 }
 
-.sentence-card__label {
+.vehicle-hero__eyebrow,
+.vehicle-hero__title,
+.vehicle-hero__desc {
   display: block;
-  font-size: 24rpx;
-  color: $color-muted;
 }
 
-.sentence-card__en {
-  display: block;
+.vehicle-hero__eyebrow {
+  font-size: 22rpx;
+  font-weight: 800;
+  color: #426d61;
+}
+
+.vehicle-hero__title {
   margin-top: 12rpx;
-  font-size: 40rpx;
-  font-weight: 900;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 36rpx;
+  font-weight: 700;
   color: $color-primary-dark;
 }
 
-.sentence-card__cn {
-  display: block;
-  margin-top: 10rpx;
-  font-size: 25rpx;
+.vehicle-hero__desc {
+  margin-top: 8rpx;
+  font-size: 22rpx;
   color: $color-muted;
 }
 
-.sentence-card__audio {
-  margin-top: 20rpx;
+.vehicle-hero__image {
+  position: absolute;
+  right: 2rpx;
+  bottom: -8rpx;
+  width: 220rpx;
+  height: 220rpx;
 }
 
-.station-grid {
+.vehicle-art {
+  background-image: url("/static/ui/vehicle-atlas-premium.png");
+  background-repeat: no-repeat;
+  background-size: 300% 200%;
+}
+
+.vehicle-art--car {
+  background-position: 0 0;
+}
+
+.vehicle-art--fire-truck {
+  background-position: 50% 0;
+}
+
+.vehicle-art--excavator {
+  background-position: 100% 0;
+}
+
+.vehicle-art--bus {
+  background-position: 0 100%;
+}
+
+.vehicle-art--train {
+  background-size: 318% 212%;
+  background-position: 50% 100%;
+}
+
+.vehicle-art--truck {
+  background-position: 100% 100%;
+}
+
+.station-scroll {
+  margin: 18rpx -28rpx 0;
+  white-space: nowrap;
+}
+
+.station-scroll__inner {
+  display: inline-flex;
+  gap: 12rpx;
+  padding: 0 28rpx 8rpx;
+}
+
+.station-tab {
+  min-width: 136rpx;
+  min-height: 80rpx;
+  padding: 12rpx 18rpx;
+  border: 1rpx solid $color-line;
+  border-radius: $radius-small;
+  text-align: left;
+  background: #fffdf9;
+}
+
+.station-tab__tag,
+.station-tab__title {
+  display: block;
+}
+
+.station-tab__tag {
+  font-size: 18rpx;
+  font-weight: 800;
+  color: $color-primary;
+}
+
+.station-tab__title {
+  margin-top: 4rpx;
+  font-size: 22rpx;
+  font-weight: 800;
+  color: $color-primary-dark;
+}
+
+.vehicle-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18rpx;
-  margin-top: 28rpx;
+  gap: 14rpx;
 }
 
-.station-card {
-  position: relative;
-  min-height: 330rpx;
-  padding: 20rpx;
-  overflow: hidden;
-  transition: transform 0.16s ease;
+.vehicle-word {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: 302rpx;
+  margin: 0;
+  padding: 16rpx;
+  text-align: center;
 }
 
-.station-card:active {
-  transform: scale(0.98);
+.vehicle-word__image-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 170rpx;
+  border-radius: $radius-small;
+  background: #f2f0e9;
 }
 
-.station-card__visual {
-  height: 150rpx;
-  margin: 16rpx 0 10rpx;
+.vehicle-word__image {
+  width: 164rpx;
+  height: 164rpx;
 }
 
-.station-card__tag {
-  position: absolute;
-  top: 18rpx;
-  right: 18rpx;
-  padding: 8rpx 14rpx;
-  border-radius: $radius-pill;
+.vehicle-word__cn {
+  margin-top: 13rpx;
+  font-size: 25rpx;
+  font-weight: 800;
+  color: $color-primary-dark;
+}
+
+.vehicle-word__en {
+  margin-top: 3rpx;
   font-size: 21rpx;
-  font-weight: 900;
-  color: $color-primary-dark;
-  background: rgba(255, 214, 107, 0.7);
-}
-
-.station-card__title {
-  display: block;
-  font-size: 31rpx;
-  font-weight: 900;
-  color: $color-primary-dark;
-}
-
-.station-card__desc {
-  display: block;
-  margin-top: 8rpx;
-  font-size: 23rpx;
   color: $color-muted;
-  line-height: 1.35;
+  text-transform: capitalize;
+}
+
+.vehicle-word__listen {
+  margin-top: 8rpx;
+  font-size: 19rpx;
+  font-weight: 700;
+  color: $color-primary;
+}
+
+.brand-section {
+  margin-top: 22rpx;
+  padding: 24rpx;
+}
+
+.brand-section__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.brand-section__eyebrow,
+.brand-section__title {
+  display: block;
+}
+
+.brand-section__eyebrow {
+  font-size: 19rpx;
+  font-weight: 800;
+  color: $color-primary;
+}
+
+.brand-section__title {
+  margin-top: 5rpx;
+  font-size: 27rpx;
+  font-weight: 800;
+  color: $color-primary-dark;
+}
+
+.brand-section__more {
+  font-size: 20rpx;
+  color: $color-muted;
+}
+
+.brand-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8rpx;
+  margin-top: 18rpx;
+}
+
+@media (min-width: 900px) {
+  .vehicle-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 </style>

@@ -55,16 +55,16 @@ const percent = computed(() => {
 
 .progress-bar__track {
   width: 100%;
-  height: 16rpx;
+  height: 12rpx;
   overflow: hidden;
   border-radius: $radius-pill;
-  background: rgba(221, 240, 255, 0.72);
+  background: #ebe4da;
 }
 
 .progress-bar__fill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, $color-primary 0%, $color-mint 100%);
+  background: $color-mint;
   transition: width 0.2s ease;
 }
 </style>

@@ -7,6 +7,11 @@
   "transformPx": false,
   "mp-weixin": {
     "appid": "",
+    "permission": {
+      "scope.record": {
+        "desc": "用于孩子完成跟读练习，录音默认仅保存在本地设备"
+      }
+    },
     "setting": {
       "urlCheck": false,
       "es6": true

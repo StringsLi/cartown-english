@@ -1,4 +1,4 @@
-import type { Book, BookLevel, BookPage, BookTheme, Hotspot, ParentTip, Word } from "@/types/book";
+import type { Book, BookLevel, BookPage, BookTheme, Hotspot, ParentTip, VehicleStoryId, Word } from "@/types/book";
 
 export type ThemeFilterValue = BookTheme | "All";
 
@@ -10,7 +10,8 @@ export const themeLabelMap: Record<BookTheme, string> = {
   Toys: "玩具",
   Actions: "动作",
   Bedtime: "睡前",
-  "Daily Life": "生活习惯"
+  "Daily Life": "生活习惯",
+  Vehicles: "交通工具"
 };
 
 export const themeFilters: Array<{ label: string; value: ThemeFilterValue }> = [
@@ -22,7 +23,8 @@ export const themeFilters: Array<{ label: string; value: ThemeFilterValue }> = [
   { label: "玩具", value: "Toys" },
   { label: "动作", value: "Actions" },
   { label: "睡前", value: "Bedtime" },
-  { label: "生活习惯", value: "Daily Life" }
+  { label: "生活习惯", value: "Daily Life" },
+  { label: "交通", value: "Vehicles" }
 ];
 
 export const levelLabels: Record<BookLevel, string> = {
@@ -101,6 +103,66 @@ export const mockBooks: Book[] = [
     pageCount: 5,
     isPublished: true,
     sort: 5
+  },
+  {
+    id: "book_red_car_001",
+    title: "Red Car Comes Home",
+    cover: "/static/books/vehicles/red-car-storyboard.png",
+    level: "A",
+    ageRange: "3-6",
+    theme: "Vehicles",
+    description: "A careful little red car travels home through town.",
+    keywords: ["car", "stop", "rain"],
+    targetSentence: "Red Car goes down the road.",
+    pageCount: 5,
+    isPublished: true,
+    sort: 6,
+    vehicleStoryId: "red-car"
+  },
+  {
+    id: "book_digger_001",
+    title: "Digger Builds a Park",
+    cover: "/static/ui/vehicle-atlas-premium.png",
+    level: "A",
+    ageRange: "3-6",
+    theme: "Vehicles",
+    description: "A friendly digger works step by step to build a park.",
+    keywords: ["digger", "dig", "park"],
+    targetSentence: "Digger digs a big hole.",
+    pageCount: 5,
+    isPublished: true,
+    sort: 7,
+    vehicleStoryId: "digger"
+  },
+  {
+    id: "book_fire_truck_001",
+    title: "Fire Truck Is Ready",
+    cover: "/static/ui/vehicle-atlas-premium.png",
+    level: "A",
+    ageRange: "3-6",
+    theme: "Vehicles",
+    description: "The fire truck answers the bell and helps a little cat.",
+    keywords: ["fire truck", "ladder", "safe"],
+    targetSentence: "Fire Truck is ready.",
+    pageCount: 5,
+    isPublished: true,
+    sort: 8,
+    vehicleStoryId: "fire-truck"
+  },
+  {
+    id: "book_city_bus_001",
+    title: "Good Night, City Bus",
+    cover: "/static/ui/vehicle-atlas-premium.png",
+    level: "A",
+    ageRange: "3-6",
+    theme: "Vehicles",
+    description: "A warm city ride from the busy morning to bedtime.",
+    keywords: ["bus", "bridge", "home"],
+    targetSentence: "The bus goes over the bridge.",
+    pageCount: 5,
+    isPublished: true,
+    sort: 9,
+    vehicleStoryId: "city-bus"
   }
 ];
 
@@ -117,7 +179,19 @@ export const mockWords: Word[] = [
   { id: "word_mom", word: "mom", phonetic: "/mɑːm/", meaning: "妈妈", image: "/static/books/mom/word-mom.jpg", audio: "/static/audio/words/mom.wav", level: "A", theme: "Family" },
   { id: "word_love", word: "love", phonetic: "/lʌv/", meaning: "爱", image: "/static/books/mom/word-love.jpg", audio: "/static/audio/words/love.wav", level: "A", theme: "Family" },
   { id: "word_run", word: "run", phonetic: "/rʌn/", meaning: "跑", image: "/static/books/jump/word-run.jpg", audio: "/static/audio/words/run.wav", level: "A", theme: "Actions" },
-  { id: "word_clap", word: "clap", phonetic: "/klæp/", meaning: "拍手", image: "/static/books/jump/word-clap.jpg", audio: "/static/audio/words/clap.wav", level: "A", theme: "Actions" }
+  { id: "word_clap", word: "clap", phonetic: "/klæp/", meaning: "拍手", image: "/static/books/jump/word-clap.jpg", audio: "/static/audio/words/clap.wav", level: "A", theme: "Actions" },
+  { id: "word_car", word: "car", phonetic: "/kɑːr/", meaning: "小汽车", image: "/static/topic-icons/vehicles/car.png", audio: "/static/audio/words/car.wav", level: "A", theme: "Vehicles" },
+  { id: "word_stop", word: "stop", phonetic: "/stɑːp/", meaning: "停下", image: "/static/topic-icons/vehicles/car.png", audio: "/static/audio/words/stop.wav", level: "A", theme: "Vehicles" },
+  { id: "word_rain", word: "rain", phonetic: "/reɪn/", meaning: "雨", image: "/static/topic-icons/vehicles/car.png", audio: "/static/audio/words/rain.wav", level: "A", theme: "Vehicles" },
+  { id: "word_digger", word: "digger", phonetic: "/ˈdɪɡər/", meaning: "挖掘机", image: "/static/topic-icons/vehicles/excavator.png", audio: "/static/audio/words/digger.wav", level: "A", theme: "Vehicles" },
+  { id: "word_dig", word: "dig", phonetic: "/dɪɡ/", meaning: "挖", image: "/static/topic-icons/vehicles/excavator.png", audio: "/static/audio/words/dig.wav", level: "A", theme: "Vehicles" },
+  { id: "word_park", word: "park", phonetic: "/pɑːrk/", meaning: "公园", image: "/static/topic-icons/vehicles/excavator.png", audio: "/static/audio/words/park.wav", level: "A", theme: "Vehicles" },
+  { id: "word_fire_truck", word: "fire truck", phonetic: "/ˈfaɪər trʌk/", meaning: "消防车", image: "/static/topic-icons/vehicles/fire-truck.png", audio: "/static/audio/words/fire-truck.wav", level: "A", theme: "Vehicles" },
+  { id: "word_ladder", word: "ladder", phonetic: "/ˈlædər/", meaning: "梯子", image: "/static/topic-icons/vehicles/fire-truck.png", audio: "/static/audio/words/ladder.wav", level: "A", theme: "Vehicles" },
+  { id: "word_safe", word: "safe", phonetic: "/seɪf/", meaning: "安全的", image: "/static/topic-icons/vehicles/fire-truck.png", audio: "/static/audio/words/safe.wav", level: "A", theme: "Vehicles" },
+  { id: "word_bus", word: "bus", phonetic: "/bʌs/", meaning: "公共汽车", image: "/static/topic-icons/vehicles/bus.png", audio: "/static/audio/words/bus.wav", level: "A", theme: "Vehicles" },
+  { id: "word_bridge", word: "bridge", phonetic: "/brɪdʒ/", meaning: "桥", image: "/static/topic-icons/vehicles/bus.png", audio: "/static/audio/words/bridge.wav", level: "A", theme: "Vehicles" },
+  { id: "word_home", word: "home", phonetic: "/hoʊm/", meaning: "家", image: "/static/topic-icons/vehicles/bus.png", audio: "/static/audio/words/home.wav", level: "A", theme: "Vehicles" }
 ];
 
 const pageContent: Array<{
@@ -126,6 +200,7 @@ const pageContent: Array<{
   sentences: string[];
   sentenceCn: string[];
   hotspotWords: string[];
+  vehicleStoryId?: VehicleStoryId;
 }> = [
   {
     bookId: "book_cat_001",
@@ -161,6 +236,62 @@ const pageContent: Array<{
     sentences: ["I can jump.", "I can run.", "I can clap.", "I can turn around.", "Look at me!"],
     sentenceCn: ["我会跳。", "我会跑。", "我会拍手。", "我会转一圈。", "看我！"],
     hotspotWords: ["jump", "run", "clap", "jump", "jump"]
+  },
+  {
+    bookId: "book_red_car_001",
+    folder: "vehicles",
+    vehicleStoryId: "red-car",
+    sentences: [
+      "This is Red Car.",
+      "Red Car goes down the road.",
+      "Red Car stops for the ducks.",
+      "Red Car drives slowly in the rain.",
+      "Red Car is home. Beep, beep!"
+    ],
+    sentenceCn: ["这是红色小汽车。", "红色小汽车沿着道路前进。", "红色小汽车停下来让小鸭子通过。", "红色小汽车在雨中慢慢开。", "红色小汽车到家啦。嘀嘀！"],
+    hotspotWords: ["car", "car", "stop", "rain", "home"]
+  },
+  {
+    bookId: "book_digger_001",
+    folder: "vehicles",
+    vehicleStoryId: "digger",
+    sentences: [
+      "This is Digger.",
+      "Digger digs a big hole.",
+      "Digger lifts the rocks.",
+      "Digger makes the ground flat.",
+      "The new park is ready!"
+    ],
+    sentenceCn: ["这是挖掘机。", "挖掘机挖了一个大洞。", "挖掘机把石头举起来。", "挖掘机把地面铺平。", "新公园建好啦！"],
+    hotspotWords: ["digger", "dig", "digger", "digger", "park"]
+  },
+  {
+    bookId: "book_fire_truck_001",
+    folder: "vehicles",
+    vehicleStoryId: "fire-truck",
+    sentences: [
+      "Fire Truck is ready.",
+      "Ring, ring! The bell rings.",
+      "Fire Truck goes down the road.",
+      "The ladder goes up.",
+      "The little cat is safe."
+    ],
+    sentenceCn: ["消防车准备好了。", "铃铃！警铃响了。", "消防车沿着道路前进。", "梯子升起来了。", "小猫安全了。"],
+    hotspotWords: ["fire truck", "fire truck", "fire truck", "ladder", "safe"]
+  },
+  {
+    bookId: "book_city_bus_001",
+    folder: "vehicles",
+    vehicleStoryId: "city-bus",
+    sentences: [
+      "The yellow bus is busy.",
+      "The bus stops at the school.",
+      "The bus goes over the bridge.",
+      "The last child goes home.",
+      "Good night, City Bus."
+    ],
+    sentenceCn: ["黄色巴士忙碌起来了。", "巴士停在学校门口。", "巴士开过小桥。", "最后一个孩子回家了。", "晚安，城市巴士。"],
+    hotspotWords: ["bus", "stop", "bridge", "home", "bus"]
   }
 ];
 
@@ -192,11 +323,12 @@ export const mockBookPages: BookPage[] = pageContent.flatMap((book) =>
       id: `page_${book.bookId}_${pageNumber}`,
       bookId: book.bookId,
       pageIndex,
-      image: `/static/books/${book.folder}/page${pageNumber}.jpg`,
+      image: book.vehicleStoryId ? "/static/ui/vehicle-atlas-premium.png" : `/static/books/${book.folder}/page${pageNumber}.jpg`,
       sentence,
       sentenceCn: book.sentenceCn[pageOffset],
-      audio: `/static/audio/${book.folder}/page${pageNumber}.wav`,
-      hotspots: [makeHotspot(book.hotspotWords[pageOffset], pageIndex)]
+      audio: `/static/audio/${book.vehicleStoryId ?? book.folder}/page${pageNumber}.wav`,
+      hotspots: [makeHotspot(book.hotspotWords[pageOffset], pageIndex)],
+      vehicleStoryId: book.vehicleStoryId
     };
   })
 );
@@ -251,5 +383,45 @@ export const parentTips: ParentTip[] = [
       { en: "Can you clap?", cn: "你会拍手吗？" }
     ],
     activity: "一起做 jump、run、clap 三个动作。"
+  },
+  {
+    bookId: "book_red_car_001",
+    title: "今日陪读卡：Red Car Comes Home",
+    questions: [
+      { en: "What color is the car?", cn: "小汽车是什么颜色？" },
+      { en: "Why does Red Car stop?", cn: "红色小汽车为什么停下来？" },
+      { en: "Can you say beep, beep?", cn: "你能说 beep, beep 吗？" }
+    ],
+    activity: "和孩子用玩具小车练习 go、slow、stop 三个动作。"
+  },
+  {
+    bookId: "book_digger_001",
+    title: "今日陪读卡：Digger Builds a Park",
+    questions: [
+      { en: "What does Digger dig?", cn: "挖掘机挖了什么？" },
+      { en: "Can Digger lift the rocks?", cn: "挖掘机能举起石头吗？" },
+      { en: "Is the park ready?", cn: "公园建好了吗？" }
+    ],
+    activity: "用积木搭一个小公园，边搭边说 dig、lift、flat。"
+  },
+  {
+    bookId: "book_fire_truck_001",
+    title: "今日陪读卡：Fire Truck Is Ready",
+    questions: [
+      { en: "What do you hear?", cn: "你听到了什么？" },
+      { en: "Where is the ladder?", cn: "梯子在哪里？" },
+      { en: "Is the little cat safe?", cn: "小猫安全了吗？" }
+    ],
+    activity: "一起模仿警铃和升梯子的动作，练习 ring、up、safe。"
+  },
+  {
+    bookId: "book_city_bus_001",
+    title: "今日陪读卡：Good Night, City Bus",
+    questions: [
+      { en: "Where does the bus stop?", cn: "巴士停在哪里？" },
+      { en: "Does the bus cross a bridge?", cn: "巴士开过小桥了吗？" },
+      { en: "Where do the children go?", cn: "孩子们去哪里？" }
+    ],
+    activity: "用椅子排成一辆小巴士，一起说 stop、bridge、home。"
   }
 ];
