@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { onLaunch } from "@dcloudio/uni-app";
+import { initCloudEnvironment } from "@/services/cloudService";
+import { configureAudioPlayback } from "@/services/audioService";
 
 onLaunch(() => {
-  console.log("Little English Book launched");
+  const cloudReady = initCloudEnvironment();
+  configureAudioPlayback();
+  console.log("车车探索小助手 launched", { cloudReady });
 });
 </script>
 

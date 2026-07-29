@@ -14,7 +14,9 @@
         :class="{ 'count-card--active': tapped.includes(slot) }"
         @tap="tapCar(slot)"
       >
-        <CartownVehicle :color="challenge.color" :accent="challenge.accent" :kind="challenge.kind" />
+        <view class="count-card__vehicle">
+          <PremiumVehicleImage :name="challenge.kind" :alt="challenge.vehicleZh" />
+        </view>
       </view>
     </view>
 
@@ -28,7 +30,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import BigButton from "@/components/BigButton.vue";
-import CartownVehicle from "@/components/CartownVehicle.vue";
+import PremiumVehicleImage from "@/components/PremiumVehicleImage.vue";
 import { countingChallenges } from "@/mock/cartown";
 import { speakEnglish } from "@/services/audioService";
 import { addCartownStar, getCartownProgress, saveCartownProgress } from "@/services/cartownProgressService";
@@ -92,6 +94,15 @@ function nextChallenge() {
   min-height: 230rpx;
   padding: 24rpx 16rpx;
   transition: transform 0.16s ease;
+}
+
+.count-card__vehicle {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: $radius-small;
+  background: #eef2f3;
 }
 
 .count-card--active {

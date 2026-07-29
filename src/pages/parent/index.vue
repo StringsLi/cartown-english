@@ -23,7 +23,7 @@
         </view>
         <text class="week-card__delta">{{ weeklyDeltaText }}</text>
       </view>
-      <image class="week-card__image" src="/static/books/mom/cover.jpg" mode="aspectFill" />
+      <CachedImage class="week-card__image" :src="highResolutionAsset('/static/books/mom/cover.webp')" mode="aspectFill" />
     </view>
 
     <view class="streak-card soft-card">
@@ -102,11 +102,13 @@
 </template>
 
 <script setup lang="ts">
+import CachedImage from "@/components/CachedImage.vue";
 import { computed, ref } from "vue";
 import { onLoad, onShow } from "@dcloudio/uni-app";
 import BottomNav from "@/components/BottomNav.vue";
 import { getBookById, getParentTip, getTodayBook } from "@/services/bookService";
 import { getCartownProgress } from "@/services/cartownProgressService";
+import { highResolutionAsset } from "@/services/assetService";
 import { getCurrentWeekActivity, getHomeStats, getLearningState } from "@/services/progressService";
 
 const bookId = ref(getTodayBook().id);

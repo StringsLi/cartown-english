@@ -9,13 +9,19 @@
     </view>
 
     <view v-if="currentPage" class="point-scene soft-card">
+      <CachedImage
+        v-if="!imageFailed"
+        class="point-scene__image"
+        :src="currentPage.image"
+        mode="aspectFill"
+        @error="imageFailed = true"
+      />
       <VehicleStoryArt
-        v-if="currentPage.vehicleStoryId"
+        v-else-if="currentPage.vehicleStoryId"
         class="point-scene__image"
         :story-id="currentPage.vehicleStoryId"
         :page-index="currentPage.pageIndex"
       />
-      <image v-else-if="!imageFailed" class="point-scene__image" :src="currentPage.image" mode="aspectFill" @error="imageFailed = true" />
       <view v-else class="point-art">
         <view class="point-art__sun" />
         <view class="point-art__card">
@@ -64,6 +70,7 @@ import { computed, ref, watch } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import AudioButton from "@/components/AudioButton.vue";
 import BigButton from "@/components/BigButton.vue";
+import CachedImage from "@/components/CachedImage.vue";
 import VehicleStoryArt from "@/components/VehicleStoryArt.vue";
 import { playAudio } from "@/services/audioService";
 import { getBookById, getBookPages, getTodayBook } from "@/services/bookService";

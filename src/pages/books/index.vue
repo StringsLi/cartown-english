@@ -28,7 +28,7 @@
     </scroll-view>
 
     <view class="reading-system soft-card">
-      <image class="reading-system__image" src="/static/books/bear/cover.jpg" mode="aspectFill" />
+      <CachedImage class="reading-system__image" :src="highResolutionAsset('/static/books/bear/cover.webp')" mode="aspectFill" />
       <view class="reading-system__copy">
         <text class="reading-system__eyebrow">分级阅读体系</text>
         <text class="reading-system__title">科学选册，成长看得见</text>
@@ -73,12 +73,14 @@
 </template>
 
 <script setup lang="ts">
+import CachedImage from "@/components/CachedImage.vue";
 import { computed, ref } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import BookCard from "@/components/BookCard.vue";
 import BottomNav from "@/components/BottomNav.vue";
 import { getBooks, themeFilters } from "@/services/bookService";
 import { getLearningState } from "@/services/progressService";
+import { highResolutionAsset } from "@/services/assetService";
 import type { Book, BookLevel } from "@/types/book";
 import type { ThemeFilterValue } from "@/mock/books";
 

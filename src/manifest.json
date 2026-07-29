@@ -1,17 +1,12 @@
 {
-  "name": "Little English Book",
+  "name": "Car Explorer Helper",
   "appid": "",
-  "description": "Little English Book | 亲子英语绘本馆",
+  "description": "车车探索小助手 | 儿童车辆认知与互动故事",
   "versionName": "0.1.0",
   "versionCode": "1",
   "transformPx": false,
   "mp-weixin": {
-    "appid": "",
-    "permission": {
-      "scope.record": {
-        "desc": "用于孩子完成跟读练习，录音默认仅保存在本地设备"
-      }
-    },
+    "appid": "wx41ac769b99219ff5",
     "setting": {
       "urlCheck": false,
       "es6": true

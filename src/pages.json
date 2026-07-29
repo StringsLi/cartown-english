@@ -3,7 +3,7 @@
     {
       "path": "pages/index/index",
       "style": {
-        "navigationBarTitleText": "小朋友英语绘本"
+        "navigationBarTitleText": "车车探索小助手"
       }
     },
     {
@@ -15,7 +15,7 @@
     {
         "path": "pages/vehicles/index",
         "style": {
-          "navigationBarTitleText": "车辆英语"
+          "navigationBarTitleText": "认识车辆"
         }
     },
     {
@@ -63,7 +63,7 @@
     {
         "path": "pages/world/index",
         "style": {
-          "navigationBarTitleText": "国家图标"
+          "navigationBarTitleText": "车车看世界"
         }
     },
     {

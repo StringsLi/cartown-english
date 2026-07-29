@@ -1,5 +1,6 @@
 import type { TopicGroup } from "@/types/topic";
 import { flagIcon, vehicleIcon } from "@/mock/topicAssets";
+import { countryGroupLabels, countryWords } from "@/mock/countries";
 
 export const vehicleGroups: TopicGroup[] = [
   {
@@ -15,7 +16,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "I see a car.",
         sentenceCn: "我看见一辆小汽车。",
         image: vehicleIcon("car"),
-        audio: "/static/audio/words/car.wav",
+        audio: "/static/audio/words/car.mp3",
         group: "small-cars"
       },
       {
@@ -26,7 +27,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "The bus is big.",
         sentenceCn: "公共汽车很大。",
         image: vehicleIcon("bus"),
-        audio: "/static/audio/words/bus.wav",
+        audio: "/static/audio/words/bus.mp3",
         group: "small-cars"
       },
       {
@@ -37,7 +38,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "This is a taxi.",
         sentenceCn: "这是一辆出租车。",
         image: vehicleIcon("taxi"),
-        audio: "/static/audio/words/taxi.wav",
+        audio: "/static/audio/words/taxi.mp3",
         group: "small-cars"
       },
       {
@@ -48,7 +49,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "The train goes choo-choo.",
         sentenceCn: "火车呜呜开。",
         image: vehicleIcon("train"),
-        audio: "/static/audio/words/train.wav",
+        audio: "/static/audio/words/train.mp3",
         group: "small-cars"
       },
       {
@@ -59,7 +60,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "The truck is strong.",
         sentenceCn: "卡车很有力。",
         image: vehicleIcon("truck"),
-        audio: "/static/audio/words/truck.wav",
+        audio: "/static/audio/words/truck.mp3",
         group: "small-cars"
       },
       {
@@ -70,7 +71,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "I ride a bicycle.",
         sentenceCn: "我骑自行车。",
         image: vehicleIcon("bicycle"),
-        audio: "/static/audio/words/bicycle.wav",
+        audio: "/static/audio/words/bicycle.mp3",
         group: "small-cars"
       },
       {
@@ -81,7 +82,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "The motorcycle is fast.",
         sentenceCn: "摩托车很快。",
         image: vehicleIcon("motorcycle"),
-        audio: "/static/audio/words/motorcycle.wav",
+        audio: "/static/audio/words/motorcycle.mp3",
         group: "small-cars"
       },
       {
@@ -92,7 +93,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "This is a scooter.",
         sentenceCn: "这是一辆滑板车。",
         image: vehicleIcon("scooter"),
-        audio: "/static/audio/words/scooter.wav",
+        audio: "/static/audio/words/scooter.mp3",
         group: "small-cars"
       }
     ]
@@ -110,7 +111,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "The excavator can dig.",
         sentenceCn: "挖掘机会挖土。",
         image: vehicleIcon("excavator"),
-        audio: "/static/audio/words/excavator.wav",
+        audio: "/static/audio/words/excavator.mp3",
         group: "construction"
       },
       {
@@ -121,7 +122,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "The bulldozer can push.",
         sentenceCn: "推土机会往前推。",
         image: vehicleIcon("bulldozer"),
-        audio: "/static/audio/words/bulldozer.wav",
+        audio: "/static/audio/words/bulldozer.mp3",
         group: "construction"
       },
       {
@@ -132,7 +133,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "The crane can lift.",
         sentenceCn: "起重机会吊起来。",
         image: vehicleIcon("crane"),
-        audio: "/static/audio/words/crane.wav",
+        audio: "/static/audio/words/crane.mp3",
         group: "construction"
       },
       {
@@ -143,7 +144,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "The dump truck carries sand.",
         sentenceCn: "自卸卡车运沙子。",
         image: vehicleIcon("dump-truck"),
-        audio: "/static/audio/words/dump-truck.wav",
+        audio: "/static/audio/words/dump-truck.mp3",
         group: "construction"
       },
       {
@@ -154,7 +155,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "The mixer goes round and round.",
         sentenceCn: "搅拌车转呀转。",
         image: vehicleIcon("cement-mixer"),
-        audio: "/static/audio/words/cement-mixer.wav",
+        audio: "/static/audio/words/cement-mixer.mp3",
         group: "construction"
       },
       {
@@ -165,7 +166,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "The tractor works on a farm.",
         sentenceCn: "拖拉机在农场工作。",
         image: vehicleIcon("tractor"),
-        audio: "/static/audio/words/tractor.wav",
+        audio: "/static/audio/words/tractor.mp3",
         group: "construction"
       },
       {
@@ -176,7 +177,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "The road roller rolls slowly.",
         sentenceCn: "压路机慢慢压路。",
         image: vehicleIcon("road-roller"),
-        audio: "/static/audio/words/road-roller.wav",
+        audio: "/static/audio/words/road-roller.mp3",
         group: "construction"
       },
       {
@@ -187,7 +188,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "The forklift can lift boxes.",
         sentenceCn: "叉车能举起箱子。",
         image: vehicleIcon("forklift"),
-        audio: "/static/audio/words/forklift.wav",
+        audio: "/static/audio/words/forklift.mp3",
         group: "construction"
       }
     ]
@@ -205,7 +206,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "The fire truck helps people.",
         sentenceCn: "消防车帮助大家。",
         image: vehicleIcon("fire-truck"),
-        audio: "/static/audio/words/fire-truck.wav",
+        audio: "/static/audio/words/fire-truck.mp3",
         group: "helper-cars"
       },
       {
@@ -216,7 +217,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "The ambulance is fast.",
         sentenceCn: "救护车开得很快。",
         image: vehicleIcon("ambulance"),
-        audio: "/static/audio/words/ambulance.wav",
+        audio: "/static/audio/words/ambulance.mp3",
         group: "helper-cars"
       },
       {
@@ -227,7 +228,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "This is a police car.",
         sentenceCn: "这是一辆警车。",
         image: vehicleIcon("police-car"),
-        audio: "/static/audio/words/police-car.wav",
+        audio: "/static/audio/words/police-car.mp3",
         group: "helper-cars"
       },
       {
@@ -238,7 +239,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "The school bus is yellow.",
         sentenceCn: "校车是黄色的。",
         image: vehicleIcon("school-bus"),
-        audio: "/static/audio/words/school-bus.wav",
+        audio: "/static/audio/words/school-bus.mp3",
         group: "helper-cars"
       },
       {
@@ -249,7 +250,7 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "The garbage truck keeps streets clean.",
         sentenceCn: "垃圾车让街道保持干净。",
         image: vehicleIcon("garbage-truck"),
-        audio: "/static/audio/words/garbage-truck.wav",
+        audio: "/static/audio/words/garbage-truck.mp3",
         group: "helper-cars"
       },
       {
@@ -260,14 +261,14 @@ export const vehicleGroups: TopicGroup[] = [
         sentence: "The tow truck pulls a car.",
         sentenceCn: "拖车拉走一辆车。",
         image: vehicleIcon("tow-truck"),
-        audio: "/static/audio/words/tow-truck.wav",
+        audio: "/static/audio/words/tow-truck.mp3",
         group: "helper-cars"
       }
     ]
   }
 ];
 
-export const worldGroups: TopicGroup[] = [
+const legacyWorldGroups: TopicGroup[] = [
   {
     id: "countries",
     title: "国家图标",
@@ -281,7 +282,7 @@ export const worldGroups: TopicGroup[] = [
         sentence: "I live in China.",
         sentenceCn: "我住在中国。",
         image: flagIcon("china"),
-        audio: "/static/audio/words/china.wav",
+        audio: "/static/audio/words/china.mp3",
         group: "countries"
       },
       {
@@ -292,7 +293,7 @@ export const worldGroups: TopicGroup[] = [
         sentence: "This is the United States.",
         sentenceCn: "这是美国。",
         image: flagIcon("united-states"),
-        audio: "/static/audio/words/united-states.wav",
+        audio: "/static/audio/words/united-states.mp3",
         group: "countries"
       },
       {
@@ -303,7 +304,7 @@ export const worldGroups: TopicGroup[] = [
         sentence: "This is the United Kingdom.",
         sentenceCn: "这是英国。",
         image: flagIcon("united-kingdom"),
-        audio: "/static/audio/words/united-kingdom.wav",
+        audio: "/static/audio/words/united-kingdom.mp3",
         group: "countries"
       },
       {
@@ -314,7 +315,7 @@ export const worldGroups: TopicGroup[] = [
         sentence: "Canada is big.",
         sentenceCn: "加拿大很大。",
         image: flagIcon("canada"),
-        audio: "/static/audio/words/canada.wav",
+        audio: "/static/audio/words/canada.mp3",
         group: "countries"
       },
       {
@@ -325,7 +326,7 @@ export const worldGroups: TopicGroup[] = [
         sentence: "Australia has kangaroos.",
         sentenceCn: "澳大利亚有袋鼠。",
         image: flagIcon("australia"),
-        audio: "/static/audio/words/australia.wav",
+        audio: "/static/audio/words/australia.mp3",
         group: "countries"
       },
       {
@@ -336,7 +337,7 @@ export const worldGroups: TopicGroup[] = [
         sentence: "This is Japan.",
         sentenceCn: "这是日本。",
         image: flagIcon("japan"),
-        audio: "/static/audio/words/japan.wav",
+        audio: "/static/audio/words/japan.mp3",
         group: "countries"
       },
       {
@@ -347,7 +348,7 @@ export const worldGroups: TopicGroup[] = [
         sentence: "This is France.",
         sentenceCn: "这是法国。",
         image: flagIcon("france"),
-        audio: "/static/audio/words/france.wav",
+        audio: "/static/audio/words/france.mp3",
         group: "countries"
       },
       {
@@ -358,7 +359,7 @@ export const worldGroups: TopicGroup[] = [
         sentence: "This is Germany.",
         sentenceCn: "这是德国。",
         image: flagIcon("germany"),
-        audio: "/static/audio/words/germany.wav",
+        audio: "/static/audio/words/germany.mp3",
         group: "countries"
       },
       {
@@ -369,7 +370,7 @@ export const worldGroups: TopicGroup[] = [
         sentence: "Brazil is far away.",
         sentenceCn: "巴西在很远的地方。",
         image: flagIcon("brazil"),
-        audio: "/static/audio/words/brazil.wav",
+        audio: "/static/audio/words/brazil.mp3",
         group: "countries"
       },
       {
@@ -380,7 +381,7 @@ export const worldGroups: TopicGroup[] = [
         sentence: "This is India.",
         sentenceCn: "这是印度。",
         image: flagIcon("india"),
-        audio: "/static/audio/words/india.wav",
+        audio: "/static/audio/words/india.mp3",
         group: "countries"
       },
       {
@@ -391,7 +392,7 @@ export const worldGroups: TopicGroup[] = [
         sentence: "Egypt has pyramids.",
         sentenceCn: "埃及有金字塔。",
         image: flagIcon("egypt"),
-        audio: "/static/audio/words/egypt.wav",
+        audio: "/static/audio/words/egypt.mp3",
         group: "countries"
       },
       {
@@ -402,7 +403,7 @@ export const worldGroups: TopicGroup[] = [
         sentence: "This is Mexico.",
         sentenceCn: "这是墨西哥。",
         image: flagIcon("mexico"),
-        audio: "/static/audio/words/mexico.wav",
+        audio: "/static/audio/words/mexico.mp3",
         group: "countries"
       },
       {
@@ -413,7 +414,7 @@ export const worldGroups: TopicGroup[] = [
         sentence: "This is Italy.",
         sentenceCn: "这是意大利。",
         image: flagIcon("italy"),
-        audio: "/static/audio/words/italy.wav",
+        audio: "/static/audio/words/italy.mp3",
         group: "countries"
       },
       {
@@ -424,9 +425,17 @@ export const worldGroups: TopicGroup[] = [
         sentence: "This is Spain.",
         sentenceCn: "这是西班牙。",
         image: flagIcon("spain"),
-        audio: "/static/audio/words/spain.wav",
+        audio: "/static/audio/words/spain.mp3",
         group: "countries"
       }
     ]
   }
 ];
+void legacyWorldGroups;
+
+export const worldGroups: TopicGroup[] = Object.entries(countryGroupLabels).map(([group, title]) => ({
+  id: group,
+  title,
+  subtitle: `一起探索${title}的国家。`,
+  words: countryWords.filter((country) => country.group === group)
+}));

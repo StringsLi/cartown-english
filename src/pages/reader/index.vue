@@ -9,18 +9,18 @@
     </view>
 
     <view class="reader-illustration soft-card">
-      <VehicleStoryArt
-        v-if="currentPage?.vehicleStoryId"
-        class="reader-illustration__image"
-        :story-id="currentPage.vehicleStoryId"
-        :page-index="currentPage.pageIndex"
-      />
-      <image
-        v-else-if="currentPage && !imageFailed"
+      <CachedImage
+        v-if="currentPage && !imageFailed"
         class="reader-illustration__image"
         :src="currentPage.image"
         mode="aspectFill"
         @error="imageFailed = true"
+      />
+      <VehicleStoryArt
+        v-else-if="currentPage?.vehicleStoryId"
+        class="reader-illustration__image"
+        :story-id="currentPage.vehicleStoryId"
+        :page-index="currentPage.pageIndex"
       />
       <view v-else class="reader-art">
         <text class="reader-art__title">{{ book.title }}</text>
@@ -83,8 +83,9 @@
 import { computed, ref, watch } from "vue";
 import { onHide, onLoad, onShow, onUnload } from "@dcloudio/uni-app";
 import BigButton from "@/components/BigButton.vue";
+import CachedImage from "@/components/CachedImage.vue";
 import VehicleStoryArt from "@/components/VehicleStoryArt.vue";
-import { playAudio } from "@/services/audioService";
+import { playAudio, speakEnglish } from "@/services/audioService";
 import { getBookById, getBookPages, getTodayBook } from "@/services/bookService";
 import { addReadingDuration, completeBook, getProgress, saveProgress } from "@/services/progressService";
 import type { Hotspot, UserProgress } from "@/types/book";
@@ -179,7 +180,7 @@ function flushReadingDuration() {
 }
 
 function playCurrentPage() {
-  if (currentPage.value) playAudio(currentPage.value.audio, currentPage.value.sentence);
+  if (currentPage.value) speakEnglish(currentPage.value.sentence);
 }
 
 function playHotspot(hotspot: Hotspot) {

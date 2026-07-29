@@ -14,7 +14,7 @@
         <text class="vehicle-hero__title">I see a car.</text>
         <text class="vehicle-hero__desc">我看见一辆小汽车。</text>
       </view>
-      <view class="vehicle-hero__image vehicle-art vehicle-art--car" aria-label="红色小汽车插图" />
+      <CachedImage class="vehicle-hero__image" :src="highResolutionAsset('/static/topic-icons/vehicles/car.webp')" mode="aspectFit" aria-label="红色小汽车插图" />
     </view>
 
     <scroll-view class="station-scroll" scroll-x>
@@ -34,7 +34,7 @@
     <view class="vehicle-grid">
       <button v-for="item in featuredWords" :key="item.id" class="vehicle-word soft-card" @tap="playWord(item)">
         <view class="vehicle-word__image-wrap">
-          <view class="vehicle-word__image vehicle-art" :class="item.atlasClass" />
+          <CachedImage class="vehicle-word__image" :src="item.image" mode="aspectFit" />
         </view>
         <text class="vehicle-word__cn">{{ item.meaning }}</text>
         <text class="vehicle-word__en">{{ item.word }}</text>
@@ -51,7 +51,7 @@
         <text class="brand-section__more">50 个车标 ›</text>
       </view>
       <view class="brand-row">
-        <CartownLogoBadge v-for="logo in featuredLogos" :key="logo.id" :logo="logo" size="small" :show-name="false" />
+        <CartownLogoBadge v-for="logo in featuredLogos" :key="logo.id" :logo-id="logo.id" :name="logo.name" :badge-text="logo.badgeText" :shape="logo.shape" :primary="logo.primary" :secondary="logo.secondary" size="small" :show-name="false" />
       </view>
     </view>
 
@@ -60,11 +60,13 @@
 </template>
 
 <script setup lang="ts">
+import CachedImage from "@/components/CachedImage.vue";
 import BottomNav from "@/components/BottomNav.vue";
 import CartownLogoBadge from "@/components/CartownLogoBadge.vue";
 import { carLogos } from "@/mock/cartown";
 import { vehicleGroups } from "@/mock/topics";
 import { speakEnglish } from "@/services/audioService";
+import { highResolutionAsset } from "@/services/assetService";
 import type { TopicWord } from "@/types/topic";
 
 const stationItems = [
@@ -79,18 +81,18 @@ const stationItems = [
 
 const stations = stationItems.map(([tag, title, path]) => ({ tag, title, path }));
 const allVehicleWords = vehicleGroups.flatMap((group) => group.words);
-const featuredVehicles = [
-  ["vehicle_car", "vehicle-art--car"],
-  ["vehicle_fire_truck", "vehicle-art--fire-truck"],
-  ["vehicle_excavator", "vehicle-art--excavator"],
-  ["vehicle_bus", "vehicle-art--bus"],
-  ["vehicle_train", "vehicle-art--train"],
-  ["vehicle_truck", "vehicle-art--truck"]
+const featuredVehicleIds = [
+  "vehicle_car",
+  "vehicle_fire_truck",
+  "vehicle_excavator",
+  "vehicle_bus",
+  "vehicle_train",
+  "vehicle_truck"
 ] as const;
 
-const featuredWords = featuredVehicles.flatMap(([id, atlasClass]) => {
+const featuredWords = featuredVehicleIds.flatMap((id) => {
   const item = allVehicleWords.find((word) => word.id === id);
-  return item ? [{ ...item, atlasClass }] : [];
+  return item ? [item] : [];
 });
 const featuredLogos = carLogos.slice(0, 4);
 
@@ -177,36 +179,6 @@ function goStation(path: string) {
   height: 220rpx;
 }
 
-.vehicle-art {
-  background-image: url("/static/ui/vehicle-atlas-premium.png");
-  background-repeat: no-repeat;
-  background-size: 300% 200%;
-}
-
-.vehicle-art--car {
-  background-position: 0 0;
-}
-
-.vehicle-art--fire-truck {
-  background-position: 50% 0;
-}
-
-.vehicle-art--excavator {
-  background-position: 100% 0;
-}
-
-.vehicle-art--bus {
-  background-position: 0 100%;
-}
-
-.vehicle-art--train {
-  background-size: 318% 212%;
-  background-position: 50% 100%;
-}
-
-.vehicle-art--truck {
-  background-position: 100% 100%;
-}
 
 .station-scroll {
   margin: 18rpx -28rpx 0;

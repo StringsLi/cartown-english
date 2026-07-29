@@ -7,7 +7,7 @@
         :story-id="props.book.vehicleStoryId"
         :page-index="0"
       />
-      <image v-else-if="!imageFailed" class="book-card__image" :src="props.book.cover" mode="aspectFill" @error="imageFailed = true" />
+      <CachedImage v-else-if="!imageFailed" class="book-card__image" :src="props.book.cover" mode="aspectFill" @error="imageFailed = true" />
       <view v-else class="book-card__fallback">
         <text class="book-card__fallback-title">{{ props.book.title }}</text>
       </view>
@@ -26,6 +26,7 @@
 </template>
 
 <script setup lang="ts">
+import CachedImage from "@/components/CachedImage.vue";
 import { computed, ref, watch } from "vue";
 import VehicleStoryArt from "@/components/VehicleStoryArt.vue";
 import { getThemeLabel } from "@/services/bookService";

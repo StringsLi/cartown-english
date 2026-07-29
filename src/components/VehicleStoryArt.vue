@@ -1,7 +1,7 @@
 <template>
   <view class="vehicle-story-art" :class="[`vehicle-story-art--${props.storyId}`, `vehicle-story-art--page-${safePage}`]">
-    <view v-if="props.storyId === 'red-car'" class="vehicle-story-art__red-car" :class="`vehicle-story-art__cell--${safePage}`" />
-    <template v-else>
+
+    <template>
       <view class="vehicle-story-art__sun" />
       <view class="vehicle-story-art__cloud vehicle-story-art__cloud--one" />
       <view class="vehicle-story-art__cloud vehicle-story-art__cloud--two" />
@@ -24,14 +24,16 @@
         <view v-if="safePage === 4" class="story-context__home"><view /><view /></view>
         <view v-if="safePage === 5" class="story-context__moon"><view /><view /><view /></view>
       </view>
-      <view class="vehicle-story-art__machine" :class="`vehicle-story-art__machine--${props.storyId}`" />
+      <CachedImage class="vehicle-story-art__machine" :src="storyVehicleImage" mode="aspectFit" />
     </template>
   </view>
 </template>
 
 <script setup lang="ts">
+import CachedImage from "@/components/CachedImage.vue";
 import { computed } from "vue";
 import type { VehicleStoryId } from "@/types/book";
+import { highResolutionAsset } from "@/services/assetService";
 
 const props = withDefaults(
   defineProps<{
@@ -44,6 +46,16 @@ const props = withDefaults(
 );
 
 const safePage = computed(() => Math.min(Math.max(Math.round(props.pageIndex), 0), 5));
+const storyVehicleImage = computed(() => {
+  const images: Record<VehicleStoryId, string> = {
+    "red-car": highResolutionAsset("/static/topic-icons/vehicles/car.webp"),
+    digger: highResolutionAsset("/static/topic-icons/vehicles/excavator.webp"),
+    "fire-truck": highResolutionAsset("/static/topic-icons/vehicles/fire-truck.webp"),
+    "city-bus": highResolutionAsset("/static/topic-icons/vehicles/bus.webp")
+  };
+
+  return images[props.storyId];
+});
 </script>
 
 <style scoped lang="scss">
@@ -56,44 +68,15 @@ const safePage = computed(() => Math.min(Math.max(Math.round(props.pageIndex), 0
   background: #edf1e8;
 }
 
-.vehicle-story-art__red-car {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  padding-top: 100%;
-  background-image: url("/static/books/vehicles/red-car-storyboard.png");
-  background-repeat: no-repeat;
-  background-size: 300% 200%;
-  transform: translate(-50%, -50%);
-}
-
-.vehicle-story-art__cell--0 { background-position: 0 0; }
-.vehicle-story-art__cell--1 { background-position: 50% 0; }
-.vehicle-story-art__cell--2 { background-position: 100% 0; }
-.vehicle-story-art__cell--3 { background-position: 0 100%; }
-.vehicle-story-art__cell--4 { background-position: 50% 100%; }
-.vehicle-story-art__cell--5 { background-position: 100% 100%; }
-
 .vehicle-story-art__machine {
   position: absolute;
   top: 50%;
   left: 50%;
   z-index: 3;
   width: 76%;
-  padding-top: 76%;
-  border-radius: $radius-small;
-  background-image: url("/static/ui/vehicle-atlas-premium.png");
-  background-repeat: no-repeat;
-  background-size: 300% 200%;
-  box-shadow: 0 14rpx 30rpx rgba(38, 61, 89, 0.1);
+  height: 76%;
   transform: translate(-50%, -49%);
 }
-
-.vehicle-story-art__machine--fire-truck { background-position: 50% 0; }
-.vehicle-story-art__machine--digger { background-position: 100% 0; }
-.vehicle-story-art__machine--city-bus { background-position: 0 100%; }
-
 .vehicle-story-art__sun {
   position: absolute;
   top: 10%;

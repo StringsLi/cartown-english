@@ -1,11 +1,11 @@
 <template>
   <view
     class="logo-badge"
-    :class="[`logo-badge--${props.logo.shape}`, { 'logo-badge--small': props.size === 'small' }]"
+    :class="[`logo-badge--${props.shape}`, { 'logo-badge--small': props.size === 'small' }]"
     :style="badgeStyle"
   >
     <view class="logo-badge__image-wrap">
-      <image
+      <CachedImage
         v-if="!imageFailed"
         class="logo-badge__image"
         :src="logoImage"
@@ -13,20 +13,25 @@
         @error="imageFailed = true"
       />
       <view v-else class="logo-badge__shape">
-        <text class="logo-badge__text">{{ props.logo.badgeText }}</text>
+        <text class="logo-badge__text">{{ props.badgeText }}</text>
       </view>
     </view>
-    <text v-if="props.showName" class="logo-badge__name">{{ props.logo.name }}</text>
+    <text v-if="props.showName" class="logo-badge__name">{{ props.name }}</text>
   </view>
 </template>
 
 <script setup lang="ts">
+import CachedImage from "@/components/CachedImage.vue";
 import { computed, ref, watch } from "vue";
-import type { CarLogo } from "@/mock/cartown";
-
+import { highResolutionAsset } from "@/services/assetService";
 const props = withDefaults(
   defineProps<{
-    logo: CarLogo;
+    logoId: string;
+    name: string;
+    badgeText: string;
+    shape: string;
+    primary: string;
+    secondary: string;
     size?: "normal" | "small";
     showName?: boolean;
   }>(),
@@ -37,15 +42,15 @@ const props = withDefaults(
 );
 
 const badgeStyle = computed(() => ({
-  "--logo-primary": props.logo.primary,
-  "--logo-secondary": props.logo.secondary
+  "--logo-primary": props.primary,
+  "--logo-secondary": props.secondary
 }));
 
 const imageFailed = ref(false);
-const logoImage = computed(() => `/static/cartown-logos/${props.logo.id}.png`);
+const logoImage = computed(() => highResolutionAsset(`/static/cartown-logos/${props.logoId}.webp`));
 
 watch(
-  () => props.logo.id,
+  () => props.logoId,
   () => {
     imageFailed.value = false;
   }
@@ -65,8 +70,9 @@ watch(
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 188rpx;
-  height: 148rpx;
+  width: 320rpx;
+  max-width: 100%;
+  height: 238rpx;
   border: 1rpx solid rgba(47, 58, 74, 0.1);
   border-radius: $radius-card;
   background: #fffdf9;
@@ -74,14 +80,15 @@ watch(
 }
 
 .logo-badge--small .logo-badge__image-wrap {
-  width: 118rpx;
-  height: 94rpx;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
   border-radius: $radius-small;
 }
 
 .logo-badge__image {
-  width: 82%;
-  height: 82%;
+  width: 100%;
+  height: 100%;
 }
 
 .logo-badge__shape {

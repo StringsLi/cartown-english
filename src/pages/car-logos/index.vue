@@ -15,7 +15,7 @@
     </view>
 
     <view v-if="mode === 'learn'" class="logo-learn soft-card">
-      <CartownLogoBadge :logo="activeLogo" />
+      <CartownLogoBadge :logo-id="activeLogo.id" :name="activeLogo.name" :badge-text="activeLogo.badgeText" :shape="activeLogo.shape" :primary="activeLogo.primary" :secondary="activeLogo.secondary" :show-name="false" />
       <text class="logo-learn__name">{{ activeLogo.name }}</text>
       <text class="logo-learn__zh">{{ activeLogo.zh }} · {{ activeLogo.country }}</text>
       <text class="logo-learn__cue">{{ activeLogo.cue }}</text>
@@ -32,7 +32,7 @@
       </view>
       <view class="logo-options">
         <view v-for="logo in quizOptions" :key="logo.id" class="logo-option soft-card" @tap="chooseLogo(logo.id)">
-          <CartownLogoBadge :logo="logo" size="small" />
+          <CartownLogoBadge :logo-id="logo.id" :name="logo.name" :badge-text="logo.badgeText" :shape="logo.shape" :primary="logo.primary" :secondary="logo.secondary" size="small" :show-name="false" />
           <text class="logo-option__name">{{ logo.name }}</text>
           <text class="logo-option__zh">{{ logo.zh }}</text>
         </view>
@@ -43,7 +43,7 @@
     <text class="section-title">Logo Wall</text>
     <view class="logo-wall">
       <view v-for="(logo, index) in carLogos" :key="logo.id" class="logo-wall__item soft-card" @tap="selectLogo(index)">
-        <CartownLogoBadge :logo="logo" size="small" :show-name="false" />
+        <CartownLogoBadge :logo-id="logo.id" :name="logo.name" :badge-text="logo.badgeText" :shape="logo.shape" :primary="logo.primary" :secondary="logo.secondary" size="small" :show-name="false" />
         <text class="logo-wall__name">{{ logo.name }}</text>
       </view>
     </view>
@@ -147,6 +147,10 @@ function chooseLogo(id: string) {
   text-align: center;
 }
 
+.logo-learn {
+  overflow: hidden;
+}
+
 .logo-learn__name,
 .quiz-head__title {
   display: block;
@@ -197,7 +201,13 @@ function chooseLogo(id: string) {
 
 .logo-wall {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14rpx;
+}
+
+@media (min-width: 700px) {
+  .logo-wall {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 </style>

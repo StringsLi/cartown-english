@@ -4,12 +4,18 @@ import path from "node:path";
 import ts from "typescript";
 
 const root = process.cwd();
-const outputDirectory = path.join(root, "src", "static", "audio", "phrases");
-const sourceFiles = [path.join(root, "src", "mock", "topics.ts"), path.join(root, "src", "mock", "cartown.ts")];
+const outputDirectory = path.join(root, "docs", "source-assets", "audio-original", "phrases");
+const sourceFiles = [
+  path.join(root, "src", "mock", "topics.ts"),
+  path.join(root, "src", "mock", "countries.ts"),
+  path.join(root, "src", "mock", "books.ts"),
+  path.join(root, "src", "mock", "cartown.ts")
+];
 const fixedPhrases = [
   "You are so brave!",
   "I see a car.",
   "Hello, world!",
+  "Let's explore!",
   "Try again!",
   "Great job!",
   "1",
@@ -61,6 +67,7 @@ function collectPhrases(sourceText, filePath, target) {
       const sentence = stringProperty(node, "sentence");
       const name = stringProperty(node, "name");
       const task = stringProperty(node, "task");
+      const sentences = stringArrayProperty(node, "sentences");
 
       if (word && sentence) target.add(normalizePhrase(`${word}. ${sentence}`));
       if (name) {
@@ -68,6 +75,7 @@ function collectPhrases(sourceText, filePath, target) {
         target.add(normalizePhrase(`Tap ${name}.`));
       }
       if (task) target.add(normalizePhrase(task));
+      for (const sentence of sentences) target.add(normalizePhrase(sentence));
     }
 
     ts.forEachChild(node, visit);
@@ -87,6 +95,18 @@ function stringProperty(object, propertyName) {
   return "";
 }
 
+function stringArrayProperty(object, propertyName) {
+  for (const property of object.properties) {
+    if (!ts.isPropertyAssignment(property)) continue;
+    const name = property.name.getText().replace(/["']/g, "");
+    if (name !== propertyName || !ts.isArrayLiteralExpression(property.initializer)) continue;
+    return property.initializer.elements
+      .filter(ts.isStringLiteralLike)
+      .map((element) => element.text);
+  }
+
+  return [];
+}
 function normalizePhrase(text) {
   return text.trim().replace(/\s+/g, " ");
 }

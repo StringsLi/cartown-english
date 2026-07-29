@@ -3,7 +3,7 @@
     class="big-button"
     :class="[`big-button--${props.variant}`, { 'big-button--disabled': props.disabled }]"
     :disabled="props.disabled"
-    @tap="handleTap"
+    @tap.stop="handleTap"
   >
     <slot>{{ props.label }}</slot>
   </button>
@@ -71,8 +71,7 @@ function handleTap() {
   box-shadow: 0 10rpx 22rpx rgba(47, 58, 74, 0.04);
 }
 
-.big-button--disabled,
-.big-button[disabled] {
+.big-button--disabled {
   opacity: 0.55;
   box-shadow: none;
 }

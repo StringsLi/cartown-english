@@ -10,7 +10,9 @@
     </view>
 
     <view class="learn-card soft-card" @tap="playVehicle">
-      <CartownVehicle :color="vehicle.color" :accent="vehicle.accent" :kind="vehicle.kind" />
+      <view class="learn-card__vehicle-frame">
+        <PremiumVehicleImage :name="vehicle.id" :alt="vehicle.zh" />
+      </view>
       <text class="learn-card__word">{{ vehicle.word }}</text>
       <text class="learn-card__zh">{{ vehicle.zh }}</text>
       <text class="learn-card__sentence">{{ vehicle.sentence }}</text>
@@ -26,7 +28,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import BigButton from "@/components/BigButton.vue";
-import CartownVehicle from "@/components/CartownVehicle.vue";
+import PremiumVehicleImage from "@/components/PremiumVehicleImage.vue";
 import { vehicles } from "@/mock/cartown";
 import { speakEnglish } from "@/services/audioService";
 import { addCartownStar, getCartownProgress, saveCartownProgress } from "@/services/cartownProgressService";
@@ -81,9 +83,14 @@ function nextVehicle() {
   text-align: center;
 }
 
-.learn-card .cartown-vehicle {
-  max-width: 560rpx;
-  height: 250rpx;
+.learn-card__vehicle-frame {
+  width: 100%;
+  max-width: 520rpx;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: $radius-card;
+  background: #eef2f3;
 }
 
 .learn-card__word {

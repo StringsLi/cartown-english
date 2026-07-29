@@ -1,3 +1,5 @@
+import { highResolutionAsset } from "@/services/assetService";
+
 const PHRASE_AUDIO_ROOT = "/static/audio/phrases";
 
 export function normalizeEnglishPhrase(text: string): string {
@@ -5,7 +7,7 @@ export function normalizeEnglishPhrase(text: string): string {
 }
 
 export function phraseAudioPath(text: string): string {
-  return `${PHRASE_AUDIO_ROOT}/${phraseHash(normalizeEnglishPhrase(text))}.mp3`;
+  return highResolutionAsset(`${PHRASE_AUDIO_ROOT}/${phraseHash(normalizeEnglishPhrase(text))}.mp3`);
 }
 
 function phraseHash(text: string): string {

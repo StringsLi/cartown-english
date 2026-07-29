@@ -13,7 +13,9 @@
 
     <view class="choice-grid">
       <view v-for="car in choices" :key="car.id" class="choice-card soft-card" @tap="choose(car.id)">
-        <CartownVehicle :color="car.hex" accent="#eadfca" kind="color-car" />
+        <view class="choice-card__vehicle">
+          <PremiumVehicleImage :name="`color-car-${car.id}`" :alt="`${car.zh}???`" />
+        </view>
         <text class="choice-card__word">{{ car.label }}</text>
         <text class="choice-card__zh">{{ car.zh }}</text>
       </view>
@@ -24,7 +26,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import BigButton from "@/components/BigButton.vue";
-import CartownVehicle from "@/components/CartownVehicle.vue";
+import PremiumVehicleImage from "@/components/PremiumVehicleImage.vue";
 import { colorCars } from "@/mock/cartown";
 import { speakEnglish } from "@/services/audioService";
 import { addCartownStar, getCartownProgress, saveCartownProgress } from "@/services/cartownProgressService";
@@ -95,6 +97,15 @@ function choose(id: string) {
   min-height: 300rpx;
   padding: 18rpx 12rpx;
   text-align: center;
+}
+
+.choice-card__vehicle {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: $radius-small;
+  background: #eef2f3;
 }
 
 .choice-card__word,

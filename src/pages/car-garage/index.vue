@@ -15,7 +15,9 @@
     <view class="garage-grid">
       <view v-for="(vehicle, index) in vehicles" :key="vehicle.id" class="garage-card soft-card" :class="{ 'garage-card--locked': index >= unlockedCount }" @tap="playVehicle(vehicle, index)">
         <view v-if="index >= unlockedCount" class="garage-card__lock">★ {{ index * 2 }}</view>
-        <CartownVehicle :color="vehicle.color" :accent="vehicle.accent" :kind="vehicle.kind" />
+        <view class="garage-card__vehicle">
+          <PremiumVehicleImage :name="vehicle.id" :alt="vehicle.zh" />
+        </view>
         <text class="garage-card__word">{{ vehicle.word }}</text>
         <text class="garage-card__zh">{{ vehicle.zh }}</text>
       </view>
@@ -25,7 +27,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import CartownVehicle from "@/components/CartownVehicle.vue";
+import PremiumVehicleImage from "@/components/PremiumVehicleImage.vue";
 import { vehicles, type Vehicle } from "@/mock/cartown";
 import { speakEnglish } from "@/services/audioService";
 import { getCartownProgress } from "@/services/cartownProgressService";
@@ -98,6 +100,15 @@ function playVehicle(vehicle: Vehicle, index: number) {
   padding: 18rpx 12rpx;
   text-align: center;
   overflow: hidden;
+}
+
+.garage-card__vehicle {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: $radius-small;
+  background: #eef2f3;
 }
 
 .garage-card--locked {

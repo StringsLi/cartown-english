@@ -8,7 +8,7 @@
           :story-id="book.vehicleStoryId"
           :page-index="0"
         />
-        <image v-else-if="!coverFailed" class="detail-cover__image" :src="book.cover" mode="aspectFill" @error="coverFailed = true" />
+        <CachedImage v-else-if="!coverFailed" class="detail-cover__image" :src="book.cover" mode="aspectFill" @error="coverFailed = true" />
         <view v-else class="detail-cover__fallback">
           <text class="detail-cover__fallback-label">Picture Book</text>
           <text class="detail-cover__fallback-title">{{ book.title }}</text>
@@ -49,6 +49,7 @@
 </template>
 
 <script setup lang="ts">
+import CachedImage from "@/components/CachedImage.vue";
 import { computed, ref, watch } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import BigButton from "@/components/BigButton.vue";

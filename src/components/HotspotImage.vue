@@ -1,6 +1,6 @@
 <template>
   <view class="hotspot-image">
-    <image class="hotspot-image__image" :src="props.image" mode="aspectFill" />
+    <CachedImage class="hotspot-image__image" :src="props.image" mode="aspectFill" />
     <button
       v-for="hotspot in props.hotspots"
       :key="`${hotspot.word}-${hotspot.x}-${hotspot.y}`"
@@ -19,6 +19,7 @@
 </template>
 
 <script setup lang="ts">
+import CachedImage from "@/components/CachedImage.vue";
 import type { Hotspot } from "@/types/book";
 
 const props = defineProps<{
