@@ -1,15 +1,21 @@
 <template>
-  <CachedImage
+  <image
     class="premium-vehicle"
     :src="vehicleIcon(props.name)"
     mode="aspectFit"
+    :lazy-load="false"
     :aria-label="props.alt || props.name"
   />
 </template>
 
 <script setup lang="ts">
-import CachedImage from "@/components/CachedImage.vue";
 import { vehicleIcon } from "@/mock/topicAssets";
+
+defineOptions({
+  options: {
+    virtualHost: true
+  }
+});
 
 const props = defineProps<{
   name: string;
@@ -21,7 +27,9 @@ const props = defineProps<{
 .premium-vehicle {
   display: block;
   width: 100%;
-  height: 100%;
+  height: auto;
+  max-height: 100%;
+  aspect-ratio: 1 / 1;
   border-radius: $radius-small;
 }
 </style>

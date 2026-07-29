@@ -16,8 +16,6 @@ import { ref, watch } from "vue";
 import { highResolutionAsset } from "@/services/assetService";
 import { resolveCachedMedia } from "@/services/mediaCacheService";
 
-
-
 const props = withDefaults(defineProps<{
   src: string;
   mode?: "scaleToFill" | "aspectFit" | "aspectFill" | "widthFix" | "heightFix";
@@ -69,6 +67,8 @@ function handleError(event: unknown) {
 <style scoped>
 .cached-image {
   display: block;
+  width: 100%;
+  height: 100%;
   background: #f2eee5;
   transition: opacity 180ms ease;
 }

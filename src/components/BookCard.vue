@@ -1,13 +1,7 @@
 <template>
   <view class="book-card soft-card" :class="`book-card--${props.variant}`" @tap="emit('select', props.book)">
     <view class="book-card__cover" :class="`book-card__cover--${props.book.theme.toLowerCase().replace(' ', '-')}`">
-      <VehicleStoryArt
-        v-if="props.book.vehicleStoryId"
-        class="book-card__image"
-        :story-id="props.book.vehicleStoryId"
-        :page-index="0"
-      />
-      <CachedImage v-else-if="!imageFailed" class="book-card__image" :src="props.book.cover" mode="aspectFill" @error="imageFailed = true" />
+      <CachedImage v-if="!imageFailed" class="book-card__image" :src="props.book.cover" mode="aspectFill" @error="imageFailed = true" />
       <view v-else class="book-card__fallback">
         <text class="book-card__fallback-title">{{ props.book.title }}</text>
       </view>
@@ -28,7 +22,6 @@
 <script setup lang="ts">
 import CachedImage from "@/components/CachedImage.vue";
 import { computed, ref, watch } from "vue";
-import VehicleStoryArt from "@/components/VehicleStoryArt.vue";
 import { getThemeLabel } from "@/services/bookService";
 import type { Book } from "@/types/book";
 

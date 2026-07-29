@@ -2,13 +2,7 @@
   <view class="page detail-page">
     <view class="detail-hero">
       <view class="detail-cover soft-card">
-        <VehicleStoryArt
-          v-if="book.vehicleStoryId"
-          class="detail-cover__image"
-          :story-id="book.vehicleStoryId"
-          :page-index="0"
-        />
-        <CachedImage v-else-if="!coverFailed" class="detail-cover__image" :src="book.cover" mode="aspectFill" @error="coverFailed = true" />
+        <CachedImage v-if="!coverFailed" class="detail-cover__image" :src="book.cover" mode="aspectFill" @error="coverFailed = true" />
         <view v-else class="detail-cover__fallback">
           <text class="detail-cover__fallback-label">Picture Book</text>
           <text class="detail-cover__fallback-title">{{ book.title }}</text>
@@ -54,7 +48,6 @@ import { computed, ref, watch } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import BigButton from "@/components/BigButton.vue";
 import ParentTipCard from "@/components/ParentTipCard.vue";
-import VehicleStoryArt from "@/components/VehicleStoryArt.vue";
 import WordChip from "@/components/WordChip.vue";
 import { getBookById, getBookWords, getParentTip, getThemeLabel, getTodayBook } from "@/services/bookService";
 import { getProgress } from "@/services/progressService";

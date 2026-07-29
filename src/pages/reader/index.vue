@@ -53,7 +53,7 @@
       </button>
       <button class="reader-tool" @tap="goPointRead">
         <text class="reader-tool__icon">♫</text>
-        <text class="reader-tool__label">听原声</text>
+        <text class="reader-tool__label">点读</text>
       </button>
     </view>
 

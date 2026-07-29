@@ -12,7 +12,9 @@
         <view class="traffic-light__dot traffic-light__dot--yellow" :class="{ 'traffic-light__dot--active': prompt.light === 'yellow' }" />
         <view class="traffic-light__dot traffic-light__dot--green" :class="{ 'traffic-light__dot--active': prompt.light === 'green' }" />
       </view>
-      <CartownVehicle color="#b94b45" accent="#d8b45a" kind="car" />
+      <view class="traffic-scene__vehicle">
+        <PremiumVehicleImage name="police-car" alt="警车" />
+      </view>
     </view>
 
     <view class="traffic-actions">
@@ -24,7 +26,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import BigButton from "@/components/BigButton.vue";
-import CartownVehicle from "@/components/CartownVehicle.vue";
+import PremiumVehicleImage from "@/components/PremiumVehicleImage.vue";
 import { trafficPrompts } from "@/mock/cartown";
 import { speakEnglish } from "@/services/audioService";
 import { addCartownStar, getCartownProgress, saveCartownProgress } from "@/services/cartownProgressService";
@@ -71,7 +73,7 @@ function choose(action: string) {
   padding: 32rpx;
 }
 
-.traffic-scene .cartown-vehicle {
+.traffic-scene__vehicle {
   height: 240rpx;
 }
 

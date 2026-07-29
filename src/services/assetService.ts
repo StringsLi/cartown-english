@@ -13,6 +13,13 @@ export function highResolutionAsset(path: string): string {
   }
 
   const cloudPath = originalAssetPath(path);
+
+  // #ifdef H5
+  // The H5 build packages these originals so previews and deployed web builds
+  // can render the same vehicle, map, book, and audio assets without wx.cloud.
+  return cloudPath ? `/docs/source-assets/${cloudPath}` : path;
+  // #endif
+
   return cloudPath ? `${CLOUD_FILE_PREFIX}${CLOUD_ASSET_ROOT}/${cloudPath}` : path;
 }
 

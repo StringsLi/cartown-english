@@ -5,6 +5,7 @@ import { getStorage, removeStorage, setStorage } from "@/utils/storage";
 
 const STORAGE_KEY = "little_english_book_progress";
 const DEFAULT_USER_ID = "local_child";
+const MAX_REPEAT_RECORDS = 12;
 
 export interface LearningState {
   userId: string;
@@ -143,10 +144,34 @@ export function saveRepeatRecord(record: Omit<RepeatRecord, "userId" | "createdA
     ...record
   };
 
-  state.repeatRecords.unshift(nextRecord);
+  state.repeatRecords = [nextRecord, ...state.repeatRecords].slice(0, MAX_REPEAT_RECORDS);
   saveLearningState(state);
 
   return nextRecord;
+}
+
+export function getRepeatRecords(): RepeatRecord[] {
+  return getLearningState().repeatRecords;
+}
+
+export function mergeRepeatRecords(records: RepeatRecord[]): { added: number; total: number } {
+  const state = getLearningState();
+  const currentKeys = new Set(state.repeatRecords.map(repeatRecordKey));
+  const incoming = records.filter((record) => {
+    const key = repeatRecordKey(record);
+    if (currentKeys.has(key)) return false;
+    currentKeys.add(key);
+    return true;
+  });
+
+  state.repeatRecords = [...incoming, ...state.repeatRecords]
+    .sort((first, second) => second.createdAt.localeCompare(first.createdAt))
+    .slice(0, MAX_REPEAT_RECORDS);
+  saveLearningState(state);
+
+  const savedKeys = new Set(state.repeatRecords.map(repeatRecordKey));
+  const added = incoming.filter((record) => savedKeys.has(repeatRecordKey(record))).length;
+  return { added, total: state.repeatRecords.length };
 }
 
 export function saveGameRecord(record: Omit<GameRecord, "userId" | "createdAt">): GameRecord {
@@ -236,6 +261,10 @@ function touchStudyStreak(state: LearningState): void {
 
   state.streakDays = isYesterday(state.lastStudyDate) ? state.streakDays + 1 : 1;
   state.lastStudyDate = today;
+}
+
+function repeatRecordKey(record: RepeatRecord): string {
+  return `${record.bookId}|${record.sentence}|${record.createdAt}`;
 }
 
 function markStudy(state: LearningState): void {

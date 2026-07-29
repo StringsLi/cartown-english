@@ -10,7 +10,7 @@
     </view>
 
     <view class="vehicle-books-hero soft-card">
-      <VehicleStoryArt class="vehicle-books-hero__art" story-id="red-car" :page-index="0" />
+      <CachedImage class="vehicle-books-hero__art" :src="featuredBook.cover" mode="aspectFill" />
       <view class="vehicle-books-hero__copy">
         <text class="vehicle-books-hero__eyebrow">本周推荐</text>
         <text class="vehicle-books-hero__title">Red Car Comes Home</text>
@@ -43,11 +43,12 @@
 
 <script setup lang="ts">
 import BookCard from "@/components/BookCard.vue";
-import VehicleStoryArt from "@/components/VehicleStoryArt.vue";
+import CachedImage from "@/components/CachedImage.vue";
 import { getBooks } from "@/services/bookService";
 import type { Book } from "@/types/book";
 
 const vehicleBooks = getBooks({ theme: "Vehicles" });
+const featuredBook = vehicleBooks.find((book) => book.id === "book_red_car_001") ?? vehicleBooks[0];
 
 function goBookDetail(book: Book) {
   uni.navigateTo({ url: `/pages/book-detail/index?bookId=${book.id}` });
