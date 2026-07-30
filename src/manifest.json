@@ -1,0 +1,17 @@
+{
+  "name": "Car Explorer Helper",
+  "appid": "",
+  "description": "车车探索小助手 | 儿童车辆认知与互动故事",
+  "versionName": "0.1.0",
+  "versionCode": "1",
+  "transformPx": false,
+  "mp-weixin": {
+    "appid": "wx41ac769b99219ff5",
+    "lazyCodeLoading": "requiredComponents",
+    "setting": {
+      "urlCheck": false,
+      "es6": true
+    },
+    "usingComponents": true
+  }
+}
