@@ -68,7 +68,9 @@ import { vehicleGroups } from "@/mock/topics";
 import { speakEnglish } from "@/services/audioService";
 import { highResolutionAsset } from "@/services/assetService";
 import type { TopicWord } from "@/types/topic";
+import { usePageShare } from "@/composables/usePageShare";
 
+usePageShare();
 const stationItems = [
   ["词卡", "车辆词汇", "/pages/car-learn/index"],
   ["车标", "品牌认知", "/pages/car-logos/index"],

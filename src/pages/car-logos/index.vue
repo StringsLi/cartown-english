@@ -57,7 +57,9 @@ import CartownLogoBadge from "@/components/CartownLogoBadge.vue";
 import { carLogos } from "@/mock/cartown";
 import { speakEnglish } from "@/services/audioService";
 import { addCartownStar, getCartownProgress, saveCartownProgress } from "@/services/cartownProgressService";
+import { usePageShare } from "@/composables/usePageShare";
 
+usePageShare();
 const mode = ref<"learn" | "play">("learn");
 const activeIndex = ref(Math.min(getCartownProgress().logoIndex, carLogos.length - 1));
 const targetIndex = ref(0);

@@ -83,7 +83,9 @@ import { worldGroups } from "@/mock/topics";
 import { mapIcon } from "@/mock/topicAssets";
 import { speakEnglish } from "@/services/audioService";
 import type { TopicWord } from "@/types/topic";
+import { usePageShare } from "@/composables/usePageShare";
 
+usePageShare();
 const EXPLORED_STORAGE_KEY = "cartown_explored_countries";
 const heroWorldIcon = mapIcon("world");
 const allCountries = worldGroups.flatMap((group) => group.words);

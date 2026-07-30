@@ -79,10 +79,6 @@
           <text class="report-stat__label">已学单词</text>
         </view>
         <view class="report-stat">
-          <text class="report-stat__value">{{ learningState.repeatRecords.length }}</text>
-          <text class="report-stat__label">跟读次数</text>
-        </view>
-        <view class="report-stat">
           <text class="report-stat__value">{{ cartownProgress.stars }}</text>
           <text class="report-stat__label">主题星星</text>
         </view>
@@ -110,7 +106,9 @@ import { getBookById, getParentTip, getTodayBook } from "@/services/bookService"
 import { getCartownProgress } from "@/services/cartownProgressService";
 import { highResolutionAsset } from "@/services/assetService";
 import { getCurrentWeekActivity, getHomeStats, getLearningState } from "@/services/progressService";
+import { usePageShare } from "@/composables/usePageShare";
 
+usePageShare();
 const bookId = ref(getTodayBook().id);
 const stats = ref(getHomeStats());
 const learningState = ref(getLearningState());
@@ -134,7 +132,6 @@ const readingPercent = computed(() => Math.min(100, Math.round((stats.value.read
 const skillScores = computed(() => [
   { label: "听读", score: Math.min(100, Math.round((stats.value.readBookCount / 20) * 100)) },
   { label: "词汇", score: Math.min(100, Math.round((stats.value.learnedWordCount / 40) * 100)) },
-  { label: "跟读", score: Math.min(100, learningState.value.repeatRecords.length * 10) },
   { label: "练习", score: Math.min(100, learningState.value.gameRecords.length * 10) }
 ]);
 
@@ -455,7 +452,7 @@ function goProfile() {
 
 .report-card__summary {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12rpx;
   margin-top: 24rpx;
   padding-top: 20rpx;

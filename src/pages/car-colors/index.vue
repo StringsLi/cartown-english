@@ -30,7 +30,9 @@ import PremiumVehicleImage from "@/components/PremiumVehicleImage.vue";
 import { colorCars } from "@/mock/cartown";
 import { speakEnglish } from "@/services/audioService";
 import { addCartownStar, getCartownProgress, saveCartownProgress } from "@/services/cartownProgressService";
+import { usePageShare } from "@/composables/usePageShare";
 
+usePageShare();
 const progress = getCartownProgress();
 const targetIndex = ref(progress.colorQuestionsDone % colorCars.length);
 const feedback = ref("听一听，选对颜色车。");

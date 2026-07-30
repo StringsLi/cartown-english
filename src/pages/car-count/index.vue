@@ -34,7 +34,9 @@ import PremiumVehicleImage from "@/components/PremiumVehicleImage.vue";
 import { countingChallenges } from "@/mock/cartown";
 import { speakEnglish } from "@/services/audioService";
 import { addCartownStar, getCartownProgress, saveCartownProgress } from "@/services/cartownProgressService";
+import { usePageShare } from "@/composables/usePageShare";
 
+usePageShare();
 const progress = getCartownProgress();
 const challengeIndex = ref(progress.countQuestionsDone % countingChallenges.length);
 const tapped = ref<number[]>([]);

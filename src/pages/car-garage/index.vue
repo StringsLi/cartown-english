@@ -31,7 +31,9 @@ import PremiumVehicleImage from "@/components/PremiumVehicleImage.vue";
 import { vehicles, type Vehicle } from "@/mock/cartown";
 import { speakEnglish } from "@/services/audioService";
 import { getCartownProgress } from "@/services/cartownProgressService";
+import { usePageShare } from "@/composables/usePageShare";
 
+usePageShare();
 const progress = ref(getCartownProgress());
 const unlockedCount = computed(() => Math.max(1, Math.min(vehicles.length, Math.floor(progress.value.stars / 2) + 1)));
 

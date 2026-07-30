@@ -44,10 +44,6 @@
     </view>
 
     <view class="reader-tools">
-      <button class="reader-tool" @tap="goRepeat">
-        <text class="reader-tool__icon">●</text>
-        <text class="reader-tool__label">跟读</text>
-      </button>
       <button class="reader-tool reader-tool--play" @tap="playCurrentPage">
         <text class="reader-tool__play">▶</text>
       </button>
@@ -89,7 +85,9 @@ import { playAudio, speakEnglish } from "@/services/audioService";
 import { getBookById, getBookPages, getTodayBook } from "@/services/bookService";
 import { addReadingDuration, completeBook, getProgress, saveProgress } from "@/services/progressService";
 import type { Hotspot, UserProgress } from "@/types/book";
+import { usePageShare } from "@/composables/usePageShare";
 
+usePageShare();
 const bookId = ref(getTodayBook().id);
 const activePageIndex = ref(0);
 const imageFailed = ref(false);
@@ -189,11 +187,6 @@ function playHotspot(hotspot: Hotspot) {
 
 function goPointRead() {
   uni.navigateTo({ url: `/pages/point-read/index?bookId=${book.value.id}&pageIndex=${currentPageNumber.value}` });
-}
-
-function goRepeat() {
-  const sentence = encodeURIComponent(currentPage.value?.sentence ?? book.value.targetSentence);
-  uni.navigateTo({ url: `/pages/repeat/index?bookId=${book.value.id}&sentence=${sentence}` });
 }
 
 function goDetail() {

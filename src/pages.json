@@ -13,10 +13,10 @@
       }
     },
     {
-        "path": "pages/vehicles/index",
-        "style": {
-          "navigationBarTitleText": "认识车辆"
-        }
+      "path": "pages/vehicles/index",
+      "style": {
+        "navigationBarTitleText": "认识车辆"
+      }
     },
     {
       "path": "pages/car-learn/index",
@@ -61,10 +61,10 @@
       }
     },
     {
-        "path": "pages/world/index",
-        "style": {
-          "navigationBarTitleText": "车车看世界"
-        }
+      "path": "pages/world/index",
+      "style": {
+        "navigationBarTitleText": "车车看世界"
+      }
     },
     {
       "path": "pages/book-detail/index",
@@ -82,12 +82,6 @@
       "path": "pages/point-read/index",
       "style": {
         "navigationBarTitleText": "点一点图片"
-      }
-    },
-    {
-      "path": "pages/repeat/index",
-      "style": {
-        "navigationBarTitleText": "跟我读"
       }
     },
     {

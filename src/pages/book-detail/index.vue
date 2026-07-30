@@ -52,7 +52,9 @@ import WordChip from "@/components/WordChip.vue";
 import { getBookById, getBookWords, getParentTip, getThemeLabel, getTodayBook } from "@/services/bookService";
 import { getProgress } from "@/services/progressService";
 import type { UserProgress } from "@/types/book";
+import { usePageShare } from "@/composables/usePageShare";
 
+usePageShare();
 const bookId = ref(getTodayBook().id);
 const coverFailed = ref(false);
 const book = computed(() => getBookById(bookId.value) ?? getTodayBook());

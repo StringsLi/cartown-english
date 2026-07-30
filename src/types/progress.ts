@@ -1,1 +1,1 @@
-export type { GameRecord, RepeatRecord, UserProgress } from "./book";
+export type { GameRecord, UserProgress } from "./book";

@@ -111,7 +111,9 @@ import { getHomeStats, getLearningState } from "@/services/progressService";
 import { highResolutionAsset } from "@/services/assetService";
 import { speakEnglish } from "@/services/audioService";
 import type { Book } from "@/types/book";
+import { usePageShare } from "@/composables/usePageShare";
 
+usePageShare();
 const explorerBook = getBookById("book_red_car_001") ?? getTodayBook();
 const stats = ref(getHomeStats());
 const learningState = ref(getLearningState());

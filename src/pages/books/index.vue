@@ -83,7 +83,9 @@ import { getLearningState } from "@/services/progressService";
 import { highResolutionAsset } from "@/services/assetService";
 import type { Book, BookLevel } from "@/types/book";
 import type { ThemeFilterValue } from "@/mock/books";
+import { usePageShare } from "@/composables/usePageShare";
 
+usePageShare();
 const activeTheme = ref<ThemeFilterValue>("All");
 const readBookIds = ref(getLearningState().readBookIds);
 const searchOpen = ref(false);

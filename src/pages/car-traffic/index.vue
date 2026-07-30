@@ -30,7 +30,9 @@ import PremiumVehicleImage from "@/components/PremiumVehicleImage.vue";
 import { trafficPrompts } from "@/mock/cartown";
 import { speakEnglish } from "@/services/audioService";
 import { addCartownStar, getCartownProgress, saveCartownProgress } from "@/services/cartownProgressService";
+import { usePageShare } from "@/composables/usePageShare";
 
+usePageShare();
 const progress = getCartownProgress();
 const promptIndex = ref(progress.trafficTurnsDone % trafficPrompts.length);
 const feedback = ref("Listen and choose!");

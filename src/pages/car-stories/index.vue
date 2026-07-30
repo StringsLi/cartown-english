@@ -46,7 +46,9 @@ import BookCard from "@/components/BookCard.vue";
 import CachedImage from "@/components/CachedImage.vue";
 import { getBooks } from "@/services/bookService";
 import type { Book } from "@/types/book";
+import { usePageShare } from "@/composables/usePageShare";
 
+usePageShare();
 const vehicleBooks = getBooks({ theme: "Vehicles" });
 const featuredBook = vehicleBooks.find((book) => book.id === "book_red_car_001") ?? vehicleBooks[0];
 

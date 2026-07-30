@@ -75,7 +75,9 @@ import VehicleStoryArt from "@/components/VehicleStoryArt.vue";
 import { playAudio } from "@/services/audioService";
 import { getBookById, getBookPages, getTodayBook } from "@/services/bookService";
 import type { Hotspot } from "@/types/book";
+import { usePageShare } from "@/composables/usePageShare";
 
+usePageShare();
 const bookId = ref(getTodayBook().id);
 const activePageIndex = ref(0);
 const imageFailed = ref(false);

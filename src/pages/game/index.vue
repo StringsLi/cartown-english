@@ -55,7 +55,9 @@ import BigButton from "@/components/BigButton.vue";
 import { getBookById, getBookWords, getTodayBook } from "@/services/bookService";
 import { saveGameRecord } from "@/services/progressService";
 import type { Word } from "@/types/book";
+import { usePageShare } from "@/composables/usePageShare";
 
+usePageShare();
 const bookId = ref(getTodayBook().id);
 const questionIndex = ref(0);
 const selectedWord = ref("");
