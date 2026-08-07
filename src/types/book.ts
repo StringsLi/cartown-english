@@ -75,6 +75,15 @@ export interface UserProgress {
   completedAt?: string;
 }
 
+export interface RepeatRecord {
+  userId: string;
+  bookId: string;
+  sentence: string;
+  audioUrl: string;
+  durationSeconds?: number;
+  createdAt: string;
+}
+
 export interface GameRecord {
   userId: string;
   bookId: string;

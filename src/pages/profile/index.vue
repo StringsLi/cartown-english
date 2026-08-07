@@ -11,7 +11,7 @@
 
     <view class="profile-card soft-card">
       <text class="profile-card__label">隐私说明</text>
-      <text class="profile-card__text">不做儿童社交、不做排行榜，不采集位置或麦克风信息。学习记录仅保存在当前设备。</text>
+      <text class="profile-card__text">不做儿童社交、不做排行榜、不采集位置。跟读录音默认只保存在当前设备，由家长管理。</text>
       <BigButton label="清除本地学习记录" variant="ghost" @tap="clearData" />
     </view>
   </view>
@@ -35,7 +35,7 @@ function saveNickname() {
 function clearData() {
   uni.showModal({
     title: "清除学习记录？",
-    content: "绘本进度、游戏成绩和主题星星都会被清除，此操作无法撤销。",
+    content: "绘本进度、跟读记录、游戏成绩和主题星星都会被清除，此操作无法撤销。",
     confirmText: "确认清除",
     confirmColor: "#b95f3d",
     success(result) {

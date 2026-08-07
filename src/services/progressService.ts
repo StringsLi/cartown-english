@@ -1,10 +1,11 @@
 import { mockBooks } from "@/mock/books";
-import type { GameRecord, ReadStatus, UserProgress } from "@/types/book";
+import type { GameRecord, ReadStatus, RepeatRecord, UserProgress } from "@/types/book";
 import { formatDateTime, isYesterday, todayKey } from "@/utils/date";
 import { getStorage, removeStorage, setStorage } from "@/utils/storage";
 
 const STORAGE_KEY = "little_english_book_progress";
 const DEFAULT_USER_ID = "local_child";
+const MAX_REPEAT_RECORDS = 12;
 
 export interface LearningState {
   userId: string;
@@ -13,6 +14,7 @@ export interface LearningState {
   lastStudyDate: string;
   readBookIds: string[];
   progressMap: Record<string, UserProgress>;
+  repeatRecords: RepeatRecord[];
   gameRecords: GameRecord[];
   studyDates: string[];
   readingSecondsByDate: Record<string, number>;
@@ -42,6 +44,7 @@ const defaultState: LearningState = {
   lastStudyDate: "",
   readBookIds: [],
   progressMap: {},
+  repeatRecords: [],
   gameRecords: [],
   studyDates: [],
   readingSecondsByDate: {}
@@ -57,6 +60,7 @@ export function getLearningState(): LearningState {
     lastStudyDate: stored?.lastStudyDate ?? defaultState.lastStudyDate,
     readBookIds: stored?.readBookIds ?? [],
     progressMap: stored?.progressMap ?? {},
+    repeatRecords: stored?.repeatRecords ?? [],
     gameRecords: stored?.gameRecords ?? [],
     studyDates: stored?.studyDates ?? [],
     readingSecondsByDate: stored?.readingSecondsByDate ?? {}
@@ -131,6 +135,45 @@ export function completeBook(bookId: string): UserProgress {
   saveLearningState(state);
 
   return nextProgress;
+}
+
+export function saveRepeatRecord(record: Omit<RepeatRecord, "userId" | "createdAt">): RepeatRecord {
+  const state = getLearningState();
+  markStudy(state);
+  const nextRecord: RepeatRecord = {
+    userId: state.userId,
+    createdAt: formatDateTime(),
+    ...record
+  };
+
+  state.repeatRecords = [nextRecord, ...state.repeatRecords].slice(0, MAX_REPEAT_RECORDS);
+  saveLearningState(state);
+
+  return nextRecord;
+}
+
+export function getRepeatRecords(): RepeatRecord[] {
+  return getLearningState().repeatRecords;
+}
+
+export function mergeRepeatRecords(records: RepeatRecord[]): { added: number; total: number } {
+  const state = getLearningState();
+  const currentKeys = new Set(state.repeatRecords.map(repeatRecordKey));
+  const incoming = records.filter((record) => {
+    const key = repeatRecordKey(record);
+    if (currentKeys.has(key)) return false;
+    currentKeys.add(key);
+    return true;
+  });
+
+  state.repeatRecords = [...incoming, ...state.repeatRecords]
+    .sort((first, second) => second.createdAt.localeCompare(first.createdAt))
+    .slice(0, MAX_REPEAT_RECORDS);
+  saveLearningState(state);
+
+  const savedKeys = new Set(state.repeatRecords.map(repeatRecordKey));
+  const added = incoming.filter((record) => savedKeys.has(repeatRecordKey(record))).length;
+  return { added, total: state.repeatRecords.length };
 }
 
 export function saveGameRecord(record: Omit<GameRecord, "userId" | "createdAt">): GameRecord {
@@ -220,6 +263,10 @@ function touchStudyStreak(state: LearningState): void {
 
   state.streakDays = isYesterday(state.lastStudyDate) ? state.streakDays + 1 : 1;
   state.lastStudyDate = today;
+}
+
+function repeatRecordKey(record: RepeatRecord): string {
+  return `${record.bookId}|${record.sentence}|${record.createdAt}`;
 }
 
 function markStudy(state: LearningState): void {

@@ -85,6 +85,12 @@
       }
     },
     {
+      "path": "pages/repeat/index",
+      "style": {
+        "navigationBarTitleText": "跟我读"
+      }
+    },
+    {
       "path": "pages/game/index",
       "style": {
         "navigationBarTitleText": "小游戏"

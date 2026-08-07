@@ -28,6 +28,7 @@ const pageShareTitles: Record<string, string> = {
   "pages/book-detail/index": "亲子绘本时间，一起听故事",
   "pages/reader/index": "这本绘本真有趣，一起听一听",
   "pages/point-read/index": "点一点图片，发现更多英语声音",
+  "pages/repeat/index": "跟我读一句，一起练习自然表达",
   "pages/game/index": "来玩一个轻松的英语小游戏",
   "pages/parent/index": "车车探索小助手，记录孩子的每次进步",
   "pages/profile/index": "车车探索小助手，陪孩子快乐探索"
