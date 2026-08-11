@@ -48,10 +48,12 @@ const props = withDefaults(
 const safePage = computed(() => Math.min(Math.max(Math.round(props.pageIndex), 0), 5));
 const storyVehicleImage = computed(() => {
   const images: Record<VehicleStoryId, string> = {
-    "red-car": highResolutionAsset("/static/topic-icons/vehicles/car.webp"),
+    "red-car": "/static/generated-books/red-car/cover.jpg",
     digger: highResolutionAsset("/static/topic-icons/vehicles/excavator.webp"),
     "fire-truck": highResolutionAsset("/static/topic-icons/vehicles/fire-truck.webp"),
-    "city-bus": highResolutionAsset("/static/topic-icons/vehicles/bus.webp")
+    "city-bus": highResolutionAsset("/static/topic-icons/vehicles/bus.webp"),
+    "police-car": highResolutionAsset("/static/topic-icons/vehicles/police-car.webp"),
+    van: highResolutionAsset("/static/topic-icons/vehicles/van.webp")
   };
 
   return images[props.storyId];
@@ -145,6 +147,8 @@ const storyVehicleImage = computed(() => {
 .vehicle-story-art--digger { background: #f3ead2; }
 .vehicle-story-art--fire-truck { background: #dce8e8; }
 .vehicle-story-art--city-bus { background: #e5eadc; }
+.vehicle-story-art--police-car { background: #dce9ee; }
+.vehicle-story-art--van { background: #e2ecdf; }
 .vehicle-story-art--page-3 .vehicle-story-art__hill { background: #c6aa7d; }
 .vehicle-story-art--page-4 { background: #d8e1e2; }
 .vehicle-story-art--page-4 .vehicle-story-art__sun { opacity: 0.28; }

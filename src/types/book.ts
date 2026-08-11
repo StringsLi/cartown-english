@@ -11,7 +11,13 @@ export type BookTheme =
   | "Daily Life"
   | "Vehicles";
 
-export type VehicleStoryId = "red-car" | "digger" | "fire-truck" | "city-bus";
+export type VehicleStoryId =
+  | "red-car"
+  | "digger"
+  | "fire-truck"
+  | "city-bus"
+  | "police-car"
+  | "van";
 
 export type ReadStatus = "not_started" | "reading" | "completed";
 

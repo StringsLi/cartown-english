@@ -47,6 +47,21 @@ for (const story of vehicleStories) {
   }
 }
 
+const localVehicleStories = ["red-car", "police-car", "van"];
+for (const story of localVehicleStories) {
+  await requireFile(
+    path.join(sourceRoot, "static", "generated-books", story, "cover.jpg"),
+    "Missing local vehicle story cover: " + story
+  );
+  for (let page = 1; page <= 5; page += 1) {
+    const pageName = "page" + String(page).padStart(2, "0") + ".jpg";
+    await requireFile(
+      path.join(sourceRoot, "pkg-reading", "static", "generated-books", story, pageName),
+      "Missing local vehicle story art: " + story + " page " + page
+    );
+  }
+}
+
 const premiumVehicles = [
   "car", "bus", "truck", "taxi", "train", "motorcycle",
   "excavator", "bulldozer", "crane", "dump-truck", "cement-mixer", "road-roller",
@@ -72,6 +87,14 @@ for (const country of countries) {
     path.join(assetRoot, "topic-icons-original", "flags", country + ".png"),
     "Missing original flag: " + country
   );
+  await requireFile(
+    path.join(sourceRoot, "static", "country-flags", country + ".png"),
+    "Missing local rectangular flag: " + country
+  );
+  await requireFile(
+    path.join(sourceRoot, "static", "country-maps", country + ".png"),
+    "Missing local country map: " + country
+  );
 }
 
 const phraseDirectory = path.join(assetRoot, "audio-original", "phrases");
@@ -82,6 +105,16 @@ if (phraseFiles.length !== 253) {
 for (const fileName of phraseFiles) {
   const details = await stat(path.join(phraseDirectory, fileName));
   if (details.size < 1024) errors.push("Original phrase audio is empty or invalid: " + fileName);
+}
+
+const carAudioDirectory = path.join(sourceRoot, "static", "audio", "car-models");
+const carAudioFiles = (await readdir(carAudioDirectory)).filter((fileName) => fileName.endsWith(".mp3"));
+if (carAudioFiles.length !== 50) {
+  errors.push("Expected 50 car model pronunciation files, found " + carAudioFiles.length + ".");
+}
+for (const fileName of carAudioFiles) {
+  const details = await stat(path.join(carAudioDirectory, fileName));
+  if (details.size < 1024) errors.push("Car model pronunciation is empty or invalid: " + fileName);
 }
 
 const cloudConfig = await readFile(path.join(sourceRoot, "config", "cloud.ts"), "utf8");
@@ -122,7 +155,8 @@ const totalHighResolutionFiles = (await walk(assetRoot)).length;
 console.log(
   "Content validation passed: " + totalHighResolutionFiles +
   " high-resolution source assets, " + phraseFiles.length +
-  " phrase audios, " + countries.length + " countries."
+  " phrase audios, " + carAudioFiles.length +
+  " car model audios, " + countries.length + " countries."
 );
 
 async function requireFile(filePath, message) {

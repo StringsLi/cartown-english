@@ -13,7 +13,7 @@
     </view>
 
     <view class="explore-hero" @tap="goBookDetail(explorerBook)">
-      <CachedImage class="explore-hero__art" :src="explorerBook.cover" mode="aspectFill" />
+      <view class="explore-hero__art"><RedCarMascot /></view>
       <view class="explore-hero__shade" />
       <view class="explore-hero__copy">
         <text class="explore-hero__eyebrow">TODAY'S TRIP</text>
@@ -47,7 +47,7 @@
 
     <view class="mission-grid">
       <button class="mission-card mission-card--story" @tap="goBooks">
-        <CachedImage class="mission-card__art" :src="explorerBook.cover" mode="aspectFill" />
+        <view class="mission-card__art"><RedCarMascot compact /></view>
         <view class="mission-card__shade" />
         <view class="mission-card__copy">
           <text class="mission-card__count">9 本</text>
@@ -57,16 +57,18 @@
       </button>
 
       <button class="mission-card mission-card--vehicle" @tap="goVehicles">
-        <CachedImage class="mission-card__art mission-card__art--contain" :src="vehicleMissionImage" mode="aspectFit" />
+        <CachedImage class="mission-card__art" :src="vehicleMissionImage" mode="aspectFill" />
+        <view class="mission-card__shade" />
         <view class="mission-card__copy">
-          <text class="mission-card__count">22 辆</text>
+          <text class="mission-card__count">50 辆</text>
           <text class="mission-card__title">认识车辆</text>
-          <text class="mission-card__desc">点车辆听发音</text>
+          <text class="mission-card__desc">看真车学车型</text>
         </view>
       </button>
 
       <button class="mission-card mission-card--world" @tap="goWorld">
-        <CachedImage class="mission-card__art mission-card__art--contain" :src="worldMissionImage" mode="aspectFit" />
+        <CachedImage class="mission-card__art" :src="worldMissionImage" mode="aspectFill" />
+        <view class="mission-card__shade" />
         <view class="mission-card__copy">
           <text class="mission-card__count">50 国</text>
           <text class="mission-card__title">世界地图</text>
@@ -75,7 +77,8 @@
       </button>
 
       <button class="mission-card mission-card--logo" @tap="goLogos">
-        <CachedImage class="mission-card__art mission-card__art--logo" :src="logoMissionImage" mode="aspectFit" />
+        <CachedImage class="mission-card__art" :src="logoMissionImage" mode="aspectFill" />
+        <view class="mission-card__shade" />
         <view class="mission-card__copy">
           <text class="mission-card__count">50 个</text>
           <text class="mission-card__title">车标发现</text>
@@ -105,9 +108,10 @@ import { computed, ref } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import BottomNav from "@/components/BottomNav.vue";
 import CachedImage from "@/components/CachedImage.vue";
-import { mapIcon, vehicleIcon } from "@/mock/topicAssets";
+import RedCarMascot from "@/components/RedCarMascot.vue";
 import { getBookById, getTodayBook } from "@/services/bookService";
 import { getHomeStats, getLearningState } from "@/services/progressService";
+import { getCartownProgress } from "@/services/cartownProgressService";
 import { highResolutionAsset } from "@/services/assetService";
 import { speakEnglish } from "@/services/audioService";
 import type { Book } from "@/types/book";
@@ -117,6 +121,7 @@ usePageShare();
 const explorerBook = getBookById("book_red_car_001") ?? getTodayBook();
 const stats = ref(getHomeStats());
 const learningState = ref(getLearningState());
+const cartownProgress = ref(getCartownProgress());
 const routeStops = [
   { label: "听一个词" },
   { label: "读车车故事" },
@@ -124,16 +129,17 @@ const routeStops = [
 ];
 
 const childName = computed(() => learningState.value.childNickname || "小小探索家");
-const earnedStars = computed(() => Math.min(99, stats.value.readBookCount + stats.value.learnedWordCount));
+const earnedStars = computed(() => Math.min(99, cartownProgress.value.stars));
 const completedStops = computed(() => stats.value.todayCompleted ? 3 : Math.min(2, stats.value.readBookCount % 3));
 const weeklyProgress = computed(() => Math.min(100, Math.round(stats.value.weeklyReadingSeconds / 18)));
-const vehicleMissionImage = vehicleIcon("fire-truck");
-const worldMissionImage = mapIcon("world");
-const logoMissionImage = highResolutionAsset("/static/cartown-logos/toyota.webp");
+const vehicleMissionImage = "/static/ui/top-selling-car.jpg";
+const worldMissionImage = "/static/ui/world-road-trip.jpg";
+const logoMissionImage = highResolutionAsset("/static/cartown-logos/byd.webp");
 
 onShow(() => {
   stats.value = getHomeStats();
   learningState.value = getLearningState();
+  cartownProgress.value = getCartownProgress();
 });
 
 function playExplore() {
@@ -141,7 +147,7 @@ function playExplore() {
 }
 
 function goBookDetail(book: Book) {
-  uni.navigateTo({ url: "/pages/book-detail/index?bookId=" + book.id });
+  uni.navigateTo({ url: "/pkg-reading/book-detail/index?bookId=" + book.id });
 }
 
 function goBooks() {
@@ -149,7 +155,7 @@ function goBooks() {
 }
 
 function goParent() {
-  uni.reLaunch({ url: "/pages/parent/index?bookId=" + explorerBook.id });
+  uni.reLaunch({ url: "/pkg-user/parent/index?bookId=" + explorerBook.id });
 }
 
 function goVehicles() {
@@ -157,15 +163,15 @@ function goVehicles() {
 }
 
 function goWorld() {
-  uni.navigateTo({ url: "/pages/world/index" });
+  uni.navigateTo({ url: "/pkg-world/world/index" });
 }
 
 function goLogos() {
-  uni.navigateTo({ url: "/pages/car-logos/index" });
+  uni.navigateTo({ url: "/pkg-learning/car-logos/index" });
 }
 
 function goGarage() {
-  uni.navigateTo({ url: "/pages/car-garage/index" });
+  uni.navigateTo({ url: "/pkg-learning/car-garage/index" });
 }
 </script>
 
@@ -405,21 +411,6 @@ function goGarage() {
   height: 100%;
 }
 
-.mission-card__art--contain {
-  top: -12rpx;
-  left: 39%;
-  width: 66%;
-  height: 66%;
-}
-
-.mission-card__art--logo {
-  top: 12rpx;
-  right: 10rpx;
-  left: auto;
-  width: 47%;
-  height: 47%;
-}
-
 .mission-card__shade {
   position: absolute;
   inset: 0;
@@ -463,8 +454,8 @@ function goGarage() {
   color: #68757b;
 }
 
-.mission-card--story .mission-card__title,
-.mission-card--story .mission-card__desc {
+.mission-card .mission-card__title,
+.mission-card .mission-card__desc {
   color: #ffffff;
 }
 

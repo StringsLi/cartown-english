@@ -50,6 +50,11 @@ function originalAssetPath(path: string): string | null {
     return `audio-original/phrases/${phraseMatch[1]}.mp3`;
   }
 
+  // Car model names are bundled MP3 files, not cloud-hosted WAV originals.
+  if (/^static\/audio\/car-models\/[^/]+\.mp3$/i.test(normalized)) {
+    return null;
+  }
+
   const audioMatch = normalized.match(/^static\/audio\/([^/]+)\/([^/]+)\.(?:mp3|wav)$/i);
   if (audioMatch) {
     return `audio-original/${audioMatch[1]}/${audioMatch[2]}.wav`;

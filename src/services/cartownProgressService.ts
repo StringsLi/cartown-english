@@ -1,10 +1,15 @@
 import { getStorage, removeStorage, setStorage } from "@/utils/storage";
 
 const STORAGE_KEY = "cartown_english_progress";
+const DEBOUNCE_MS = 300;
+
+let cachedProgress: CartownProgress | null = null;
+let saveTimer: ReturnType<typeof setTimeout> | null = null;
 
 export interface CartownProgress {
   stars: number;
   learnedVehicleIndex: number;
+  learnedVehicleIds: string[];
   logoIndex: number;
   logoQuizDone: number;
   storyBookIndex: number;
@@ -17,6 +22,7 @@ export interface CartownProgress {
 const defaultProgress: CartownProgress = {
   stars: 0,
   learnedVehicleIndex: 0,
+  learnedVehicleIds: [],
   logoIndex: 0,
   logoQuizDone: 0,
   storyBookIndex: 0,
@@ -27,20 +33,33 @@ const defaultProgress: CartownProgress = {
 };
 
 export function getCartownProgress(): CartownProgress {
-  return {
-    ...defaultProgress,
-    ...(getStorage<CartownProgress>(STORAGE_KEY) ?? {})
-  };
+  if (!cachedProgress) {
+    const stored = getStorage<CartownProgress>(STORAGE_KEY);
+    cachedProgress = {
+      ...defaultProgress,
+      ...(stored ?? {}),
+      learnedVehicleIds: stored?.learnedVehicleIds ?? []
+    };
+  }
+  return cachedProgress;
 }
 
 export function saveCartownProgress(progress: Partial<CartownProgress>): CartownProgress {
-  const nextProgress = {
-    ...getCartownProgress(),
-    ...progress
-  };
+  cachedProgress = { ...getCartownProgress(), ...progress };
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    if (cachedProgress) setStorage(STORAGE_KEY, cachedProgress);
+    saveTimer = null;
+  }, DEBOUNCE_MS);
+  return cachedProgress;
+}
 
-  setStorage(STORAGE_KEY, nextProgress);
-  return nextProgress;
+export function flushCartownProgress(): void {
+  if (saveTimer) {
+    clearTimeout(saveTimer);
+    saveTimer = null;
+  }
+  if (cachedProgress) setStorage(STORAGE_KEY, cachedProgress);
 }
 
 export function addCartownStar(count = 1): CartownProgress {
@@ -51,6 +70,24 @@ export function addCartownStar(count = 1): CartownProgress {
   });
 }
 
+export function completeCartownVehicle(vehicleId: string): { earned: boolean; progress: CartownProgress } {
+  const current = getCartownProgress();
+  if (!vehicleId || current.learnedVehicleIds.includes(vehicleId)) {
+    return { earned: false, progress: current };
+  }
+
+  const progress = saveCartownProgress({
+    learnedVehicleIds: [...current.learnedVehicleIds, vehicleId],
+    stars: current.stars + 1
+  });
+  return { earned: true, progress };
+}
+
 export function clearCartownProgress(): void {
+  cachedProgress = null;
+  if (saveTimer) {
+    clearTimeout(saveTimer);
+    saveTimer = null;
+  }
   removeStorage(STORAGE_KEY);
 }

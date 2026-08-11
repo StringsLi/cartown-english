@@ -14,6 +14,11 @@ interface CacheIndex {
   entries: Record<string, CacheEntry>;
 }
 
+export interface MediaPreloadItem {
+  source: string;
+  kind: MediaKind;
+}
+
 interface CloudTempFile {
   fileID: string;
   tempFileURL: string;
@@ -87,6 +92,16 @@ export async function resolveCachedMedia(source: string, kind: MediaKind): Promi
   inFlight.set(asset, request);
   return request;
   // #endif
+}
+
+export async function preloadCachedMedia(items: MediaPreloadItem[]): Promise<void> {
+  const uniqueItems = [...new Map(
+    items.filter((item) => item.source).map((item) => [`${item.kind}:${item.source}`, item])
+  ).values()];
+
+  await Promise.allSettled(
+    uniqueItems.map((item) => resolveCachedMedia(item.source, item.kind))
+  );
 }
 
 export function clearMediaCache(): void {

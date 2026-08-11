@@ -72,17 +72,19 @@ export function saveRepeatRecord(record: Omit<RepeatRecord, "userId" | "createdA
 
 async function ensureRecordPermission(): Promise<void> {
   // #ifdef MP-WEIXIN
-  await new Promise<void>((resolve, reject) => {
-    uni.getSetting({
-      success(result) {
-        if (result.authSetting["scope.record"]) {
-          resolve();
-          return;
-        }
+  // 先检查当前授权状态
+  const setting = await new Promise<UniApp.GetSettingSuccessResult>((resolve, reject) => {
+    uni.getSetting({ success: resolve, fail: reject });
+  });
 
-        uni.authorize({ scope: "scope.record", success: () => resolve(), fail: reject });
-      },
-      fail: reject
+  if (setting.authSetting["scope.record"]) return;
+
+  // 未授权 → 尝试弹出授权弹窗
+  await new Promise<void>((resolve, reject) => {
+    uni.authorize({
+      scope: "scope.record",
+      success: () => resolve(),
+      fail: (err) => reject(err)
     });
   });
   // #endif

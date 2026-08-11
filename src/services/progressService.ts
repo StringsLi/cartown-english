@@ -6,6 +6,10 @@ import { getStorage, removeStorage, setStorage } from "@/utils/storage";
 const STORAGE_KEY = "little_english_book_progress";
 const DEFAULT_USER_ID = "local_child";
 const MAX_REPEAT_RECORDS = 12;
+const DEBOUNCE_MS = 300;
+
+let cachedState: LearningState | null = null;
+let saveTimer: ReturnType<typeof setTimeout> | null = null;
 
 export interface LearningState {
   userId: string;
@@ -51,24 +55,41 @@ const defaultState: LearningState = {
 };
 
 export function getLearningState(): LearningState {
-  const stored = getStorage<LearningState>(STORAGE_KEY);
-
-  return {
-    userId: stored?.userId ?? defaultState.userId,
-    childNickname: stored?.childNickname ?? defaultState.childNickname,
-    streakDays: stored?.streakDays ?? defaultState.streakDays,
-    lastStudyDate: stored?.lastStudyDate ?? defaultState.lastStudyDate,
-    readBookIds: stored?.readBookIds ?? [],
-    progressMap: stored?.progressMap ?? {},
-    repeatRecords: stored?.repeatRecords ?? [],
-    gameRecords: stored?.gameRecords ?? [],
-    studyDates: stored?.studyDates ?? [],
-    readingSecondsByDate: stored?.readingSecondsByDate ?? {}
-  };
+  if (!cachedState) {
+    const stored = getStorage<LearningState>(STORAGE_KEY);
+    cachedState = {
+      userId: stored?.userId ?? defaultState.userId,
+      childNickname: stored?.childNickname ?? defaultState.childNickname,
+      streakDays: stored?.streakDays ?? defaultState.streakDays,
+      lastStudyDate: stored?.lastStudyDate ?? defaultState.lastStudyDate,
+      readBookIds: stored?.readBookIds ?? [],
+      progressMap: stored?.progressMap ?? {},
+      repeatRecords: stored?.repeatRecords ?? [],
+      gameRecords: stored?.gameRecords ?? [],
+      studyDates: stored?.studyDates ?? [],
+      readingSecondsByDate: stored?.readingSecondsByDate ?? {}
+    };
+  }
+  return cachedState;
 }
 
 export function saveLearningState(state: LearningState): void {
-  setStorage(STORAGE_KEY, state);
+  cachedState = state;
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    if (cachedState) setStorage(STORAGE_KEY, cachedState);
+    saveTimer = null;
+  }, DEBOUNCE_MS);
+}
+
+export function flushLearningState(): void {
+  if (saveTimer) {
+    clearTimeout(saveTimer);
+    saveTimer = null;
+  }
+  if (cachedState) {
+    setStorage(STORAGE_KEY, cachedState);
+  }
 }
 
 export function updateChildNickname(childNickname: string): void {
@@ -251,6 +272,11 @@ export function getRecentProgress(limit = 3): UserProgress[] {
 }
 
 export function clearLearningData(): void {
+  cachedState = null;
+  if (saveTimer) {
+    clearTimeout(saveTimer);
+    saveTimer = null;
+  }
   removeStorage(STORAGE_KEY);
 }
 

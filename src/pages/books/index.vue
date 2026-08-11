@@ -123,7 +123,7 @@ onShow(() => {
 });
 
 function goBookDetail(book: Book) {
-  uni.navigateTo({ url: `/pages/book-detail/index?bookId=${book.id}` });
+  uni.navigateTo({ url: `/pkg-reading/book-detail/index?bookId=${book.id}` });
 }
 
 function showSearchHint() {

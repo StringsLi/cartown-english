@@ -17,98 +17,109 @@
       "style": {
         "navigationBarTitleText": "认识车辆"
       }
-    },
-    {
-      "path": "pages/car-learn/index",
-      "style": {
-        "navigationBarTitleText": "认识车辆"
-      }
-    },
-    {
-      "path": "pages/car-logos/index",
-      "style": {
-        "navigationBarTitleText": "50 个车标"
-      }
-    },
-    {
-      "path": "pages/car-colors/index",
-      "style": {
-        "navigationBarTitleText": "颜色汽车"
-      }
-    },
-    {
-      "path": "pages/car-count/index",
-      "style": {
-        "navigationBarTitleText": "数字数车"
-      }
-    },
-    {
-      "path": "pages/car-traffic/index",
-      "style": {
-        "navigationBarTitleText": "红绿灯动作"
-      }
-    },
-    {
-      "path": "pages/car-stories/index",
-      "style": {
-        "navigationBarTitleText": "小汽车故事"
-      }
-    },
-    {
-      "path": "pages/car-garage/index",
-      "style": {
-        "navigationBarTitleText": "奖励车库"
-      }
-    },
-    {
-      "path": "pages/world/index",
-      "style": {
-        "navigationBarTitleText": "车车看世界"
-      }
-    },
-    {
-      "path": "pages/book-detail/index",
-      "style": {
-        "navigationBarTitleText": "绘本详情"
-      }
-    },
-    {
-      "path": "pages/reader/index",
-      "style": {
-        "navigationBarTitleText": "绘本阅读"
-      }
-    },
-    {
-      "path": "pages/point-read/index",
-      "style": {
-        "navigationBarTitleText": "点一点图片"
-      }
-    },
-    {
-      "path": "pages/repeat/index",
-      "style": {
-        "navigationBarTitleText": "跟我读"
-      }
-    },
-    {
-      "path": "pages/game/index",
-      "style": {
-        "navigationBarTitleText": "小游戏"
-      }
-    },
-    {
-      "path": "pages/parent/index",
-      "style": {
-        "navigationBarTitleText": "家长中心"
-      }
-    },
-    {
-      "path": "pages/profile/index",
-      "style": {
-        "navigationBarTitleText": "我的"
-      }
     }
   ],
+  "subPackages": [
+    {
+      "root": "pkg-learning",
+      "pages": [
+        {
+          "path": "car-logos/index",
+          "style": { "navigationBarTitleText": "50 个车标" }
+        },
+        {
+          "path": "car-colors/index",
+          "style": { "navigationBarTitleText": "颜色汽车" }
+        },
+        {
+          "path": "car-count/index",
+          "style": { "navigationBarTitleText": "数字数车" }
+        },
+        {
+          "path": "car-traffic/index",
+          "style": { "navigationBarTitleText": "红绿灯动作" }
+        },
+        {
+          "path": "car-stories/index",
+          "style": { "navigationBarTitleText": "小汽车故事" }
+        },
+        {
+          "path": "car-garage/index",
+          "style": { "navigationBarTitleText": "奖励车库" }
+        }
+      ]
+    },
+    {
+      "root": "pkg-cars",
+      "pages": [
+        {
+          "path": "car-learn/index",
+          "style": { "navigationBarTitleText": "认识车辆" }
+        }
+      ]
+    },
+    {
+      "root": "pkg-world",
+      "pages": [
+        {
+          "path": "world/index",
+          "style": { "navigationBarTitleText": "车车看世界" }
+        }
+      ]
+    },
+    {
+      "root": "pkg-reading",
+      "pages": [
+        {
+          "path": "book-detail/index",
+          "style": { "navigationBarTitleText": "绘本详情" }
+        },
+        {
+          "path": "reader/index",
+          "style": { "navigationBarTitleText": "绘本阅读" }
+        },
+        {
+          "path": "point-read/index",
+          "style": { "navigationBarTitleText": "点一点图片" }
+        },
+        {
+          "path": "repeat/index",
+          "style": { "navigationBarTitleText": "跟我读" }
+        },
+        {
+          "path": "game/index",
+          "style": { "navigationBarTitleText": "小游戏" }
+        }
+      ]
+    },
+    {
+      "root": "pkg-user",
+      "pages": [
+        {
+          "path": "parent/index",
+          "style": { "navigationBarTitleText": "家长中心" }
+        },
+        {
+          "path": "profile/index",
+          "style": { "navigationBarTitleText": "我的" }
+        }
+      ]
+    }
+  ],
+  "preloadRule": {
+    "pages/index/index": {
+      "packages": ["pkg-learning"],
+      "network": "wifi"
+    },
+    "pages/books/index": {
+      "packages": ["pkg-reading"],
+      "network": "wifi"
+    },
+    "pages/vehicles/index": {
+      "packages": ["pkg-cars"],
+      "network": "wifi"
+    }
+  },
   "globalStyle": {
     "navigationBarBackgroundColor": "#FBF7EF",
     "navigationBarTextStyle": "black",

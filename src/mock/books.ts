@@ -108,7 +108,7 @@ export const mockBooks: Book[] = ([
   {
     id: "book_red_car_001",
     title: "Red Car Comes Home",
-    cover: "/static/books/red-car/cover.jpg",
+    cover: "/static/generated-books/red-car/cover.jpg",
     level: "A",
     ageRange: "3-6",
     theme: "Vehicles",
@@ -164,6 +164,36 @@ export const mockBooks: Book[] = ([
     isPublished: true,
     sort: 9,
     vehicleStoryId: "city-bus"
+  },
+  {
+    id: "book_police_car_001",
+    title: "Police Car Keeps Us Safe",
+    cover: "/static/generated-books/police-car/cover.jpg",
+    level: "A",
+    ageRange: "3-6",
+    theme: "Vehicles",
+    description: "A friendly police car helps ducks and returns a lost ball.",
+    keywords: ["police car", "stop", "safe"],
+    targetSentence: "Police Car starts patrol.",
+    pageCount: 5,
+    isPublished: true,
+    sort: 10,
+    vehicleStoryId: "police-car"
+  },
+  {
+    id: "book_van_001",
+    title: "Little Van's Big Delivery",
+    cover: "/static/generated-books/van/cover.jpg",
+    level: "A",
+    ageRange: "3-6",
+    theme: "Vehicles",
+    description: "A little van carries three parcels safely to the bakery.",
+    keywords: ["van", "rain", "home"],
+    targetSentence: "Little Van carries three boxes.",
+    pageCount: 5,
+    isPublished: true,
+    sort: 11,
+    vehicleStoryId: "van"
   }
 ] satisfies Book[]).map((book) => ({ ...book, cover: highResolutionAsset(book.cover) }));
 
@@ -192,7 +222,9 @@ export const mockWords: Word[] = ([
   { id: "word_safe", word: "safe", phonetic: "/seɪf/", meaning: "安全的", image: "/static/topic-icons/vehicles/fire-truck.webp", audio: "/static/audio/words/safe.mp3", level: "A", theme: "Vehicles" },
   { id: "word_bus", word: "bus", phonetic: "/bʌs/", meaning: "公共汽车", image: "/static/topic-icons/vehicles/bus.webp", audio: "/static/audio/words/bus.mp3", level: "A", theme: "Vehicles" },
   { id: "word_bridge", word: "bridge", phonetic: "/brɪdʒ/", meaning: "桥", image: "/static/topic-icons/vehicles/bus.webp", audio: "/static/audio/words/bridge.mp3", level: "A", theme: "Vehicles" },
-  { id: "word_home", word: "home", phonetic: "/hoʊm/", meaning: "家", image: "/static/topic-icons/vehicles/bus.webp", audio: "/static/audio/words/home.mp3", level: "A", theme: "Vehicles" }
+  { id: "word_home", word: "home", phonetic: "/hoʊm/", meaning: "家", image: "/static/topic-icons/vehicles/bus.webp", audio: "/static/audio/words/home.mp3", level: "A", theme: "Vehicles" },
+  { id: "word_police_car", word: "police car", phonetic: "/pəˈliːs kɑːr/", meaning: "警车", image: "/static/topic-icons/vehicles/police-car.webp", audio: "/static/audio/words/police-car.mp3", level: "A", theme: "Vehicles" },
+  { id: "word_van", word: "van", phonetic: "/væn/", meaning: "厢式货车", image: "/static/topic-icons/vehicles/van.webp", audio: "/static/audio/words/van.mp3", level: "A", theme: "Vehicles" }
 ] satisfies Word[]).map((word) => ({
   ...word,
   image: highResolutionAsset(word.image),
@@ -206,6 +238,7 @@ const pageContent: Array<{
   sentenceCn: string[];
   hotspotWords: string[];
   vehicleStoryId?: VehicleStoryId;
+  imageRoot?: string;
 }> = [
   {
     bookId: "book_cat_001",
@@ -246,6 +279,7 @@ const pageContent: Array<{
     bookId: "book_red_car_001",
     folder: "vehicles",
     vehicleStoryId: "red-car",
+    imageRoot: "/pkg-reading/static/generated-books/red-car",
     sentences: [
       "This is Red Car.",
       "Red Car goes down the road.",
@@ -297,6 +331,36 @@ const pageContent: Array<{
     ],
     sentenceCn: ["黄色巴士忙碌起来了。", "巴士停在学校门口。", "巴士开过小桥。", "最后一个孩子回家了。", "晚安，城市巴士。"],
     hotspotWords: ["bus", "stop", "bridge", "home", "bus"]
+  },
+  {
+    bookId: "book_police_car_001",
+    folder: "police-car",
+    vehicleStoryId: "police-car",
+    imageRoot: "/pkg-reading/static/generated-books/police-car",
+    sentences: [
+      "Police Car starts patrol.",
+      "Police Car stops for the ducks.",
+      "Police Car keeps the road safe.",
+      "Police Car gives back the ball.",
+      "Police Car is back at the station."
+    ],
+    sentenceCn: ["警车开始巡逻。", "警车停下来让小鸭子过马路。", "警车守护道路安全。", "警车把球还给小朋友。", "警车回到警察局。"],
+    hotspotWords: ["police car", "stop", "safe", "police car", "police car"]
+  },
+  {
+    bookId: "book_van_001",
+    folder: "van",
+    vehicleStoryId: "van",
+    imageRoot: "/pkg-reading/static/generated-books/van",
+    sentences: [
+      "Little Van carries three boxes.",
+      "The van drives through town.",
+      "The boxes stay dry in the rain.",
+      "The van delivers to the bakery.",
+      "Little Van goes home."
+    ],
+    sentenceCn: ["小货车装上三个箱子。", "小货车穿过小镇。", "下雨了，箱子还是干干的。", "小货车把箱子送到面包店。", "小货车回家啦。"],
+    hotspotWords: ["van", "van", "rain", "van", "home"]
   }
 ];
 
@@ -328,10 +392,14 @@ export const mockBookPages: BookPage[] = pageContent.flatMap((book) =>
       id: `page_${book.bookId}_${pageNumber}`,
       bookId: book.bookId,
       pageIndex,
-      image: highResolutionAsset(`/static/books/${book.vehicleStoryId ?? book.folder}/page${pageNumber}.jpg`),
+      image: book.imageRoot
+        ? `${book.imageRoot}/page${pageNumber}.jpg`
+        : highResolutionAsset(`/static/books/${book.vehicleStoryId ?? book.folder}/page${pageNumber}.jpg`),
       sentence,
       sentenceCn: book.sentenceCn[pageOffset],
-      audio: highResolutionAsset(`/static/audio/${book.vehicleStoryId ?? book.folder}/page${pageNumber}.mp3`),
+      audio: book.imageRoot
+        ? highResolutionAsset(`/static/audio/words/${book.vehicleStoryId}.mp3`)
+        : highResolutionAsset(`/static/audio/${book.vehicleStoryId ?? book.folder}/page${pageNumber}.mp3`),
       hotspots: [makeHotspot(book.hotspotWords[pageOffset], pageIndex)],
       vehicleStoryId: book.vehicleStoryId
     };
@@ -428,5 +496,25 @@ export const parentTips: ParentTip[] = [
       { en: "Where do the children go?", cn: "孩子们去哪里？" }
     ],
     activity: "用椅子排成一辆小巴士，一起说 stop、bridge、home。"
+  },
+  {
+    bookId: "book_police_car_001",
+    title: "今日陪读卡：Police Car Keeps Us Safe",
+    questions: [
+      { en: "What does Police Car see?", cn: "警车看到了什么？" },
+      { en: "Why does Police Car stop?", cn: "警车为什么停下来？" },
+      { en: "Is the road safe?", cn: "道路安全吗？" }
+    ],
+    activity: "用玩具车练习 patrol、stop、safe，轮流扮演礼让行人的小警车。"
+  },
+  {
+    bookId: "book_van_001",
+    title: "今日陪读卡：Little Van's Big Delivery",
+    questions: [
+      { en: "What does Little Van carry?", cn: "小货车装了什么？" },
+      { en: "Do the boxes stay dry?", cn: "箱子有没有被雨淋湿？" },
+      { en: "Where does Little Van go?", cn: "小货车要去哪里？" }
+    ],
+    activity: "找三个小盒子玩送货游戏，边装车边说 box、van、deliver。"
   }
 ];

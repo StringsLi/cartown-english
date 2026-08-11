@@ -9,12 +9,13 @@
     </view>
 
     <view class="vehicle-hero soft-card">
+      <CachedImage class="vehicle-hero__image" src="/static/ui/top-selling-car.jpg" mode="aspectFill" aria-label="吉利银河星愿真实车型照片" />
+      <view class="vehicle-hero__shade" />
       <view class="vehicle-hero__copy">
-        <text class="vehicle-hero__eyebrow">认识交通工具</text>
-        <text class="vehicle-hero__title">I see a car.</text>
-        <text class="vehicle-hero__desc">我看见一辆小汽车。</text>
+        <text class="vehicle-hero__eyebrow">2025 畅销真车 TOP 50</text>
+        <text class="vehicle-hero__title">Meet the real cars.</text>
+        <text class="vehicle-hero__desc">看真实车型，听品牌与车型英文。</text>
       </view>
-      <CachedImage class="vehicle-hero__image" :src="highResolutionAsset('/static/topic-icons/vehicles/car.webp')" mode="aspectFit" aria-label="红色小汽车插图" />
     </view>
 
     <scroll-view class="station-scroll" scroll-x>
@@ -27,8 +28,8 @@
     </scroll-view>
 
     <view class="section-head">
-      <text class="section-title">常用车辆</text>
-      <text class="section-link" @tap="goStation('/pages/car-learn/index')">查看全部</text>
+      <text class="section-title">常用车种</text>
+      <text class="section-link" @tap="goStation('/pkg-cars/car-learn/index')">学习 50 辆</text>
     </view>
 
     <view class="vehicle-grid">
@@ -42,7 +43,7 @@
       </button>
     </view>
 
-    <view class="brand-section soft-card" @tap="goStation('/pages/car-logos/index')">
+    <view class="brand-section soft-card" @tap="goStation('/pkg-learning/car-logos/index')">
       <view class="brand-section__head">
         <view>
           <text class="brand-section__eyebrow">品牌认知</text>
@@ -66,19 +67,18 @@ import CartownLogoBadge from "@/components/CartownLogoBadge.vue";
 import { carLogos } from "@/mock/cartown";
 import { vehicleGroups } from "@/mock/topics";
 import { speakEnglish } from "@/services/audioService";
-import { highResolutionAsset } from "@/services/assetService";
 import type { TopicWord } from "@/types/topic";
 import { usePageShare } from "@/composables/usePageShare";
 
 usePageShare();
 const stationItems = [
-  ["词卡", "车辆词汇", "/pages/car-learn/index"],
-  ["车标", "品牌认知", "/pages/car-logos/index"],
-  ["颜色", "听音选车", "/pages/car-colors/index"],
-  ["数字", "1 到 5", "/pages/car-count/index"],
-  ["动作", "红绿灯", "/pages/car-traffic/index"],
-  ["故事", "汽车绘本", "/pages/car-stories/index"],
-  ["奖励", "我的车库", "/pages/car-garage/index"]
+  ["畅销榜", "50 辆真车", "/pkg-cars/car-learn/index"],
+  ["车标", "品牌认知", "/pkg-learning/car-logos/index"],
+  ["颜色", "听音选车", "/pkg-learning/car-colors/index"],
+  ["数字", "1 到 5", "/pkg-learning/car-count/index"],
+  ["动作", "红绿灯", "/pkg-learning/car-traffic/index"],
+  ["故事", "汽车绘本", "/pkg-learning/car-stories/index"],
+  ["奖励", "我的车库", "/pkg-learning/car-garage/index"]
 ] as const;
 
 const stations = stationItems.map(([tag, title, path]) => ({ tag, title, path }));
@@ -135,15 +135,15 @@ function goStation(path: string) {
 
 .vehicle-hero {
   position: relative;
-  min-height: 202rpx;
+  min-height: 250rpx;
   overflow: hidden;
-  background: #dce8e3;
+  background: #cbd7da;
 }
 
 .vehicle-hero__copy {
   position: relative;
-  z-index: 1;
-  width: 60%;
+  z-index: 2;
+  width: 68%;
   padding: 30rpx;
 }
 
@@ -156,7 +156,7 @@ function goStation(path: string) {
 .vehicle-hero__eyebrow {
   font-size: 22rpx;
   font-weight: 800;
-  color: #426d61;
+  color: #ffd96e;
 }
 
 .vehicle-hero__title {
@@ -164,21 +164,26 @@ function goStation(path: string) {
   font-family: Georgia, "Times New Roman", serif;
   font-size: 36rpx;
   font-weight: 700;
-  color: $color-primary-dark;
+  color: #ffffff;
 }
 
 .vehicle-hero__desc {
   margin-top: 8rpx;
   font-size: 22rpx;
-  color: $color-muted;
+  color: rgba(255, 255, 255, 0.86);
 }
 
-.vehicle-hero__image {
+.vehicle-hero__image,
+.vehicle-hero__shade {
   position: absolute;
-  right: 2rpx;
-  bottom: -8rpx;
-  width: 220rpx;
-  height: 220rpx;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.vehicle-hero__shade {
+  z-index: 1;
+  background: linear-gradient(90deg, rgba(21, 43, 52, 0.9) 0%, rgba(21, 43, 52, 0.58) 58%, rgba(21, 43, 52, 0.08) 100%);
 }
 
 

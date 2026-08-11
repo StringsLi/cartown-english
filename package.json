@@ -5,9 +5,10 @@
   "description": "Little English Book | Parent-child English picture book mini program.",
   "scripts": {
     "dev:h5": "uni -p h5",
-    "build:h5": "uni build -p h5 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/copy-h5-source-assets.ps1",
+    "build:h5": "node scripts/clean-build.mjs h5 && uni build -p h5 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/copy-h5-source-assets.ps1",
     "dev:mp-weixin": "uni -p mp-weixin",
-    "build:mp-weixin": "uni build -p mp-weixin",
+    "build:mp-weixin": "node scripts/clean-build.mjs mp-weixin && uni build -p mp-weixin && node scripts/check-mp-package-size.mjs",
+    "generate:car-audio": "node scripts/generate-car-name-audio.mjs",
     "type-check": "vue-tsc --noEmit",
     "validate:content": "node scripts/validate-content.mjs",
     "check:release": "node scripts/validate-content.mjs --release",

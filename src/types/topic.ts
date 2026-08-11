@@ -6,6 +6,8 @@ export interface TopicWord {
   sentence: string;
   sentenceCn: string;
   image: string;
+  flagImage?: string;
+  mapImage?: string;
   audio: string;
   group: string;
 }

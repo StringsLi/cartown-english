@@ -1,4 +1,3 @@
-import { flagIcon } from "@/mock/topicAssets";
 import { phraseAudioPath } from "@/services/audioCatalog";
 import type { TopicWord } from "@/types/topic";
 
@@ -65,6 +64,9 @@ const countrySeeds: CountrySeed[] = [
   { slug: "new-zealand", word: "New Zealand", phonetic: "/nuː ˈziːlənd/", meaning: "新西兰", sentence: "New Zealand has many sheep.", sentenceCn: "新西兰有许多绵羊。", group: "oceania" }
 ];
 
+const countryMapImage = (slug: string) => `/static/country-maps/${slug}.png`;
+const countryFlagImage = (slug: string) => `/static/country-flags/${slug}.png`;
+
 export const countryWords: TopicWord[] = countrySeeds.map((country) => ({
   id: `country_${country.slug.replace(/-/g, "_")}`,
   word: country.word,
@@ -72,7 +74,9 @@ export const countryWords: TopicWord[] = countrySeeds.map((country) => ({
   meaning: country.meaning,
   sentence: country.sentence,
   sentenceCn: country.sentenceCn,
-  image: flagIcon(country.slug),
+  image: countryFlagImage(country.slug),
+  flagImage: countryFlagImage(country.slug),
+  mapImage: countryMapImage(country.slug),
   audio: phraseAudioPath(`${country.word}. ${country.sentence}`),
   group: country.group
 }));
