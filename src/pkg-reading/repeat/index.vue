@@ -63,8 +63,8 @@ import { onLoad, onUnload } from "@dcloudio/uni-app";
 import AudioButton from "@/components/AudioButton.vue";
 import BigButton from "@/components/BigButton.vue";
 import { getBookById, getBookPages, getTodayBook } from "@/services/bookService";
-import { exportRepeatRecordArchive, importRepeatRecordArchive } from "@/services/recordArchiveService";
-import { playRecord, saveRepeatRecord, startRecord, stopRecord } from "@/services/recordService";
+import { exportRepeatRecordArchive, importRepeatRecordArchive } from "@/pkg-reading/services/recordArchiveService";
+import { playRecord, saveRepeatRecord, startRecord, stopRecord } from "@/pkg-reading/services/recordService";
 import { getRepeatRecords } from "@/services/progressService";
 import { usePageShare } from "@/composables/usePageShare";
 

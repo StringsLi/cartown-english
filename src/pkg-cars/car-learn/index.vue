@@ -61,8 +61,8 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import BigButton from "@/components/BigButton.vue";
-import BestSellingCarPhoto from "@/components/BestSellingCarPhoto.vue";
-import { bestSellingCars } from "@/mock/bestSellingCars";
+import BestSellingCarPhoto from "@/pkg-cars/BestSellingCarPhoto.vue";
+import { bestSellingCars } from "@/pkg-cars/bestSellingCars";
 import { playAudio } from "@/services/audioService";
 import { completeCartownVehicle, getCartownProgress, saveCartownProgress } from "@/services/cartownProgressService";
 import { usePageShare } from "@/composables/usePageShare";

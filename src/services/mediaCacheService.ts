@@ -61,12 +61,6 @@ let cacheIndex: CacheIndex | null = null;
 
 export async function resolveCachedMedia(source: string, kind: MediaKind): Promise<string> {
   const asset = highResolutionAsset(source);
-
-  // #ifndef MP-WEIXIN
-  return asset;
-  // #endif
-
-  // #ifdef MP-WEIXIN
   if (!asset || (!isCloudAsset(asset) && !/^https?:\/\//i.test(asset))) {
     return asset;
   }
@@ -91,7 +85,6 @@ export async function resolveCachedMedia(source: string, kind: MediaKind): Promi
 
   inFlight.set(asset, request);
   return request;
-  // #endif
 }
 
 export async function preloadCachedMedia(items: MediaPreloadItem[]): Promise<void> {
@@ -105,14 +98,12 @@ export async function preloadCachedMedia(items: MediaPreloadItem[]): Promise<voi
 }
 
 export function clearMediaCache(): void {
-  // #ifdef MP-WEIXIN
   const index = getCacheIndex();
   for (const entry of Object.values(index.entries)) {
     removeSavedFile(entry.path);
   }
   cacheIndex = { version: CACHE_VERSION, entries: {} };
   persistIndex();
-  // #endif
 }
 
 async function downloadAndCache(asset: string, kind: MediaKind): Promise<string> {

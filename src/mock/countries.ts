@@ -64,8 +64,8 @@ const countrySeeds: CountrySeed[] = [
   { slug: "new-zealand", word: "New Zealand", phonetic: "/nuː ˈziːlənd/", meaning: "新西兰", sentence: "New Zealand has many sheep.", sentenceCn: "新西兰有许多绵羊。", group: "oceania" }
 ];
 
-const countryMapImage = (slug: string) => `/static/country-maps/${slug}.png`;
-const countryFlagImage = (slug: string) => `/static/country-flags/${slug}.png`;
+const countryMapImage = (slug: string) => `/pkg-world/static/country-maps/${slug}.png`;
+const countryFlagImage = (slug: string) => `/pkg-world/static/country-flags/${slug}.png`;
 
 export const countryWords: TopicWord[] = countrySeeds.map((country) => ({
   id: `country_${country.slug.replace(/-/g, "_")}`,

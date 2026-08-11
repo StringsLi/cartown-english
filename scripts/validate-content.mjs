@@ -88,11 +88,11 @@ for (const country of countries) {
     "Missing original flag: " + country
   );
   await requireFile(
-    path.join(sourceRoot, "static", "country-flags", country + ".png"),
+    path.join(sourceRoot, "pkg-world", "static", "country-flags", country + ".png"),
     "Missing local rectangular flag: " + country
   );
   await requireFile(
-    path.join(sourceRoot, "static", "country-maps", country + ".png"),
+    path.join(sourceRoot, "pkg-world", "static", "country-maps", country + ".png"),
     "Missing local country map: " + country
   );
 }

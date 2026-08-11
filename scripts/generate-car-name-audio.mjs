@@ -4,7 +4,7 @@ import path from "node:path";
 import ts from "typescript";
 
 const root = process.cwd();
-const sourcePath = path.join(root, "src", "mock", "bestSellingCars.ts");
+const sourcePath = path.join(root, "src", "pkg-cars", "bestSellingCars.ts");
 const outputDirectory = path.join(root, "src", "static", "audio", "car-models");
 const sourceText = await readFile(sourcePath, "utf8");
 const source = ts.createSourceFile(sourcePath, sourceText, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);

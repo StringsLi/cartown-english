@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import type { BestSellingCar } from "@/mock/bestSellingCars";
+import type { BestSellingCar } from "@/pkg-cars/bestSellingCars";
 
 defineProps<{
   vehicle: BestSellingCar;

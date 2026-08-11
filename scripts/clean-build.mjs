@@ -1,11 +1,10 @@
 import { readdir, rm } from "node:fs/promises";
 import path from "node:path";
 
-const supportedTargets = new Set(["h5", "mp-weixin"]);
 const target = process.argv[2];
 
-if (!supportedTargets.has(target)) {
-  throw new Error("Build target must be h5 or mp-weixin.");
+if (target !== "mp-weixin") {
+  throw new Error("Build target must be mp-weixin.");
 }
 
 const outputDirectory = path.join(process.cwd(), "dist", "build", target);

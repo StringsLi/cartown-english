@@ -1,11 +1,7 @@
 import { getRepeatRecords, mergeRepeatRecords } from "@/services/progressService";
 import type { RepeatRecord } from "@/types/book";
 
-declare const wx: {
-  env: {
-    USER_DATA_PATH: string;
-  };
-};
+declare const wx: { env: { USER_DATA_PATH: string } };
 
 const ARCHIVE_VERSION = 1;
 const MAX_ARCHIVE_RECORDS = 12;
@@ -45,24 +41,12 @@ export async function exportRepeatRecordArchive(): Promise<number> {
     exportedAt: new Date().toISOString(),
     records: await Promise.all(records.map(toArchiveRecord))
   };
-  const content = JSON.stringify(archive, null, 2);
-
-  // #ifdef H5
-  downloadArchive(content);
-  return archive.records.length;
-  // #endif
-
-  // #ifdef MP-WEIXIN
-  await saveMiniProgramArchive(content);
-  return archive.records.length;
-  // #endif
-
+  await saveMiniProgramArchive(JSON.stringify(archive, null, 2));
   return archive.records.length;
 }
 
 export async function importRepeatRecordArchive(): Promise<RecordArchiveResult> {
-  const content = await chooseArchiveFile();
-  return restoreArchive(content);
+  return restoreArchive(await chooseArchiveFile());
 }
 
 export async function restoreArchive(content: string): Promise<RecordArchiveResult> {
@@ -76,7 +60,6 @@ export async function restoreArchive(content: string): Promise<RecordArchiveResu
       skipped += 1;
       continue;
     }
-
     restored.push({
       userId: "local_child",
       bookId: record.bookId,
@@ -91,7 +74,7 @@ export async function restoreArchive(content: string): Promise<RecordArchiveResu
   return {
     total: archive.records.length,
     restored: merged.added,
-    skipped: skipped + (restored.length - merged.added)
+    skipped: skipped + restored.length - merged.added
   };
 }
 
@@ -106,11 +89,8 @@ async function toArchiveRecord(record: RepeatRecord): Promise<RepeatArchiveRecor
 }
 
 async function serialiseAudio(audioUrl: string): Promise<ArchiveAudio> {
-  if (audioUrl.startsWith("data:audio/")) {
-    return { encoding: "data-url", value: audioUrl };
-  }
+  if (audioUrl.startsWith("data:audio/")) return { encoding: "data-url", value: audioUrl };
 
-  // #ifdef MP-WEIXIN
   try {
     const base64 = await readMiniProgramFile(audioUrl, "base64");
     if (base64.length > MAX_AUDIO_BYTES * 1.4) return { encoding: "unavailable" };
@@ -118,22 +98,15 @@ async function serialiseAudio(audioUrl: string): Promise<ArchiveAudio> {
   } catch {
     return { encoding: "unavailable" };
   }
-  // #endif
-
-  return { encoding: "unavailable" };
 }
 
 async function restoreAudio(audio: ArchiveAudio): Promise<string | null> {
   if (audio.encoding === "data-url") {
     return audio.value.length <= MAX_AUDIO_BYTES * 1.5 ? audio.value : null;
   }
-
-  // #ifdef MP-WEIXIN
   if (audio.encoding === "base64" && audio.value.length <= MAX_AUDIO_BYTES * 1.4) {
-    return await writeMiniProgramAudio(audio.value);
+    return writeMiniProgramAudio(audio.value);
   }
-  // #endif
-
   return null;
 }
 
@@ -142,98 +115,54 @@ function parseArchive(content: string): RepeatArchive {
   try {
     parsed = JSON.parse(content);
   } catch {
-    throw new Error("备份文件不是有效的 JSON。");
+    throw new Error("The backup file is not valid JSON.");
   }
-
-  if (!isRepeatArchive(parsed)) {
-    throw new Error("这不是车车英语的录音备份文件。");
-  }
-
+  if (!isRepeatArchive(parsed)) throw new Error("This is not a supported recording backup.");
   return parsed;
 }
 
 function isRepeatArchive(value: unknown): value is RepeatArchive {
   if (!value || typeof value !== "object") return false;
   const archive = value as Partial<RepeatArchive>;
-  return archive.kind === "cartown-repeat-records" && archive.version === ARCHIVE_VERSION && Array.isArray(archive.records);
+  return archive.kind === "cartown-repeat-records"
+    && archive.version === ARCHIVE_VERSION
+    && Array.isArray(archive.records);
 }
 
 async function chooseArchiveFile(): Promise<string> {
-  // #ifdef H5
-  return await chooseBrowserFile();
-  // #endif
+  const chooseMessageFile = (uni as typeof uni & {
+    chooseMessageFile(options: {
+      count: number;
+      type: "file";
+      extension: string[];
+      success(result: { tempFiles: Array<{ path: string }> }): void;
+      fail(error: unknown): void;
+    }): void;
+  }).chooseMessageFile;
 
-  // #ifdef MP-WEIXIN
   const result = await new Promise<{ tempFilePath: string }>((resolve, reject) => {
-    const chooseFile = (uni as typeof uni & {
-      chooseMessageFile(options: {
-        count: number;
-        type: "file";
-        extension: string[];
-        success(result: { tempFiles: Array<{ path: string }> }): void;
-        fail(error: unknown): void;
-      }): void;
-    }).chooseMessageFile;
-    chooseFile({
+    chooseMessageFile({
       count: 1,
       type: "file",
       extension: ["json"],
       success: (selection) => {
-        const file = selection.tempFiles[0];
-        if (!file?.path) {
-          reject(new Error("没有选择备份文件。"));
-          return;
-        }
-        resolve({ tempFilePath: file.path });
+        const path = selection.tempFiles[0]?.path;
+        if (path) resolve({ tempFilePath: path });
+        else reject(new Error("No backup file was selected."));
       },
       fail: reject
     });
   });
-  return await readMiniProgramFile(result.tempFilePath, "utf8");
-  // #endif
-
-  throw new Error("当前平台暂不支持导入录音备份。");
-}
-
-function chooseBrowserFile(): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "application/json,.json";
-    input.onchange = () => {
-      const file = input.files?.[0];
-      if (!file) {
-        reject(new Error("没有选择备份文件。"));
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result || ""));
-      reader.onerror = () => reject(new Error("无法读取备份文件。"));
-      reader.readAsText(file, "utf-8");
-    };
-    input.click();
-  });
-}
-
-function downloadArchive(content: string): void {
-  const blob = new Blob([content], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `cartown-repeat-records-${dateStamp()}.json`;
-  link.click();
-  URL.revokeObjectURL(url);
+  return readMiniProgramFile(result.tempFilePath, "utf8");
 }
 
 async function saveMiniProgramArchive(content: string): Promise<void> {
   const manager = uni.getFileSystemManager();
-  const userDataPath = (wx as typeof wx & { env: { USER_DATA_PATH: string } }).env.USER_DATA_PATH;
-  const filePath = `${userDataPath}/cartown-repeat-records-${dateStamp()}.json`;
+  const filePath = `${wx.env.USER_DATA_PATH}/cartown-repeat-records-${dateStamp()}.json`;
 
   await new Promise<void>((resolve, reject) => {
     manager.writeFile({ filePath, data: content, encoding: "utf8", success: () => resolve(), fail: reject });
   });
-
   await new Promise<void>((resolve) => {
     uni.openDocument({ filePath, showMenu: true, success: () => resolve(), fail: () => resolve() });
   });
@@ -253,9 +182,7 @@ function readMiniProgramFile(filePath: string, encoding: "utf8" | "base64"): Pro
 
 async function writeMiniProgramAudio(base64: string): Promise<string> {
   const manager = uni.getFileSystemManager();
-  const userDataPath = (wx as typeof wx & { env: { USER_DATA_PATH: string } }).env.USER_DATA_PATH;
-  const filePath = `${userDataPath}/cartown-repeat-import-${Date.now()}.mp3`;
-
+  const filePath = `${wx.env.USER_DATA_PATH}/cartown-repeat-import-${Date.now()}.mp3`;
   await new Promise<void>((resolve, reject) => {
     manager.writeFile({ filePath, data: base64, encoding: "base64", success: () => resolve(), fail: reject });
   });
