@@ -1,4 +1,3 @@
-import { getRepeatRecords, mergeRepeatRecords } from "@/services/progressService";
 import type { RepeatRecord } from "@/types/book";
 
 declare const wx: { env: { USER_DATA_PATH: string } };
@@ -29,12 +28,12 @@ interface RepeatArchive {
 
 export interface RecordArchiveResult {
   total: number;
-  restored: number;
   skipped: number;
+  records: RepeatRecord[];
 }
 
-export async function exportRepeatRecordArchive(): Promise<number> {
-  const records = getRepeatRecords().slice(0, MAX_ARCHIVE_RECORDS);
+export async function exportRepeatRecordArchive(sourceRecords: RepeatRecord[]): Promise<number> {
+  const records = sourceRecords.slice(0, MAX_ARCHIVE_RECORDS);
   const archive: RepeatArchive = {
     kind: "cartown-repeat-records",
     version: ARCHIVE_VERSION,
@@ -70,11 +69,10 @@ export async function restoreArchive(content: string): Promise<RecordArchiveResu
     });
   }
 
-  const merged = mergeRepeatRecords(restored);
   return {
     total: archive.records.length,
-    restored: merged.added,
-    skipped: skipped + restored.length - merged.added
+    skipped,
+    records: restored
   };
 }
 

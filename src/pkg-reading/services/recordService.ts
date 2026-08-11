@@ -1,8 +1,5 @@
-import { playAudio } from "@/services/audioService";
-import { saveRepeatRecord as saveRepeatRecordToStorage } from "@/services/progressService";
-import type { RepeatRecord } from "@/types/book";
-
 let recorderManager: UniApp.RecorderManager | null = null;
+let recordAudio: UniApp.InnerAudioContext | null = null;
 
 function getRecorderManager(): UniApp.RecorderManager {
   if (!recorderManager) recorderManager = uni.getRecorderManager();
@@ -44,11 +41,22 @@ export function stopRecord(): Promise<string> {
 }
 
 export function playRecord(filePath: string): void {
-  playAudio(filePath);
+  recordAudio?.destroy();
+  const audio = uni.createInnerAudioContext();
+  recordAudio = audio;
+  audio.src = filePath;
+  audio.autoplay = true;
+  audio.onEnded(() => destroyRecordAudio(audio));
+  audio.onError(() => {
+    destroyRecordAudio(audio);
+    uni.showToast({ title: "录音播放失败", icon: "none" });
+  });
 }
 
-export function saveRepeatRecord(record: Omit<RepeatRecord, "userId" | "createdAt">): RepeatRecord {
-  return saveRepeatRecordToStorage(record);
+function destroyRecordAudio(audio: UniApp.InnerAudioContext): void {
+  if (recordAudio !== audio) return;
+  audio.destroy();
+  recordAudio = null;
 }
 
 async function ensureRecordPermission(): Promise<void> {

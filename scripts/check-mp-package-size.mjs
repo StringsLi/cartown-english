@@ -14,6 +14,7 @@ const forbiddenMainFiles = [
   "services/recordService.js"
 ];
 const packageSizes = new Map();
+const outputFiles = await listFiles(outputRoot);
 
 packageSizes.set("main", await directorySize(outputRoot, new Set(packageRoots)));
 for (const packageRoot of packageRoots) {
@@ -41,7 +42,7 @@ for (const relativePath of forbiddenMainFiles) {
   }
 }
 
-for (const filePath of await listFiles(outputRoot)) {
+for (const filePath of outputFiles) {
   if (!mediaExtensions.has(path.extname(filePath).toLowerCase())) continue;
   const bytes = (await stat(filePath)).size;
   if (bytes > mediaLimit) {
@@ -50,7 +51,31 @@ for (const filePath of await listFiles(outputRoot)) {
   }
 }
 
+for (const filePath of outputFiles.filter((item) => path.extname(item) === ".js" && isMainPackageFile(item))) {
+  const content = await readFile(filePath, "utf8");
+  const requirePattern = /require\(["']([^"']+)["']\)/g;
+  let match;
+  while ((match = requirePattern.exec(content))) {
+    const request = match[1];
+    const prefix = content.slice(Math.max(0, match.index - 40), match.index);
+    if (!request.startsWith(".") || /Promise\.resolve\(\)\.then\(\(\)=>\s*$/.test(prefix)) continue;
+
+    const resolved = path.resolve(path.dirname(filePath), request);
+    const relative = path.relative(outputRoot, resolved).split(path.sep).join("/");
+    const targetPackage = packageRoots.find((root) => relative === root || relative.startsWith(`${root}/`));
+    if (targetPackage) {
+      console.error(`Main-package JS synchronously requires ${targetPackage}: ${path.relative(outputRoot, filePath)} -> ${request}`);
+      hasQualityFailure = true;
+    }
+  }
+}
+
 if (hasQualityFailure) process.exit(1);
+
+function isMainPackageFile(filePath) {
+  const relative = path.relative(outputRoot, filePath).split(path.sep).join("/");
+  return !packageRoots.some((root) => relative === root || relative.startsWith(`${root}/`));
+}
 
 async function directorySize(directory, excludedTopLevelDirectories = new Set()) {
   const entries = await readdir(directory, { withFileTypes: true });

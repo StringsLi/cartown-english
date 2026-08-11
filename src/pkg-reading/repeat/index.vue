@@ -64,8 +64,8 @@ import AudioButton from "@/components/AudioButton.vue";
 import BigButton from "@/components/BigButton.vue";
 import { getBookById, getBookPages, getTodayBook } from "@/services/bookService";
 import { exportRepeatRecordArchive, importRepeatRecordArchive } from "@/pkg-reading/services/recordArchiveService";
-import { playRecord, saveRepeatRecord, startRecord, stopRecord } from "@/pkg-reading/services/recordService";
-import { getRepeatRecords } from "@/services/progressService";
+import { playRecord, startRecord, stopRecord } from "@/pkg-reading/services/recordService";
+import { getRepeatRecords, mergeRepeatRecords, saveRepeatRecord } from "@/services/progressService";
 import { usePageShare } from "@/composables/usePageShare";
 
 usePageShare();
@@ -168,7 +168,7 @@ function playMyRecord() {
 
 async function exportRecords() {
   try {
-    const count = await exportRepeatRecordArchive();
+    const count = await exportRepeatRecordArchive(getRepeatRecords());
     uni.showToast({ title: count ? `已导出 ${count} 条录音` : "暂无录音可导出", icon: "none" });
   } catch {
     uni.showToast({ title: "导出失败，请重试", icon: "none" });
@@ -177,9 +177,10 @@ async function exportRecords() {
 
 async function importRecords() {
   try {
-    const result = await importRepeatRecordArchive();
+    const archive = await importRepeatRecordArchive();
+    const result = mergeRepeatRecords(archive.records);
     savedRecordCount.value = getRepeatRecords().length;
-    uni.showToast({ title: result.restored ? `已恢复 ${result.restored} 条录音` : "没有新的录音需要恢复", icon: "none" });
+    uni.showToast({ title: result.added ? `已恢复 ${result.added} 条录音` : "没有新的录音需要恢复", icon: "none" });
   } catch (error) {
     const message = error instanceof Error ? error.message : "导入失败，请选择录音备份文件";
     uni.showToast({ title: message, icon: "none" });
