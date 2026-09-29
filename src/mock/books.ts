@@ -1,5 +1,6 @@
 import type { Book, BookLevel, BookPage, BookTheme, Hotspot, ParentTip, VehicleStoryId, Word } from "@/types/book";
 import { highResolutionAsset } from "@/services/assetService";
+import { phraseAudioPath } from "@/services/audioCatalog";
 
 export type ThemeFilterValue = BookTheme | "All";
 
@@ -398,7 +399,7 @@ export const mockBookPages: BookPage[] = pageContent.flatMap((book) =>
       sentence,
       sentenceCn: book.sentenceCn[pageOffset],
       audio: book.imageRoot
-        ? highResolutionAsset(`/static/audio/words/${book.vehicleStoryId}.mp3`)
+        ? phraseAudioPath(sentence)
         : highResolutionAsset(`/static/audio/${book.vehicleStoryId ?? book.folder}/page${pageNumber}.mp3`),
       hotspots: [makeHotspot(book.hotspotWords[pageOffset], pageIndex)],
       vehicleStoryId: book.vehicleStoryId

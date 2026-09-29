@@ -11,7 +11,7 @@ const requiredGroups = {
   "books-original": 69,
   "topic-icons-original": 92,
   "cartown-logos-original": 50,
-  "audio-original": 367
+  "audio-original": 377
 };
 
 for (const [group, expected] of Object.entries(requiredGroups)) {
@@ -99,12 +99,23 @@ for (const country of countries) {
 
 const phraseDirectory = path.join(assetRoot, "audio-original", "phrases");
 const phraseFiles = (await readdir(phraseDirectory)).filter((fileName) => fileName.endsWith(".mp3"));
-if (phraseFiles.length !== 253) {
-  errors.push("Expected 253 original phrase audio files, found " + phraseFiles.length + ".");
+if (phraseFiles.length !== 263) {
+  errors.push("Expected 263 original phrase audio files, found " + phraseFiles.length + ".");
 }
 for (const fileName of phraseFiles) {
   const details = await stat(path.join(phraseDirectory, fileName));
   if (details.size < 1024) errors.push("Original phrase audio is empty or invalid: " + fileName);
+}
+
+const packagedBookPhraseFiles = [
+  "01842735.mp3", "3cb635ae.mp3", "7142b4f4.mp3", "7e297770.mp3", "96f3858c.mp3",
+  "9dd6ec65.mp3", "a0619613.mp3", "a3530ee2.mp3", "b559cddd.mp3", "ebb03227.mp3"
+];
+for (const fileName of packagedBookPhraseFiles) {
+  await requireFile(
+    path.join(sourceRoot, "pkg-reading", "static", "audio", "phrases", fileName),
+    "Missing packaged picture-book phrase audio: " + fileName
+  );
 }
 
 const carAudioDirectory = path.join(sourceRoot, "static", "audio", "car-models");

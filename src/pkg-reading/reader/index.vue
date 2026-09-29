@@ -85,7 +85,7 @@ import { onHide, onLoad, onShow, onUnload } from "@dcloudio/uni-app";
 import BigButton from "@/components/BigButton.vue";
 import CachedImage from "@/components/CachedImage.vue";
 import VehicleStoryArt from "@/components/VehicleStoryArt.vue";
-import { playAudio, speakEnglish } from "@/services/audioService";
+import { playAudio } from "@/services/audioService";
 import { phraseAudioPath } from "@/services/audioCatalog";
 import { preloadCachedMedia, type MediaPreloadItem } from "@/services/mediaCacheService";
 import { getBookById, getBookPages, getTodayBook } from "@/services/bookService";
@@ -189,7 +189,7 @@ function preloadUpcomingPages() {
 
   upcomingPages.forEach((page) => {
     if (page.image) items.push({ source: page.image, kind: "image" });
-    if (page.sentence) items.push({ source: phraseAudioPath(page.sentence), kind: "audio" });
+    if (page.sentence) items.push({ source: page.audio || phraseAudioPath(page.sentence), kind: "audio" });
     page.hotspots.forEach((hotspot) => {
       if (hotspot.audio) items.push({ source: hotspot.audio, kind: "audio" });
     });
@@ -205,7 +205,9 @@ function flushReadingDuration() {
 }
 
 function playCurrentPage() {
-  if (currentPage.value) speakEnglish(currentPage.value.sentence);
+  if (currentPage.value) {
+    playAudio(currentPage.value.audio || phraseAudioPath(currentPage.value.sentence), currentPage.value.sentence);
+  }
 }
 
 function playHotspot(hotspot: Hotspot) {
