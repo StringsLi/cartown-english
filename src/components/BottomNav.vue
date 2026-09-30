@@ -24,7 +24,7 @@ const props = defineProps<{
 const navItems: Array<{ id: NavId; label: string; icon: string; path: string }> = [
   { id: "home", label: "首页", icon: "⌂", path: "/pages/index/index" },
   { id: "books", label: "绘本馆", icon: "▤", path: "/pages/books/index" },
-  { id: "learn", label: "主题学习", icon: "A·Z", path: "/pages/vehicles/index" },
+  { id: "learn", label: "英语乐园", icon: "A·Z", path: "/pkg-learning/playground/index" },
   { id: "parent", label: "家长", icon: "◎", path: "/pkg-user/parent/index" }
 ];
 

@@ -128,6 +128,22 @@ for (const fileName of carAudioFiles) {
   if (details.size < 1024) errors.push("Car model pronunciation is empty or invalid: " + fileName);
 }
 
+const playgroundAudioDirectory = path.join(sourceRoot, "pkg-learning", "static", "playground-audio");
+const playgroundAudioFiles = (await readdir(playgroundAudioDirectory)).filter((fileName) => fileName.endsWith(".wav"));
+if (playgroundAudioFiles.length !== 24) {
+  errors.push("Expected 24 bundled playground audio files, found " + playgroundAudioFiles.length + ".");
+}
+for (const fileName of playgroundAudioFiles) {
+  const audioFile = await readFile(path.join(playgroundAudioDirectory, fileName));
+  if (audioFile.length < 1024 || audioFile.toString("ascii", 0, 4) !== "RIFF") {
+    errors.push("Playground audio is empty or invalid: " + fileName);
+  }
+}
+await requireFile(
+  path.join(sourceRoot, "pkg-learning", "static", "playground", "friends.jpg"),
+  "Missing playground illustration."
+);
+
 const cloudConfig = await readFile(path.join(sourceRoot, "config", "cloud.ts"), "utf8");
 if (!cloudConfig.includes("cloud1-d5gbtry8n16a02de8")) {
   errors.push("CloudBase environment ID is not configured for the selected environment.");
@@ -167,7 +183,8 @@ console.log(
   "Content validation passed: " + totalHighResolutionFiles +
   " high-resolution source assets, " + phraseFiles.length +
   " phrase audios, " + carAudioFiles.length +
-  " car model audios, " + countries.length + " countries."
+  " car model audios, " + playgroundAudioFiles.length +
+  " playground audios, " + countries.length + " countries."
 );
 
 async function requireFile(filePath, message) {

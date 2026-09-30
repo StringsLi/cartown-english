@@ -17,6 +17,7 @@ export interface CartownProgress {
   colorQuestionsDone: number;
   countQuestionsDone: number;
   trafficTurnsDone: number;
+  playgroundCompletedTopicIds: string[];
 }
 
 const defaultProgress: CartownProgress = {
@@ -29,7 +30,8 @@ const defaultProgress: CartownProgress = {
   storyPageIndex: 0,
   colorQuestionsDone: 0,
   countQuestionsDone: 0,
-  trafficTurnsDone: 0
+  trafficTurnsDone: 0,
+  playgroundCompletedTopicIds: []
 };
 
 export function getCartownProgress(): CartownProgress {
@@ -38,7 +40,8 @@ export function getCartownProgress(): CartownProgress {
     cachedProgress = {
       ...defaultProgress,
       ...(stored ?? {}),
-      learnedVehicleIds: stored?.learnedVehicleIds ?? []
+      learnedVehicleIds: stored?.learnedVehicleIds ?? [],
+      playgroundCompletedTopicIds: stored?.playgroundCompletedTopicIds ?? []
     };
   }
   return cachedProgress;
@@ -68,6 +71,19 @@ export function addCartownStar(count = 1): CartownProgress {
   return saveCartownProgress({
     stars: current.stars + count
   });
+}
+
+export function completePlaygroundTopic(topicId: string): { earned: boolean; progress: CartownProgress } {
+  const current = getCartownProgress();
+  if (!topicId || current.playgroundCompletedTopicIds.includes(topicId)) {
+    return { earned: false, progress: current };
+  }
+
+  const progress = saveCartownProgress({
+    playgroundCompletedTopicIds: [...current.playgroundCompletedTopicIds, topicId],
+    stars: current.stars + 1
+  });
+  return { earned: true, progress };
 }
 
 export function completeCartownVehicle(vehicleId: string): { earned: boolean; progress: CartownProgress } {

@@ -24,7 +24,7 @@ onLaunch(() => {
     if (src) void resolveCachedMedia(src, "image");
   });
 
-  console.log("车车探索小助手 launched", { cloudReady });
+  console.log("车车英语乐园 launched", { cloudReady });
 });
 
 onHide(() => {

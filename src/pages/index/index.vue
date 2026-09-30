@@ -3,7 +3,7 @@
     <view class="brand-row">
       <view class="brand-copy">
         <text class="brand-kicker">CAR EXPLORER</text>
-        <text class="brand-title">车车探索小助手</text>
+        <text class="brand-title">车车英语乐园</text>
         <text class="brand-greeting">{{ childName }}，今天想开哪辆车出发？</text>
       </view>
       <button class="star-pill" aria-label="查看奖励车库" @tap="goGarage">
@@ -36,6 +36,16 @@
       </view>
       <view class="route-strip__road" />
     </view>
+
+    <button class="playground-entry soft-card" @tap="goPlayground">
+      <view class="playground-entry__symbol">★</view>
+      <view class="playground-entry__copy">
+        <text class="playground-entry__eyebrow">NEW · PARENT & CHILD</text>
+        <text class="playground-entry__title">小小英语乐园</text>
+        <text class="playground-entry__desc">颜色、动物、食物、动作，听一听再一起玩。</text>
+      </view>
+      <text class="playground-entry__arrow">›</text>
+    </button>
 
     <view class="section-head">
       <view>
@@ -172,6 +182,10 @@ function goLogos() {
 
 function goGarage() {
   uni.navigateTo({ url: "/pkg-learning/car-garage/index" });
+}
+
+function goPlayground() {
+  uni.navigateTo({ url: "/pkg-learning/playground/index" });
 }
 </script>
 
@@ -392,6 +406,38 @@ function goGarage() {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16rpx;
 }
+
+.playground-entry {
+  display: grid;
+  grid-template-columns: 78rpx 1fr 28rpx;
+  gap: 17rpx;
+  align-items: center;
+  width: 100%;
+  margin-top: 24rpx;
+  padding: 20rpx 22rpx;
+  text-align: left;
+  background: #eaf3e5;
+}
+
+.playground-entry__symbol {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 20rpx;
+  font-size: 43rpx;
+  color: #fff3b4;
+  background: #4b8063;
+}
+
+.playground-entry__eyebrow,
+.playground-entry__title,
+.playground-entry__desc { display: block; }
+.playground-entry__eyebrow { font-size: 16rpx; font-weight: 900; color: #4b8063; letter-spacing: 1rpx; }
+.playground-entry__title { margin-top: 4rpx; font-size: 27rpx; font-weight: 900; color: $color-primary-dark; }
+.playground-entry__desc { margin-top: 5rpx; font-size: 19rpx; line-height: 1.4; color: $color-muted; }
+.playground-entry__arrow { font-size: 37rpx; font-weight: 800; color: #4b8063; }
 
 .mission-card {
   position: relative;
