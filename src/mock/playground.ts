@@ -39,19 +39,19 @@ export const playgroundTopics: PlaygroundTopic[] = [
     description: "看看车车是什么颜色",
     tint: "#fff0db",
     items: [
-      { id: "red", word: "red", label: "红色", symbol: "🚗", color: "#df5c51", prompt: "Find something red.", audio: `${audioRoot}/colors-red.wav` },
-      { id: "blue", word: "blue", label: "蓝色", symbol: "🚙", color: "#477db8", prompt: "Find something blue.", audio: `${audioRoot}/colors-blue.wav` },
-      { id: "yellow", word: "yellow", label: "黄色", symbol: "🚕", color: "#efc548", prompt: "Find something yellow.", audio: `${audioRoot}/colors-yellow.wav` },
-      { id: "green", word: "green", label: "绿色", symbol: "🚗", color: "#6ea66e", prompt: "Find something green.", audio: `${audioRoot}/colors-green.wav` }
+      { id: "red", word: "red", label: "红色", symbol: "🚗", color: "#df5c51", prompt: "Find something red.", audio: `${audioRoot}/colors-red.mp3` },
+      { id: "blue", word: "blue", label: "蓝色", symbol: "🚙", color: "#477db8", prompt: "Find something blue.", audio: `${audioRoot}/colors-blue.mp3` },
+      { id: "yellow", word: "yellow", label: "黄色", symbol: "🚕", color: "#efc548", prompt: "Find something yellow.", audio: `${audioRoot}/colors-yellow.mp3` },
+      { id: "green", word: "green", label: "绿色", symbol: "🚗", color: "#6ea66e", prompt: "Find something green.", audio: `${audioRoot}/colors-green.mp3` }
     ],
     parentPhrase: "Find something blue!",
     parentTip: "在家里找一件蓝色的东西，找到后一起说 “I found it!”。",
     offlineTask: "找两件蓝色物品，和家长比一比谁先找到。",
     story: "I see a blue car. I see a red apple. Colors are everywhere!",
-    storyAudio: `${audioRoot}/colors-story.wav`,
+    storyAudio: `${audioRoot}/colors-story.mp3`,
     chantTitle: "彩色车车歌",
     chantLyrics: ["Red car, blue car, drive around!", "Yellow car, green car, slow down!"],
-    chantAudio: `${audioRoot}/colors-chant.wav`
+    chantAudio: `${audioRoot}/colors-chant.mp3`
   },
   {
     id: "animals",
@@ -61,19 +61,19 @@ export const playgroundTopics: PlaygroundTopic[] = [
     description: "找一找动物朋友",
     tint: "#fff3d2",
     items: [
-      { id: "lion", word: "lion", label: "狮子", symbol: "🦁", prompt: "Find the lion.", audio: `${audioRoot}/animals-lion.wav` },
-      { id: "elephant", word: "elephant", label: "大象", symbol: "🐘", prompt: "Find the elephant.", audio: `${audioRoot}/animals-elephant.wav` },
-      { id: "monkey", word: "monkey", label: "猴子", symbol: "🐒", prompt: "Find the monkey.", audio: `${audioRoot}/animals-monkey.wav` },
-      { id: "penguin", word: "penguin", label: "企鹅", symbol: "🐧", prompt: "Find the penguin.", audio: `${audioRoot}/animals-penguin.wav` }
+      { id: "lion", word: "lion", label: "狮子", symbol: "🦁", prompt: "Find the lion.", audio: `${audioRoot}/animals-lion.mp3` },
+      { id: "elephant", word: "elephant", label: "大象", symbol: "🐘", prompt: "Find the elephant.", audio: `${audioRoot}/animals-elephant.mp3` },
+      { id: "monkey", word: "monkey", label: "猴子", symbol: "🐒", prompt: "Find the monkey.", audio: `${audioRoot}/animals-monkey.mp3` },
+      { id: "penguin", word: "penguin", label: "企鹅", symbol: "🐧", prompt: "Find the penguin.", audio: `${audioRoot}/animals-penguin.mp3` }
     ],
     parentPhrase: "Where is the lion?",
     parentTip: "拿玩具或绘本里的动物来玩，找到后模仿它的动作或叫声。",
     offlineTask: "找一只玩具动物，用英语说出名字，再学它走路。",
     story: "Here is a lion. The lion can run. Hello, lion!",
-    storyAudio: `${audioRoot}/animals-story.wav`,
+    storyAudio: `${audioRoot}/animals-story.mp3`,
     chantTitle: "动物朋友歌",
     chantLyrics: ["Lion, lion, wave hello!", "Monkey, penguin, here we go!"],
-    chantAudio: `${audioRoot}/animals-chant.wav`
+    chantAudio: `${audioRoot}/animals-chant.mp3`
   },
   {
     id: "food",
@@ -83,19 +83,19 @@ export const playgroundTopics: PlaygroundTopic[] = [
     description: "认识喜欢的水果",
     tint: "#e9f4e4",
     items: [
-      { id: "apple", word: "apple", label: "苹果", symbol: "🍎", prompt: "Find the apple.", audio: `${audioRoot}/food-apple.wav` },
-      { id: "banana", word: "banana", label: "香蕉", symbol: "🍌", prompt: "Find the banana.", audio: `${audioRoot}/food-banana.wav` },
-      { id: "grapes", word: "grapes", label: "葡萄", symbol: "🍇", prompt: "Find the grapes.", audio: `${audioRoot}/food-grapes.wav` },
-      { id: "watermelon", word: "watermelon", label: "西瓜", symbol: "🍉", prompt: "Find the watermelon.", audio: `${audioRoot}/food-watermelon.wav` }
+      { id: "apple", word: "apple", label: "苹果", symbol: "🍎", prompt: "Find the apple.", audio: `${audioRoot}/food-apple.mp3` },
+      { id: "banana", word: "banana", label: "香蕉", symbol: "🍌", prompt: "Find the banana.", audio: `${audioRoot}/food-banana.mp3` },
+      { id: "grapes", word: "grapes", label: "葡萄", symbol: "🍇", prompt: "Find the grapes.", audio: `${audioRoot}/food-grapes.mp3` },
+      { id: "watermelon", word: "watermelon", label: "西瓜", symbol: "🍉", prompt: "Find the watermelon.", audio: `${audioRoot}/food-watermelon.mp3` }
     ],
     parentPhrase: "Do you like apples?",
     parentTip: "吃水果时问一问，孩子可以用点头、摇头或 “Yes!” 回答。",
     offlineTask: "点心时间指一指真正的水果，说 “I like apples.”。",
     story: "I have an apple. Yum! I like apples.",
-    storyAudio: `${audioRoot}/food-story.wav`,
+    storyAudio: `${audioRoot}/food-story.mp3`,
     chantTitle: "水果点心歌",
     chantLyrics: ["Apple, banana, yum, yum, yum!", "Grapes and watermelon, here they come!"],
-    chantAudio: `${audioRoot}/food-chant.wav`
+    chantAudio: `${audioRoot}/food-chant.mp3`
   },
   {
     id: "actions",
@@ -105,19 +105,19 @@ export const playgroundTopics: PlaygroundTopic[] = [
     description: "听指令，动起来",
     tint: "#e5f0f4",
     items: [
-      { id: "clap", word: "clap", label: "拍手", symbol: "👏", prompt: "Clap your hands!", audio: `${audioRoot}/actions-clap.wav` },
-      { id: "wave", word: "wave", label: "挥手", symbol: "👋", prompt: "Wave hello!", audio: `${audioRoot}/actions-wave.wav` },
-      { id: "jump", word: "jump", label: "跳一跳", symbol: "🦘", prompt: "Jump!", audio: `${audioRoot}/actions-jump.wav` },
-      { id: "stomp", word: "stomp", label: "跺脚", symbol: "🦶", prompt: "Stomp your feet!", audio: `${audioRoot}/actions-stomp.wav` }
+      { id: "clap", word: "clap", label: "拍手", symbol: "👏", prompt: "Clap your hands!", audio: `${audioRoot}/actions-clap.mp3` },
+      { id: "wave", word: "wave", label: "挥手", symbol: "👋", prompt: "Wave hello!", audio: `${audioRoot}/actions-wave.mp3` },
+      { id: "jump", word: "jump", label: "跳一跳", symbol: "🦘", prompt: "Jump!", audio: `${audioRoot}/actions-jump.mp3` },
+      { id: "stomp", word: "stomp", label: "跺脚", symbol: "🦶", prompt: "Stomp your feet!", audio: `${audioRoot}/actions-stomp.mp3` }
     ],
     parentPhrase: "Clap your hands!",
     parentTip: "点完图片，全家一起做动作。听懂并做出来就很好。",
     offlineTask: "家长随机说两个动作，让孩子做给你看，然后交换角色。",
     story: "Clap your hands. Wave hello. Jump up high. Great job!",
-    storyAudio: `${audioRoot}/actions-story.wav`,
+    storyAudio: `${audioRoot}/actions-story.mp3`,
     chantTitle: "动起来歌",
     chantLyrics: ["Clap and wave, then jump up high!", "Stomp your feet and touch the sky!"],
-    chantAudio: `${audioRoot}/actions-chant.wav`
+    chantAudio: `${audioRoot}/actions-chant.mp3`
   }
 ];
 

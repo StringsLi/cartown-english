@@ -129,13 +129,13 @@ for (const fileName of carAudioFiles) {
 }
 
 const playgroundAudioDirectory = path.join(sourceRoot, "pkg-learning", "static", "playground-audio");
-const playgroundAudioFiles = (await readdir(playgroundAudioDirectory)).filter((fileName) => fileName.endsWith(".wav"));
+const playgroundAudioFiles = (await readdir(playgroundAudioDirectory)).filter((fileName) => fileName.endsWith(".mp3"));
 if (playgroundAudioFiles.length !== 24) {
   errors.push("Expected 24 bundled playground audio files, found " + playgroundAudioFiles.length + ".");
 }
 for (const fileName of playgroundAudioFiles) {
   const audioFile = await readFile(path.join(playgroundAudioDirectory, fileName));
-  if (audioFile.length < 1024 || audioFile.toString("ascii", 0, 4) !== "RIFF") {
+  if (audioFile.length < 1024 || audioFile.toString("ascii", 0, 3) !== "ID3") {
     errors.push("Playground audio is empty or invalid: " + fileName);
   }
 }
