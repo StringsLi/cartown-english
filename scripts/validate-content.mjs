@@ -130,8 +130,25 @@ for (const fileName of carAudioFiles) {
 
 const playgroundAudioDirectory = path.join(sourceRoot, "pkg-learning", "static", "playground-audio");
 const playgroundAudioFiles = (await readdir(playgroundAudioDirectory)).filter((fileName) => fileName.endsWith(".mp3"));
-if (playgroundAudioFiles.length !== 24) {
-  errors.push("Expected 24 bundled playground audio files, found " + playgroundAudioFiles.length + ".");
+const playgroundSource = await readFile(path.join(sourceRoot, "mock", "playground.ts"), "utf8");
+const referencedAudio = [...playgroundSource.matchAll(/\$\{audioRoot\}\/([a-z-]+\.mp3)/g)].map(match => match[1]);
+const wordArt = [...playgroundSource.matchAll(/\$\{artRoot\}\/([a-z-]+\.png)/g)].map(match => match[1]);
+const themeIds = [...playgroundSource.matchAll(/^    id: "([a-z]+)",/gm)].map(match => match[1]);
+if (themeIds.length !== 8 || new Set(themeIds).size !== 8 || wordArt.length !== 40 || new Set(wordArt).size !== 40) {
+  errors.push("Expected eight unique playground themes and forty unique illustrated words.");
+}
+if (referencedAudio.length !== 96 || new Set(referencedAudio).size !== 96) {
+  errors.push("Expected 40 word sounds, 40 prompts, eight stories, and eight chants.");
+}
+if (playgroundAudioFiles.length !== referencedAudio.length) {
+  errors.push("Playground audio count does not match the content catalog.");
+}
+for (const fileName of referencedAudio) {
+  await requireFile(path.join(playgroundAudioDirectory, fileName), "Missing playground audio: " + fileName);
+}
+for (const fileName of [...wordArt, ...themeIds.map(id => `scene-${id}.png`)]) {
+  const artPath = path.join(sourceRoot, "pkg-learning", "static", "playground", "art", fileName);
+  await requireFile(artPath, "Missing playground artwork: " + fileName);
 }
 for (const fileName of playgroundAudioFiles) {
   const audioFile = await readFile(path.join(playgroundAudioDirectory, fileName));

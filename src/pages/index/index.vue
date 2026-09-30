@@ -38,13 +38,13 @@
     </view>
 
     <button class="playground-entry soft-card" @tap="goPlayground">
-      <view class="playground-entry__symbol">★</view>
+      <image class="playground-entry__art" src="/static/ui/playground-preview.png" mode="aspectFit" />
       <view class="playground-entry__copy">
-        <text class="playground-entry__eyebrow">NEW · PARENT & CHILD</text>
+        <text class="playground-entry__eyebrow">PLAY · LISTEN · EXPLORE</text>
         <text class="playground-entry__title">小小英语乐园</text>
-        <text class="playground-entry__desc">颜色、动物、食物、动作，听一听再一起玩。</text>
+        <text class="playground-entry__desc">{{ playgroundTopics.length }} 个主题 · {{ playgroundWordCount }} 个词 · 点图听英语</text>
       </view>
-      <text class="playground-entry__arrow">›</text>
+      <text class="playground-entry__arrow">↗</text>
     </button>
 
     <view class="section-head">
@@ -121,6 +121,7 @@ import CachedImage from "@/components/CachedImage.vue";
 import RedCarMascot from "@/components/RedCarMascot.vue";
 import { getBookById, getTodayBook } from "@/services/bookService";
 import { getHomeStats, getLearningState } from "@/services/progressService";
+import { playgroundTopics, playgroundWordCount } from "@/mock/playground";
 import { getCartownProgress } from "@/services/cartownProgressService";
 import { highResolutionAsset } from "@/services/assetService";
 import { speakEnglish } from "@/services/audioService";
@@ -409,27 +410,18 @@ function goPlayground() {
 
 .playground-entry {
   display: grid;
-  grid-template-columns: 78rpx 1fr 28rpx;
+  grid-template-columns: 132rpx 1fr 28rpx;
   gap: 17rpx;
   align-items: center;
   width: 100%;
   margin-top: 24rpx;
   padding: 20rpx 22rpx;
   text-align: left;
-  background: #eaf3e5;
+  background: linear-gradient(120deg, #edf2e5, #f8f1de);
+  border-radius: 28rpx;
 }
 
-.playground-entry__symbol {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: 20rpx;
-  font-size: 43rpx;
-  color: #fff3b4;
-  background: #4b8063;
-}
+.playground-entry__art { width: 132rpx; height: 128rpx; }
 
 .playground-entry__eyebrow,
 .playground-entry__title,

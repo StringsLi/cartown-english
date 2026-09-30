@@ -92,7 +92,7 @@
     <button class="playground-report soft-card" @tap="goPlayground">
       <view>
         <text class="playground-report__title">小小英语乐园</text>
-        <text class="playground-report__detail">已玩 {{ playgroundDoneCount }} / 4 个主题 · 颜色、动物、食物、动作</text>
+        <text class="playground-report__detail">已探索 {{ playgroundDoneCount }} / {{ playgroundTopics.length }} 个主题 · 已点读 {{ playgroundHeardCount }} / {{ playgroundWordCount }} 个词</text>
       </view>
       <text class="playground-report__more">查看 ›</text>
     </button>
@@ -116,7 +116,7 @@ import { onLoad, onShow } from "@dcloudio/uni-app";
 import BottomNav from "@/components/BottomNav.vue";
 import { getBookById, getParentTip, getTodayBook } from "@/services/bookService";
 import { getCartownProgress } from "@/services/cartownProgressService";
-import { playgroundTopics } from "@/mock/playground";
+import { playgroundTopics, playgroundWordCount } from "@/mock/playground";
 import { highResolutionAsset } from "@/services/assetService";
 import { getCurrentWeekActivity, getHomeStats, getLearningState } from "@/services/progressService";
 import { usePageShare } from "@/composables/usePageShare";
@@ -142,6 +142,7 @@ const weeklyDeltaText = computed(() => {
   return difference > 0 ? `比上周多 ${difference} 分钟` : `比上周少 ${Math.abs(difference)} 分钟`;
 });
 const readingPercent = computed(() => Math.min(100, Math.round((stats.value.readBookCount / 20) * 100)));
+const playgroundHeardCount = computed(() => playgroundTopics.reduce((count, topic) => count + topic.items.filter((item) => cartownProgress.value.playgroundHeardWordIds.includes(`${topic.id}:${item.id}`)).length, 0));
 const playgroundDoneCount = computed(() => playgroundTopics.filter((topic) => cartownProgress.value.playgroundCompletedTopicIds.includes(topic.id)).length);
 const skillScores = computed(() => [
   { label: "听读", score: Math.min(100, Math.round((stats.value.readBookCount / 20) * 100)) },

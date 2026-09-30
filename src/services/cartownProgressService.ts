@@ -18,6 +18,7 @@ export interface CartownProgress {
   countQuestionsDone: number;
   trafficTurnsDone: number;
   playgroundCompletedTopicIds: string[];
+  playgroundHeardWordIds: string[];
 }
 
 const defaultProgress: CartownProgress = {
@@ -31,7 +32,8 @@ const defaultProgress: CartownProgress = {
   colorQuestionsDone: 0,
   countQuestionsDone: 0,
   trafficTurnsDone: 0,
-  playgroundCompletedTopicIds: []
+  playgroundCompletedTopicIds: [],
+  playgroundHeardWordIds: []
 };
 
 export function getCartownProgress(): CartownProgress {
@@ -41,7 +43,8 @@ export function getCartownProgress(): CartownProgress {
       ...defaultProgress,
       ...(stored ?? {}),
       learnedVehicleIds: stored?.learnedVehicleIds ?? [],
-      playgroundCompletedTopicIds: stored?.playgroundCompletedTopicIds ?? []
+      playgroundCompletedTopicIds: stored?.playgroundCompletedTopicIds ?? [],
+      playgroundHeardWordIds: stored?.playgroundHeardWordIds ?? []
     };
   }
   return cachedProgress;
@@ -84,6 +87,15 @@ export function completePlaygroundTopic(topicId: string): { earned: boolean; pro
     stars: current.stars + 1
   });
   return { earned: true, progress };
+}
+
+export function recordPlaygroundWord(topicId: string, itemId: string): CartownProgress {
+  const current = getCartownProgress();
+  const wordId = `${topicId}:${itemId}`;
+  if (current.playgroundHeardWordIds.includes(wordId)) return current;
+  return saveCartownProgress({
+    playgroundHeardWordIds: [...current.playgroundHeardWordIds, wordId]
+  });
 }
 
 export function completeCartownVehicle(vehicleId: string): { earned: boolean; progress: CartownProgress } {

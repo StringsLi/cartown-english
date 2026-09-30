@@ -6,7 +6,7 @@
 
 <p align="center">
   面向 4-5 岁儿童的汽车探索与亲子英语启蒙小程序。<br />
-  从车车故事出发，也能玩颜色、动物、食物和动作四个短时主题。
+  从车车故事出发，也能玩颜色、动物、水果、动作、数字、形状、天气和心情八个短时主题。
 </p>
 
 <p align="center">
@@ -17,7 +17,7 @@
 
 ## 项目简介
 
-车车英语乐园是一款以汽车为主题的儿童互动启蒙微信小程序，并融合了“小小英语乐园”的四个亲子英语主题。产品强调大按钮、低阅读门槛、自然语音、正向反馈和短时任务，不要求儿童具备英文阅读能力。
+车车英语乐园是一款以汽车为主题的儿童互动启蒙微信小程序，并融合了“小小英语乐园”的八个亲子英语主题。产品强调大按钮、低阅读门槛、自然语音、正向反馈和短时任务，不要求儿童具备英文阅读能力。
 
 当前版本不包含登录、社交或排行榜。跟读练习会在用户主动点击录音后申请麦克风权限，录音和学习记录默认保存在当前设备。
 
@@ -37,7 +37,7 @@
 ## 主要功能
 
 - 汽车探索首页：集中进入绘本、车辆、车标、颜色、数字、交通和世界地图内容。
-- 小小英语乐园：颜色、动物、食物、动作各有四道听音找图题、迷你故事和线下亲子任务；家长可复制对应儿歌的官方链接。
+- 小小英语乐园：8 个主题、40 个配图词汇；先点图听词，再完成随机听音找图游戏。每个主题都有迷你故事、原创节奏儿歌和线下亲子任务。
 - 车辆认知：通过高清车辆图片、英文单词和自然语音认识常见车辆。
 - 50 个车标：浏览常见汽车品牌标志，支持分页学习与语音播放。
 - 颜色与数字：完成颜色汽车听辨、数车等低龄互动任务。
@@ -47,7 +47,7 @@
 - 车车看世界：包含 50 个国家及地图主题词汇。
 - 星星与车库：完成任务获得星星和车辆奖励。
 - 家长中心：查看阅读、词汇、练习和连续学习记录。
-- 英语主题进度：首次完成每个主题获得一颗星星，进度显示在家长中心并保存在当前设备。
+- 英语主题进度：首次完成每个主题获得一颗星星和探索印章；点读词汇单独记录为“已点读”，进度显示在乐园及家长中心，保存在当前设备。
 - 分享转发：各页面支持微信好友分享和朋友圈分享。
 
 ## 技术栈
@@ -157,7 +157,7 @@ cartown-english/
 ## 内容与隐私
 
 - 课程数据与媒体引用集中维护，新增内容时请同步执行 `npm run validate:content`。
-- 英语乐园的 16 段提示、4 段故事和 4 首原创短儿歌随 `pkg-learning` 分包离线提供。歌词与伴奏为本项目原创，人声用 [Piper](https://github.com/OHF-Voice/piper1-gpl) 和 [en_US-ljspeech-high 声线](https://huggingface.co/rhasspy/piper-voices/blob/main/en/en_US/ljspeech/high/MODEL_CARD) 在开发阶段合成。该声线从公开领域的 LJ Speech 数据集独立训练，模型库标注 MIT 许可；模型和生成工具未打包进小程序。要重新生成，安装 `piper-tts numpy imageio-ffmpeg`，下载声线 `.onnx` 和 `.onnx.json`，运行 `PIPER_MODEL=/path/to/en_US-ljspeech-high.onnx python3 scripts/generate-playground-audio.py`。音频不包含原先链接的商业儿歌录音。
+- 英语乐园的 40 段单词发音、40 段提示、8 段故事和 8 首原创短儿歌随 `pkg-learning` 分包离线提供。歌词与伴奏为本项目原创，人声用 [Piper](https://github.com/OHF-Voice/piper1-gpl) 和 [en_US-ljspeech-high 声线](https://huggingface.co/rhasspy/piper-voices/blob/main/en/en_US/ljspeech/high/MODEL_CARD) 在开发阶段合成。该声线从公开领域的 LJ Speech 数据集独立训练，模型库标注 MIT 许可；模型和生成工具未打包进小程序。要重新生成，安装 `piper-tts numpy imageio-ffmpeg`，下载声线 `.onnx` 和 `.onnx.json`，运行 `PIPER_MODEL=/path/to/en_US-ljspeech-high.onnx python3 scripts/generate-playground-audio.py`。音频不包含原先链接的商业儿歌录音。
 - 车标素材来源说明见 `docs/source-assets/CAR_LOGO_SOURCES.md`。
 - 应用仅在用户主动开始跟读录音时申请麦克风权限，不包含儿童社交和排行榜。
 - 跟读录音默认只保存在当前设备，不会自动上传到云端，可由家长手动导入或导出备份。
@@ -172,3 +172,12 @@ npm run build:mp-weixin
 ```
 
 随后在微信开发者工具中检查真机图片、音频、分享入口、学习进度和包体积，再上传体验版或提交审核。
+
+### 乐园插画与页面预览
+
+- 40 张词汇插画、8 张主题场景为本项目原创矢量绘图，PNG 随学习分包提供。矢量源文件位于 `docs/source-assets/playground-vectors`，生成脚本为 `scripts/generate-playground-art.cjs`；安装 `sharp` 后运行 `node scripts/generate-playground-art.cjs` 可重新导出。
+- 页面分成主题地图、儿歌电台和亲子任务，支持探索印章、中文故事提示及停止播放。
+
+![乐园地图、点读卡片和找图游戏](docs/ui-audit/playground-expansion/preview.jpg)
+
+页面检查结果见 [乐园预览与检查记录](docs/ui-audit/playground-expansion/README.md)。

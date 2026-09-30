@@ -6,6 +6,7 @@ generator dependencies are not distributed with the mini program.
 """
 
 import os
+import argparse
 import re
 import subprocess
 import tempfile
@@ -24,6 +25,9 @@ SOURCE = (ROOT / "src/mock/playground.ts").read_text(encoding="utf-8")
 VOICE = PiperVoice.load(MODEL)
 RATE = VOICE.config.sample_rate
 FFMPEG = imageio_ffmpeg.get_ffmpeg_exe()
+PARSER = argparse.ArgumentParser(description=__doc__)
+PARSER.add_argument("--force", action="store_true", help="Regenerate existing audio too")
+ARGS = PARSER.parse_args()
 
 
 def synthesize(text: str, length_scale: float = 1.1) -> np.ndarray:
@@ -86,16 +90,24 @@ def make_chant(first: str, second: str) -> np.ndarray:
 
 
 prompts = re.findall(r'prompt: "([^"]+)", audio: `\$\{audioRoot\}/([a-z-]+)\.mp3', SOURCE)
+words = re.findall(r'word: "([^"]+)"[^\n]+?wordAudio: `\$\{audioRoot\}/([a-z-]+)\.mp3', SOURCE)
 stories = re.findall(r'story: "([^"]+)",\s+storyAudio: `\$\{audioRoot\}/([a-z-]+)\.mp3', SOURCE)
 chants = re.findall(
     r'chantLyrics: \["([^"]+)", "([^"]+)"\],\s+chantAudio: `\$\{audioRoot\}/([a-z-]+)\.mp3',
     SOURCE,
 )
-if (len(prompts), len(stories), len(chants)) != (16, 4, 4):
-    raise ValueError("Expected 16 prompts, four stories, and four chants")
+if len(prompts) != len(words) or len(stories) != len(chants) or len(words) != len(stories) * 5:
+    raise ValueError("Each theme needs five words, five prompts, one story, and one chant")
+
+
+def needs_audio(name: str) -> bool:
+    target = OUTPUT / f"{name}.mp3"
+    return ARGS.force or not target.exists() or target.stat().st_size < 1024
 
 OUTPUT.mkdir(parents=True, exist_ok=True)
-for text, name in prompts + stories:
-    write_mp3(name, synthesize(text))
+for text, name in words + prompts + stories:
+    if needs_audio(name):
+        write_mp3(name, synthesize(text))
 for first, second, name in chants:
-    write_mp3(name, make_chant(first, second))
+    if needs_audio(name):
+        write_mp3(name, make_chant(first, second))

@@ -26,7 +26,7 @@ export function configureAudioPlayback(): void {
   audioConfigured = true;
 }
 
-export function playAudio(url?: string, fallbackText?: string): void {
+export function playAudio(url?: string, fallbackText?: string, onStarted?: () => void): void {
   if (!url) {
     uni.showToast({ title: fallbackText || "Audio unavailable", icon: "none" });
     return;
@@ -34,10 +34,10 @@ export function playAudio(url?: string, fallbackText?: string): void {
 
   const requestId = ++playbackRequest;
   destroyCurrentAudio();
-  void startPlayback(url, fallbackText, requestId);
+  void startPlayback(url, fallbackText, requestId, onStarted);
 }
 
-async function startPlayback(url: string, fallbackText: string | undefined, requestId: number): Promise<void> {
+async function startPlayback(url: string, fallbackText: string | undefined, requestId: number, onStarted?: () => void): Promise<void> {
   try {
     configureAudioPlayback();
     const playableUrl = await resolveCachedMedia(url, "audio");
@@ -45,6 +45,12 @@ async function startPlayback(url: string, fallbackText: string | undefined, requ
 
     const audio = uni.createInnerAudioContext();
     currentAudio = audio;
+    let started = false;
+    audio.onPlay(() => {
+      if (started || currentAudio !== audio || requestId !== playbackRequest) return;
+      started = true;
+      onStarted?.();
+    });
     audio.src = playableUrl;
     audio.autoplay = true;
     audio.volume = 1;

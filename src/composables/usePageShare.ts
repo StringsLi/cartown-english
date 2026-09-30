@@ -24,7 +24,7 @@ const pageShareTitles: Record<string, string> = {
   "pkg-learning/car-traffic/index": "红灯停绿灯行，一起认识交通规则",
   "pkg-learning/car-stories/index": "有趣的小汽车故事等你来听",
   "pkg-learning/car-garage/index": "来看看我的小汽车收藏",
-  "pkg-learning/playground/index": "四个英语主题，和孩子听一听、找一找",
+  "pkg-learning/playground/index": "八个英语主题，和孩子听一听、找一找",
   "pkg-learning/playground-game/index": "一起玩小小英语主题游戏",
   "pkg-world/world/index": "跟着车车一起探索世界",
   "pkg-reading/book-detail/index": "亲子绘本时间，一起听故事",

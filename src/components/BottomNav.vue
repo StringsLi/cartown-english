@@ -58,6 +58,7 @@ function go(path: string) {
   justify-content: center;
   gap: 5rpx;
   min-height: 80rpx;
+  border-radius: 22rpx;
   color: #8b857e;
 }
 
@@ -75,5 +76,6 @@ function go(path: string) {
 
 .bottom-nav__item--active {
   color: $color-primary;
+  background: #f5ebdf;
 }
 </style>
