@@ -9,6 +9,8 @@
       <BigButton label="保存昵称" @tap="saveNickname" />
     </view>
 
+    <view class="profile-card soft-card"><text class="profile-card__label">点读音量 · {{ audioVolume }}%</text><text class="profile-card__text">{{ audioVolume === 0 ? "已静音，调大后可以听英语。" : "选一个舒服的音量，下次打开也会记住。" }}</text><slider :value="audioVolume" :min="0" :max="100" :step="10" show-value activeColor="#7e9d86" @change="changeVolume" /></view>
+
     <view class="profile-card soft-card">
       <text class="profile-card__label">隐私说明</text>
       <text class="profile-card__text">不做儿童社交、不做排行榜、不采集位置。跟读录音默认只保存在当前设备，由家长管理。</text>
@@ -20,6 +22,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { getAudioVolume, setAudioVolume } from "@/services/audioService";
 import BigButton from "@/components/BigButton.vue";
 import { clearCartownProgress } from "@/services/cartownProgressService";
 import { clearLearningData, getLearningState, updateChildNickname } from "@/services/progressService";
@@ -27,6 +30,8 @@ import { clearMediaCache } from "@/services/mediaCacheService";
 import { usePageShare } from "@/composables/usePageShare";
 
 usePageShare();
+const audioVolume = ref(Math.round(getAudioVolume() * 100));
+function changeVolume(event: { detail: { value: number } }) { audioVolume.value = event.detail.value; setAudioVolume(audioVolume.value / 100); }
 const nickname = ref(getLearningState().childNickname);
 
 function saveNickname() {

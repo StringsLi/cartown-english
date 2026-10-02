@@ -2,6 +2,7 @@
   <view class="page adventure-page roleplay-page">
     <view class="adventure-topbar"><button class="adventure-back" @tap="backToAdventure">‹ 小冒险</button><text class="adventure-topbar__note">亲子小剧场</text></view>
     <text class="section-kicker">LET'S PLAY TOGETHER</text><text class="page-title">{{ scene.title }}</text><text class="page-subtitle">{{ scene.subtitle }}</text>
+    <AudioFeedback />
     <view v-if="!started || finished" class="theater-scene" :style="{ backgroundColor: scene.tint }"><AdventureScene :destination="scene.destination" :activity="scene.activity" :vehicle="scene.vehicle" :arrived="finished" /><view class="theater-scene__caption"><text>{{ scene.roles.first }} × {{ scene.roles.second }}</text><text>你一句，我一句</text></view></view>
 
     <view v-if="!started && !finished" class="adventure-card role-setup">
@@ -37,6 +38,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { onLoad, onHide, onUnload } from "@dcloudio/uni-app";
+import AudioFeedback from "@/components/AudioFeedback.vue";
 import AdventureScene from "../components/AdventureScene.vue";
 import { backToAdventure } from "@/services/adventureNavigation";
 import { adventureArtRoot, adventurePhrases, roleplayScenes, getRoleplayScene } from "@/mock/adventures";

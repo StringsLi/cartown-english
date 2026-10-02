@@ -2,6 +2,7 @@
   <view class="page adventure-page delivery-page">
     <view class="adventure-topbar"><button class="adventure-back" @tap="backToAdventure">‹ 小冒险</button><text class="adventure-topbar__note">送货小司机</text></view>
     <text class="section-kicker">A LITTLE DELIVERY</text><text class="page-title">{{ mission.title }}</text><text class="page-subtitle">{{ mission.subtitle }}</text>
+    <AudioFeedback />
     <view v-if="step !== 1 || finished" class="delivery-scene" :style="{ backgroundColor: mission.tint }"><AdventureScene :destination="mission.destination" :car="selectedCar || mission.car" :arrived="finished" /><view class="delivery-scene__caption"><image :src="mission.recipientArt" mode="aspectFit" /><text>{{ finished ? '谢谢你，小司机！' : '有一位小伙伴在等水果点心。' }}</text></view></view>
     <view class="adventure-stepper"><view v-for="(label, index) in steps" :key="label" class="adventure-stepper__step" :class="{ 'adventure-stepper__step--active': !finished && step === index, 'adventure-stepper__step--done': finished || step > index }"><text>{{ finished || step > index ? '✓' : index + 1 }}</text><text>{{ label }}</text></view></view>
 
@@ -37,6 +38,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { onLoad, onHide, onUnload } from "@dcloudio/uni-app";
+import AudioFeedback from "@/components/AudioFeedback.vue";
 import AdventureScene from "../components/AdventureScene.vue";
 import { backToAdventure } from "@/services/adventureNavigation";
 import { adventureArtRoot, adventurePhrases, deliveryMissions, deliveryCars, deliveryFruits, deliveryDestinations, getDeliveryMission, getNextDeliveryMission, checkDeliveryCargo, type CarId, type FruitId, type DestinationId, type AdventurePhraseId } from "@/mock/adventures";

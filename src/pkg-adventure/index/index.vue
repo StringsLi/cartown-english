@@ -4,6 +4,7 @@
     <text class="section-kicker">LITTLE TOWN, BIG ADVENTURES</text>
     <text class="page-title">车车英语小冒险</text>
     <text class="page-subtitle">{{ activeChapter === "car-life" ? "洗车、修车、再出发，一起演生活里的英语。" : "开一辆小车，把英语玩进故事里。" }}</text>
+    <AudioFeedback />
     <view class="town-hero">
       <view class="town-hero__copy"><text>今天的小司机，准备好了吗？</text><text>听一句 · 动一动 · 一起演</text></view>
       <AdventureScene destination="park" :vehicle="activeChapter === 'car-life' ? 'delivery-van' : 'red-hatchback'" />
@@ -29,6 +30,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { onShow, onHide, onUnload } from "@dcloudio/uni-app";
+import AudioFeedback from "@/components/AudioFeedback.vue";
 import AdventureScene from "../components/AdventureScene.vue";
 import { deliveryMissions, roleplayScenes, type AdventureChapterId, type RoleplayScene } from "@/mock/adventures";
 import { getCartownProgress } from "@/services/cartownProgressService";

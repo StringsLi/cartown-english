@@ -52,7 +52,7 @@
       <view class="progress-card__level-row">
         <view>
           <text class="progress-card__level">L{{ book.level }} 级别</text>
-          <text class="progress-card__desc">已完成 {{ stats.readBookCount }} / 20 本</text>
+          <text class="progress-card__desc">已完成 {{ stats.readBookCount }} / {{ mockBooks.length }} 本</text>
         </view>
         <view class="level-medal">L{{ book.level }}</view>
       </view>
@@ -64,7 +64,7 @@
     <view class="report-card soft-card">
       <view class="section-head report-card__head">
         <text class="section-title">学习报告</text>
-        <text class="report-card__date">近 7 天</text>
+        <text class="report-card__date">累计记录</text>
       </view>
       <view v-for="skill in skillScores" :key="skill.label" class="skill-row">
         <text class="skill-row__label">{{ skill.label }}</text>
@@ -97,6 +97,8 @@
       <text class="playground-report__more">查看 ›</text>
     </button>
 
+    <view class="playground-report soft-card"><view><text class="playground-report__title">小耳朵的找图记录</text><text class="playground-report__detail">听过 {{ wordSummary.heard }} 个词 · 独立找对 {{ wordSummary.independent }} 个词 · 待复习 {{ wordSummary.review }} 个词</text><text class="playground-report__detail">独立找对指第一次就选对；重试后的正确答案不算独立找对。</text></view><button v-if="wordSummary.review" class="playground-report__more" @tap="goReview">陪孩子复习 ›</button></view>
+
     <button class="playground-report adventure-report soft-card" @tap="goAdventure"><view><text class="playground-report__title">车车英语小冒险</text><text class="playground-report__detail">已送达 {{ deliveryDoneCount }} / {{ deliveryMissions.length }} 个故事 · 已表演 {{ roleplayDoneCount }} / {{ roleplayScenes.length }} 个场景</text><text class="playground-report__detail">陪玩完成记录，随时可以换角色再演。</text></view><text class="playground-report__more">去玩 ›</text></button>
 
     <view class="parent-advice soft-card">
@@ -117,6 +119,8 @@ import { computed, ref } from "vue";
 import { onLoad, onShow } from "@dcloudio/uni-app";
 import BottomNav from "@/components/BottomNav.vue";
 import { getBookById, getParentTip, getTodayBook } from "@/services/bookService";
+import { getPlaygroundSummary, getReviewTopic } from "@/services/playgroundLearningService";
+import { mockBooks } from "@/mock/books";
 import { getCartownProgress } from "@/services/cartownProgressService";
 import { playgroundTopics, playgroundWordCount } from "@/mock/playground";
 import { deliveryMissions, roleplayScenes } from "@/mock/adventures";
@@ -129,6 +133,8 @@ const bookId = ref(getTodayBook().id);
 const stats = ref(getHomeStats());
 const learningState = ref(getLearningState());
 const cartownProgress = ref(getCartownProgress());
+const wordSummary = ref(getPlaygroundSummary(cartownProgress.value.playgroundHeardWordIds));
+function goReview() { const topic = getReviewTopic(); if (topic) uni.navigateTo({ url: `/pkg-learning/playground-game/index?topic=${topic.id}&mode=quiz&review=1` }); }
 const weekActivity = ref(getCurrentWeekActivity());
 const book = computed(() => getBookById(bookId.value) ?? getTodayBook());
 const parentTip = computed(() => getParentTip(book.value.id));
@@ -144,13 +150,13 @@ const weeklyDeltaText = computed(() => {
   if (difference === 0) return "与上周持平";
   return difference > 0 ? `比上周多 ${difference} 分钟` : `比上周少 ${Math.abs(difference)} 分钟`;
 });
-const readingPercent = computed(() => Math.min(100, Math.round((stats.value.readBookCount / 20) * 100)));
+const readingPercent = computed(() => Math.min(100, Math.round((stats.value.readBookCount / mockBooks.length) * 100)));
 const playgroundHeardCount = computed(() => playgroundTopics.reduce((count, topic) => count + topic.items.filter((item) => cartownProgress.value.playgroundHeardWordIds.includes(`${topic.id}:${item.id}`)).length, 0));
 const playgroundDoneCount = computed(() => playgroundTopics.filter((topic) => cartownProgress.value.playgroundCompletedTopicIds.includes(topic.id)).length);
 const deliveryDoneCount = computed(() => deliveryMissions.filter(mission => cartownProgress.value.completedDeliveryMissionIds.includes(mission.id)).length);
 const roleplayDoneCount = computed(() => roleplayScenes.filter(scene => cartownProgress.value.completedRoleplaySceneIds.includes(scene.id)).length);
 const skillScores = computed(() => [
-  { label: "听读", score: Math.min(100, Math.round((stats.value.readBookCount / 20) * 100)) },
+  { label: "听读", score: Math.min(100, Math.round((stats.value.readBookCount / mockBooks.length) * 100)) },
   { label: "词汇", score: Math.min(100, Math.round((stats.value.learnedWordCount / 40) * 100)) },
   { label: "跟读", score: Math.min(100, learningState.value.repeatRecords.length * 10) },
   { label: "练习", score: Math.min(100, learningState.value.gameRecords.length * 10) }
@@ -164,6 +170,7 @@ onLoad((query) => {
 onShow(refreshReport);
 
 function refreshReport() {
+  wordSummary.value = getPlaygroundSummary(getCartownProgress().playgroundHeardWordIds);
   stats.value = getHomeStats();
   learningState.value = getLearningState();
   cartownProgress.value = getCartownProgress();

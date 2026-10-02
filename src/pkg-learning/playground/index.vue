@@ -17,6 +17,8 @@
       <text class="daily-card__spark">✦</text>
     </view>
 
+    <AudioFeedback />
+    <button v-if="reviewTopic" class="review-entry" @tap="openReview"><view><text>老朋友，再见面</text><text>{{ reviewTopic.title }} · 今天先复习 {{ reviewCount }} 个词</text></view><text>去听听 ›</text></button>
     <view class="progress-card">
       <view class="progress-card__head"><text>我们的探索地图</text><text class="progress-card__count">{{ completedCount }} / {{ playgroundTopics.length }} 个主题</text></view>
       <view class="progress-track"><view class="progress-track__fill" :style="{ width: `${completedCount / playgroundTopics.length * 100}%` }" /></view>
@@ -75,6 +77,8 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import AudioFeedback from "@/components/AudioFeedback.vue";
+import { getReviewTopic, getReviewItems } from "@/services/playgroundLearningService";
 import { onHide, onShow, onUnload } from "@dcloudio/uni-app";
 import BottomNav from "@/components/BottomNav.vue";
 import { playgroundTopics, playgroundWordCount, getSuggestedPlaygroundTopic, type PlaygroundTopicId } from "@/mock/playground";
@@ -86,6 +90,8 @@ usePageShare();
 type TabId = "topics" | "chants" | "parent";
 const tabs: Array<{ id: TabId; label: string }> = [{ id: "topics", label: "主题小世界" }, { id: "chants", label: "儿歌电台" }, { id: "parent", label: "亲子任务" }];
 const activeTab = ref<TabId>("topics");
+const reviewTopic = ref(getReviewTopic());
+const reviewCount = ref(reviewTopic.value ? getReviewItems(reviewTopic.value.id).length : 0);
 const completedIds = ref<string[]>([]);
 const heardIds = ref<string[]>([]);
 const stars = ref(0);
@@ -94,6 +100,8 @@ const heardCount = computed(() => playgroundTopics.reduce((count, topic) => coun
 const suggestedTopic = computed(() => getSuggestedPlaygroundTopic(completedIds.value));
 const sceneArt = (id: string) => `/pkg-learning/static/playground/art/${id === "colors" ? "blue-suv" : `scene-${id}`}.png`;
 onShow(() => {
+  reviewTopic.value = getReviewTopic();
+  reviewCount.value = reviewTopic.value ? getReviewItems(reviewTopic.value.id).length : 0;
   const progress = getCartownProgress();
   completedIds.value = [...progress.playgroundCompletedTopicIds];
   heardIds.value = [...progress.playgroundHeardWordIds];
@@ -101,6 +109,7 @@ onShow(() => {
 });
 onHide(stopAudio);
 onUnload(stopAudio);
+function openReview() { if (reviewTopic.value) uni.navigateTo({ url: `/pkg-learning/playground-game/index?topic=${reviewTopic.value.id}&mode=quiz&review=1` }); }
 function openTopic(topicId: PlaygroundTopicId) { stopAudio(); uni.navigateTo({ url: `/pkg-learning/playground-game/index?topic=${topicId}` }); }
 function switchTab(id: TabId) { stopAudio(); activeTab.value = id; }
 function playChant(audio: string, title: string) { playAudio(audio, title); }
@@ -113,6 +122,7 @@ function openAdventure() { stopAudio(); uni.navigateTo({ url: "/pkg-adventure/in
 .welcome-row { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
 .welcome-row .section-kicker { font-size: 18rpx; letter-spacing: 2rpx; margin-bottom: 12rpx; }
 .welcome-row .page-title { font-size: 42rpx; }
+.review-entry { display: flex; align-items: center; justify-content: space-between; gap: 14rpx; width: 100%; padding: 24rpx; margin-top: 22rpx; border-radius: 24rpx; text-align: left; background: #fff0d7; }.review-entry view text { display: block; font-size: 27rpx; font-weight: 800; }.review-entry view text + text { font-size: 21rpx; margin-top: 8rpx; font-weight: 400; color: #9c896c; }.review-entry > text { flex: none; color: #a08554; font-size: 22rpx; }
 .welcome-subtitle { display: block; margin-top: 14rpx; font-size: 24rpx; color: $color-muted; }
 .star-pocket { display: flex; align-items: center; gap: 10rpx; padding: 16rpx 20rpx; border-radius: 24rpx; background: #f5e9cc; font-size: 25rpx; font-weight: 800; color: #967332; }
 .star-pocket text:first-child { color: #bf8e3a; }

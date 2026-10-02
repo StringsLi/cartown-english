@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onLaunch, onHide } from "@dcloudio/uni-app";
 import { initCloudEnvironment } from "@/services/cloudService";
-import { configureAudioPlayback } from "@/services/audioService";
+import { configureAudioPlayback, stopAudio } from "@/services/audioService";
+import { flushPlaygroundLearning } from "@/services/playgroundLearningService";
 import { flushLearningState } from "@/services/progressService";
 import { flushCartownProgress } from "@/services/cartownProgressService";
 import { resolveCachedMedia } from "@/services/mediaCacheService";
@@ -28,6 +29,8 @@ onLaunch(() => {
 });
 
 onHide(() => {
+  stopAudio();
+  flushPlaygroundLearning();
   flushLearningState();
   flushCartownProgress();
 });

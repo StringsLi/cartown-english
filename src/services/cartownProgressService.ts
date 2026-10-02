@@ -1,5 +1,6 @@
 import { getStorage, removeStorage, setStorage } from "@/utils/storage";
 import { getDeliveryMission, getRoleplayScene } from "@/mock/adventures";
+import { recordPlaygroundListening, recordAdventureToday, clearPlaygroundLearning } from "@/services/playgroundLearningService";
 
 const STORAGE_KEY = "cartown_english_progress";
 const DEBOUNCE_MS = 300;
@@ -97,6 +98,7 @@ export function completePlaygroundTopic(topicId: string): { earned: boolean; pro
 }
 
 export function recordPlaygroundWord(topicId: string, itemId: string): CartownProgress {
+  recordPlaygroundListening(topicId, itemId);
   const current = getCartownProgress();
   const wordId = `${topicId}:${itemId}`;
   if (current.playgroundHeardWordIds.includes(wordId)) return current;
@@ -108,6 +110,7 @@ export function recordPlaygroundWord(topicId: string, itemId: string): CartownPr
 function completeAdventure(key: "completedDeliveryMissionIds" | "completedRoleplaySceneIds", id: string): { earned: boolean; progress: CartownProgress } {
   const current = getCartownProgress();
   const valid = key === "completedDeliveryMissionIds" ? getDeliveryMission(id) : getRoleplayScene(id);
+  if (valid) recordAdventureToday(`${key}:${id}`);
   if (!valid || current[key].includes(id)) return { earned: false, progress: current };
   return { earned: true, progress: saveCartownProgress({ [key]: [...current[key], id], stars: current.stars + 1 }) };
 }
@@ -128,6 +131,7 @@ export function completeCartownVehicle(vehicleId: string): { earned: boolean; pr
 }
 
 export function clearCartownProgress(): void {
+  clearPlaygroundLearning();
   cachedProgress = null;
   if (saveTimer) {
     clearTimeout(saveTimer);

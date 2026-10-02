@@ -12,7 +12,8 @@
     "validate:content": "node scripts/validate-content.mjs",
     "check:release": "node scripts/validate-content.mjs --release",
     "test:adventures": "node scripts/test-adventures.cjs",
-    "test": "npm run type-check && npm run validate:content && npm run test:adventures"
+    "test": "npm run type-check && npm run validate:content && npm run test:adventures && npm run test:learning",
+    "test:learning": "node scripts/test-learning.cjs"
   },
   "dependencies": {
     "@dcloudio/uni-app": "3.0.0-alpha-1000920260626810",
