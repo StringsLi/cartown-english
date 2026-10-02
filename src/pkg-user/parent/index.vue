@@ -97,6 +97,8 @@
       <text class="playground-report__more">查看 ›</text>
     </button>
 
+    <button class="playground-report adventure-report soft-card" @tap="goAdventure"><view><text class="playground-report__title">车车英语小冒险</text><text class="playground-report__detail">已送达 {{ deliveryDoneCount }} / {{ deliveryMissions.length }} 个故事 · 已表演 {{ roleplayDoneCount }} / {{ roleplayScenes.length }} 个场景</text><text class="playground-report__detail">陪玩完成记录，随时可以换角色再演。</text></view><text class="playground-report__more">去玩 ›</text></button>
+
     <view class="parent-advice soft-card">
       <view class="parent-advice__icon">♥</view>
       <view>
@@ -117,6 +119,7 @@ import BottomNav from "@/components/BottomNav.vue";
 import { getBookById, getParentTip, getTodayBook } from "@/services/bookService";
 import { getCartownProgress } from "@/services/cartownProgressService";
 import { playgroundTopics, playgroundWordCount } from "@/mock/playground";
+import { deliveryMissions, roleplayScenes } from "@/mock/adventures";
 import { highResolutionAsset } from "@/services/assetService";
 import { getCurrentWeekActivity, getHomeStats, getLearningState } from "@/services/progressService";
 import { usePageShare } from "@/composables/usePageShare";
@@ -144,6 +147,8 @@ const weeklyDeltaText = computed(() => {
 const readingPercent = computed(() => Math.min(100, Math.round((stats.value.readBookCount / 20) * 100)));
 const playgroundHeardCount = computed(() => playgroundTopics.reduce((count, topic) => count + topic.items.filter((item) => cartownProgress.value.playgroundHeardWordIds.includes(`${topic.id}:${item.id}`)).length, 0));
 const playgroundDoneCount = computed(() => playgroundTopics.filter((topic) => cartownProgress.value.playgroundCompletedTopicIds.includes(topic.id)).length);
+const deliveryDoneCount = computed(() => deliveryMissions.filter(mission => cartownProgress.value.completedDeliveryMissionIds.includes(mission.id)).length);
+const roleplayDoneCount = computed(() => roleplayScenes.filter(scene => cartownProgress.value.completedRoleplaySceneIds.includes(scene.id)).length);
 const skillScores = computed(() => [
   { label: "听读", score: Math.min(100, Math.round((stats.value.readBookCount / 20) * 100)) },
   { label: "词汇", score: Math.min(100, Math.round((stats.value.learnedWordCount / 40) * 100)) },
@@ -172,6 +177,7 @@ function goProfile() {
 function goPlayground() {
   uni.navigateTo({ url: "/pkg-learning/playground/index" });
 }
+function goAdventure() { uni.navigateTo({ url: "/pkg-adventure/index/index" }); }
 </script>
 
 <style scoped lang="scss">
@@ -526,6 +532,7 @@ function goPlayground() {
 .playground-report__title { font-size: 23rpx; font-weight: 900; color: $color-primary-dark; }
 .playground-report__detail { margin-top: 6rpx; font-size: 19rpx; line-height: 1.4; color: $color-muted; }
 .playground-report__more { flex: none; font-size: 20rpx; font-weight: 800; color: #4b8063; }
+.adventure-report { background: #f7eedc; }
 
 .parent-advice__icon {
   display: flex;

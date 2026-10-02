@@ -161,6 +161,28 @@ await requireFile(
   "Missing playground illustration."
 );
 
+const adventureSource = await readFile(path.join(sourceRoot, "mock", "adventures.ts"), "utf8");
+const adventureAudio = [...adventureSource.matchAll(/\$\{adventureAudioRoot\}\/([a-z-]+\.mp3)/g)].map(match => match[1]);
+const adventureDirectory = path.join(sourceRoot, "pkg-adventure");
+const adventureAudioFiles = (await readdir(path.join(adventureDirectory, "static", "audio"))).filter(name => name.endsWith(".mp3"));
+if (adventureAudio.length !== 17 || new Set(adventureAudio).size !== 17 || adventureAudioFiles.length !== 17) errors.push("Expected 17 unique packaged adventure phrase audios.");
+for (const name of adventureAudio) {
+  const file = await readFile(path.join(adventureDirectory, "static", "audio", name)).catch(() => Buffer.alloc(0));
+  if (file.length < 1024 || file.toString("ascii", 0, 3) !== "ID3") errors.push("Missing or invalid adventure audio: " + name);
+}
+const adventureArt = new Set([...adventureSource.matchAll(/\$\{adventureArtRoot\}\/([a-z-]+\.png)/g)].map(match => match[1]));
+adventureArt.add("actions-wave.png");
+for (const name of adventureArt) await requireFile(path.join(adventureDirectory, "static", "art", name), "Missing adventure art: " + name);
+const pagesConfig = JSON.parse(await readFile(path.join(sourceRoot, "pages.json"), "utf8"));
+const adventurePackage = pagesConfig.subPackages.find(pkg => pkg.root === "pkg-adventure");
+for (const route of ["index/index", "delivery/index", "roleplay/index"]) {
+  if (!adventurePackage?.pages.some(page => page.path === route)) errors.push("Missing adventure route: " + route);
+  await requireFile(path.join(adventureDirectory, route + ".vue"), "Missing adventure page: " + route);
+}
+for (const file of (await walk(adventureDirectory)).filter(file => /\.(vue|ts|scss)$/.test(file))) {
+  if (/\/pkg-(?:learning|reading|cars|world)\/static\//.test(await readFile(file, "utf8"))) errors.push("Adventure references media in another subpackage: " + path.relative(root, file));
+}
+
 const cloudConfig = await readFile(path.join(sourceRoot, "config", "cloud.ts"), "utf8");
 if (!cloudConfig.includes("cloud1-d5gbtry8n16a02de8")) {
   errors.push("CloudBase environment ID is not configured for the selected environment.");
@@ -201,7 +223,7 @@ console.log(
   " high-resolution source assets, " + phraseFiles.length +
   " phrase audios, " + carAudioFiles.length +
   " car model audios, " + playgroundAudioFiles.length +
-  " playground audios, " + countries.length + " countries."
+  " playground audios, " + adventureAudioFiles.length + " adventure audios, " + countries.length + " countries."
 );
 
 async function requireFile(filePath, message) {

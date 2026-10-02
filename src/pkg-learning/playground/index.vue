@@ -27,6 +27,8 @@
       <button v-for="tab in tabs" :key="tab.id" class="content-tabs__tab" :class="{ 'content-tabs__tab--active': activeTab === tab.id }" role="tab" :aria-selected="activeTab === tab.id" @tap="switchTab(tab.id)">{{ tab.label }}</button>
     </view>
 
+    <button class="town-entry" @tap="openAdventure"><view><text>去车车小镇冒险</text><text>开车送水果，和家长演一出小故事</text></view><text>↗</text></button>
+
     <view v-if="activeTab === 'topics'">
       <view class="section-head"><text class="section-title">今天想去哪里？</text><text class="section-caption">8 站，慢慢探索</text></view>
       <view class="topic-grid">
@@ -102,10 +104,12 @@ onUnload(stopAudio);
 function openTopic(topicId: PlaygroundTopicId) { stopAudio(); uni.navigateTo({ url: `/pkg-learning/playground-game/index?topic=${topicId}` }); }
 function switchTab(id: TabId) { stopAudio(); activeTab.value = id; }
 function playChant(audio: string, title: string) { playAudio(audio, title); }
+function openAdventure() { stopAudio(); uni.navigateTo({ url: "/pkg-adventure/index/index" }); }
 </script>
 
 <style scoped lang="scss">
 .playground-page { padding-top: 36rpx; }
+.town-entry { display: flex; align-items: center; justify-content: space-between; gap: 12rpx; width: 100%; padding: 22rpx 26rpx; margin-top: 22rpx; border: 1rpx dashed #d2b989; border-radius: 24rpx; background: #f9efd9; text-align: left; }.town-entry view text { display: block; font-size: 25rpx; font-weight: 800; }.town-entry view text + text { margin-top: 8rpx; font-size: 20rpx; font-weight: 400; color: #a08965; line-height: 1.5; }.town-entry > text { font-size: 32rpx; color: #b49966; }
 .welcome-row { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
 .welcome-row .section-kicker { font-size: 18rpx; letter-spacing: 2rpx; margin-bottom: 12rpx; }
 .welcome-row .page-title { font-size: 42rpx; }

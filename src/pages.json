@@ -112,6 +112,29 @@
           "style": { "navigationBarTitleText": "我的" }
         }
       ]
+    },
+    {
+      "root": "pkg-adventure",
+      "pages": [
+        {
+          "path": "index/index",
+          "style": {
+            "navigationBarTitleText": "车车英语小冒险"
+          }
+        },
+        {
+          "path": "delivery/index",
+          "style": {
+            "navigationBarTitleText": "送货小司机"
+          }
+        },
+        {
+          "path": "roleplay/index",
+          "style": {
+            "navigationBarTitleText": "亲子小剧场"
+          }
+        }
+      ]
     }
   ],
   "preloadRule": {

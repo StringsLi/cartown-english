@@ -1,0 +1,248 @@
+{
+  "checks": [
+    "home and playground entries",
+    "three delivery missions with wrong car, wrong fruit, wrong quantity and wrong destination retries",
+    "cargo capacity, removal, clearing",
+    "three six-line roleplay scenes",
+    "child role selection, previous line, swapping roles, translations and full script",
+    "first-time rewards and replay deduplication",
+    "progress reload and parent report",
+    "unknown query fallbacks",
+    "320/390/430 px layouts"
+  ],
+  "layouts": [
+    {
+      "name": "hub",
+      "width": 320,
+      "scroll": 320
+    },
+    {
+      "name": "hub",
+      "width": 390,
+      "scroll": 390
+    },
+    {
+      "name": "hub",
+      "width": 430,
+      "scroll": 430
+    },
+    {
+      "name": "car",
+      "width": 320,
+      "scroll": 320
+    },
+    {
+      "name": "car",
+      "width": 390,
+      "scroll": 390
+    },
+    {
+      "name": "car",
+      "width": 430,
+      "scroll": 430
+    },
+    {
+      "name": "cargo",
+      "width": 320,
+      "scroll": 320
+    },
+    {
+      "name": "cargo",
+      "width": 390,
+      "scroll": 390
+    },
+    {
+      "name": "cargo",
+      "width": 430,
+      "scroll": 430
+    },
+    {
+      "name": "destinations",
+      "width": 320,
+      "scroll": 320
+    },
+    {
+      "name": "destinations",
+      "width": 390,
+      "scroll": 390
+    },
+    {
+      "name": "destinations",
+      "width": 430,
+      "scroll": 430
+    },
+    {
+      "name": "role-setup",
+      "width": 320,
+      "scroll": 320
+    },
+    {
+      "name": "role-setup",
+      "width": 390,
+      "scroll": 390
+    },
+    {
+      "name": "role-setup",
+      "width": 430,
+      "scroll": 430
+    },
+    {
+      "name": "dialog",
+      "width": 320,
+      "scroll": 320
+    },
+    {
+      "name": "dialog",
+      "width": 390,
+      "scroll": 390
+    },
+    {
+      "name": "dialog",
+      "width": 430,
+      "scroll": 430
+    }
+  ],
+  "audio": [
+    {
+      "name": "red-car.mp3",
+      "status": 200
+    },
+    {
+      "name": "red-car.mp3",
+      "status": 206
+    },
+    {
+      "name": "two-apples.mp3",
+      "status": 200
+    },
+    {
+      "name": "two-apples.mp3",
+      "status": 206
+    },
+    {
+      "name": "to-park.mp3",
+      "status": 200
+    },
+    {
+      "name": "to-park.mp3",
+      "status": 206
+    },
+    {
+      "name": "here-you-are.mp3",
+      "status": 200
+    },
+    {
+      "name": "here-you-are.mp3",
+      "status": 206
+    },
+    {
+      "name": "blue-car.mp3",
+      "status": 200
+    },
+    {
+      "name": "three-bananas.mp3",
+      "status": 200
+    },
+    {
+      "name": "to-zoo.mp3",
+      "status": 200
+    },
+    {
+      "name": "here-you-are.mp3",
+      "status": 206
+    },
+    {
+      "name": "yellow-car.mp3",
+      "status": 200
+    },
+    {
+      "name": "one-strawberry.mp3",
+      "status": 200
+    },
+    {
+      "name": "to-garden.mp3",
+      "status": 200
+    },
+    {
+      "name": "here-you-are.mp3",
+      "status": 206
+    },
+    {
+      "name": "where-to.mp3",
+      "status": 200
+    },
+    {
+      "name": "hello.mp3",
+      "status": 200
+    },
+    {
+      "name": "hello.mp3",
+      "status": 206
+    },
+    {
+      "name": "where-to.mp3",
+      "status": 206
+    },
+    {
+      "name": "to-zoo.mp3",
+      "status": 206
+    },
+    {
+      "name": "lets-go.mp3",
+      "status": 200
+    },
+    {
+      "name": "thank-you.mp3",
+      "status": 200
+    },
+    {
+      "name": "lets-go.mp3",
+      "status": 206
+    },
+    {
+      "name": "thank-you.mp3",
+      "status": 206
+    },
+    {
+      "name": "hello.mp3",
+      "status": 206
+    },
+    {
+      "name": "what-would.mp3",
+      "status": 200
+    },
+    {
+      "name": "two-apples.mp3",
+      "status": 206
+    },
+    {
+      "name": "here-you-are.mp3",
+      "status": 206
+    },
+    {
+      "name": "thank-you.mp3",
+      "status": 206
+    },
+    {
+      "name": "hello.mp3",
+      "status": 206
+    },
+    {
+      "name": "ready.mp3",
+      "status": 200
+    },
+    {
+      "name": "yes.mp3",
+      "status": 200
+    },
+    {
+      "name": "lets-go.mp3",
+      "status": 206
+    },
+    {
+      "name": "thank-you.mp3",
+      "status": 206
+    }
+  ],
+  "errors": []
+}

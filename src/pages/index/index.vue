@@ -47,6 +47,8 @@
       <text class="playground-entry__arrow">↗</text>
     </button>
 
+    <button class="adventure-entry" @tap="goAdventure"><view class="adventure-entry__parcel"><text>✦</text></view><view><text class="adventure-entry__title">车车英语小冒险</text><text class="adventure-entry__note">送货小司机 · 亲子小剧场 · 一起演英语</text></view><text class="adventure-entry__arrow">↗</text></button>
+
     <view class="section-head">
       <view>
         <text class="section-kicker">CHOOSE A MISSION</text>
@@ -188,6 +190,10 @@ function goGarage() {
 function goPlayground() {
   uni.navigateTo({ url: "/pkg-learning/playground/index" });
 }
+
+function goAdventure() {
+  uni.navigateTo({ url: "/pkg-adventure/index/index" });
+}
 </script>
 
 <style scoped lang="scss">
@@ -196,6 +202,8 @@ function goPlayground() {
     radial-gradient(circle at 94% 2%, rgba(89, 159, 185, 0.15), transparent 25%),
     $color-cream;
 }
+
+.adventure-entry { display: flex; align-items: center; gap: 20rpx; width: 100%; margin-top: 16rpx; padding: 24rpx; border: 1rpx solid #e5d9c6; border-radius: 24rpx; background: #f6ebd5; text-align: left; }.adventure-entry__parcel { flex: none; display: flex; align-items: center; justify-content: center; width: 86rpx; height: 86rpx; border: 2rpx dashed #c7a66f; border-radius: 22rpx; background: #fff7e7; color: #c09a56; font-size: 42rpx; }.adventure-entry > view:nth-child(2) { flex: 1; min-width: 0; }.adventure-entry__title,.adventure-entry__note { display: block; }.adventure-entry__title { font-size: 27rpx; font-weight: 900; }.adventure-entry__note { margin-top: 8rpx; font-size: 19rpx; color: #998468; line-height: 1.5; }.adventure-entry__arrow { font-size: 31rpx; color: #ad8c52; }
 
 .brand-row {
   display: flex;
