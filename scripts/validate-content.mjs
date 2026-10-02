@@ -165,7 +165,7 @@ const adventureSource = await readFile(path.join(sourceRoot, "mock", "adventures
 const adventureAudio = [...adventureSource.matchAll(/\$\{adventureAudioRoot\}\/([a-z-]+\.mp3)/g)].map(match => match[1]);
 const adventureDirectory = path.join(sourceRoot, "pkg-adventure");
 const adventureAudioFiles = (await readdir(path.join(adventureDirectory, "static", "audio"))).filter(name => name.endsWith(".mp3"));
-if (adventureAudio.length !== 17 || new Set(adventureAudio).size !== 17 || adventureAudioFiles.length !== 17) errors.push("Expected 17 unique packaged adventure phrase audios.");
+if (!adventureAudio.length || new Set(adventureAudio).size !== adventureAudio.length || adventureAudioFiles.length !== adventureAudio.length) errors.push("Adventure phrase catalog must be unique and match packaged audio files.");
 for (const name of adventureAudio) {
   const file = await readFile(path.join(adventureDirectory, "static", "audio", name)).catch(() => Buffer.alloc(0));
   if (file.length < 1024 || file.toString("ascii", 0, 3) !== "ID3") errors.push("Missing or invalid adventure audio: " + name);

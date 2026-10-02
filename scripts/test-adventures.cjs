@@ -29,10 +29,15 @@ assert.deepEqual(plain(legacy.learnedVehicleIds), ["bus"]);
 assert.deepEqual(plain(legacy.playgroundCompletedTopicIds), ["colors"]);
 assert.deepEqual(plain(legacy.completedDeliveryMissionIds), []);
 assert.deepEqual(plain(legacy.completedRoleplaySceneIds), []);
-assert.equal(adventures.deliveryMissions.length, 3);
-assert.equal(adventures.roleplayScenes.length, 3);
-assert.equal(new Set(adventures.deliveryMissions.map(m => m.id)).size, 3);
-assert.equal(new Set(adventures.roleplayScenes.map(s => s.id)).size, 3);
+assert.equal(adventures.deliveryMissions.length, 6);
+assert.equal(adventures.roleplayScenes.length, 6);
+assert.equal(new Set(adventures.deliveryMissions.map(m => m.id)).size, 6);
+assert.equal(new Set(adventures.roleplayScenes.map(s => s.id)).size, 6);
+const breakfast = adventures.getDeliveryMission("elephant-breakfast");
+assert.equal(adventures.getNextDeliveryMission(breakfast, []).id, "penguin-lunch");
+assert.equal(adventures.getNextDeliveryMission(breakfast, ["penguin-lunch"]).id, "dog-tea-party");
+assert.equal(adventures.getNextDeliveryMission(breakfast, ["penguin-lunch", "dog-tea-party"]).id, "picnic");
+assert.equal(adventures.getNextDeliveryMission(breakfast, adventures.deliveryMissions.map(m => m.id)), undefined);
 for (const mission of adventures.deliveryMissions) {
   const correct = Array(mission.quantity).fill(mission.fruit);
   assert.equal(adventures.checkDeliveryCargo(mission, correct), "correct");
@@ -57,12 +62,31 @@ for (const scene of adventures.roleplayScenes) {
 }
 assert.equal(progress.completeDeliveryMission("unknown").earned, false);
 assert.equal(progress.completeRoleplayScene("unknown").earned, false);
-assert.equal(progress.getCartownProgress().stars, 13);
+assert.equal(progress.getCartownProgress().stars, 19);
 progress.flushCartownProgress();
-assert.equal(storage.get("cartown_english_progress").stars, 13);
+assert.equal(storage.get("cartown_english_progress").stars, 19);
 modules.delete(path.join(sourceRoot, "services/cartownProgressService.ts"));
 const reloaded = load(path.join(sourceRoot, "services/cartownProgressService.ts"));
-assert.equal(reloaded.getCartownProgress().stars, 13);
-assert.equal(reloaded.getCartownProgress().completedDeliveryMissionIds.length, 3);
+assert.equal(reloaded.getCartownProgress().stars, 19);
+assert.equal(reloaded.getCartownProgress().completedDeliveryMissionIds.length, 6);
 assert.equal(reloaded.completeRoleplayScene("taxi-zoo").earned, false);
-console.log("Adventure checks passed: all cargo branches, legacy progress migration, six first-time rewards, replay deduplication, and persisted reload.");
+const oldMissionIds = adventures.deliveryMissions.filter(m => !m.chapter).map(m => m.id);
+const oldSceneIds = adventures.roleplayScenes.filter(s => !s.chapter).map(s => s.id);
+assert.equal(oldMissionIds.length, 3);
+assert.equal(oldSceneIds.length, 3);
+storage.set("cartown_english_progress", { stars: 13, completedDeliveryMissionIds: oldMissionIds, completedRoleplaySceneIds: oldSceneIds });
+modules.delete(path.join(sourceRoot, "services/cartownProgressService.ts"));
+const expanded = load(path.join(sourceRoot, "services/cartownProgressService.ts"));
+for (const id of oldMissionIds) assert.equal(expanded.completeDeliveryMission(id).earned, false);
+for (const id of oldSceneIds) assert.equal(expanded.completeRoleplayScene(id).earned, false);
+for (const mission of adventures.deliveryMissions.filter(m => m.chapter === "car-life")) {
+  assert.ok(mission.quantity >= 1 && mission.quantity <= 3);
+  assert.equal(expanded.completeDeliveryMission(mission.id).earned, true);
+}
+for (const scene of adventures.roleplayScenes.filter(s => s.chapter === "car-life")) {
+  assert.ok(["wash", "repair", "fuel"].includes(scene.activity));
+  assert.equal(expanded.completeRoleplayScene(scene.id).earned, true);
+}
+assert.equal(expanded.getCartownProgress().stars, 19);
+expanded.flushCartownProgress();
+console.log("Adventure checks passed: all cargo branches, legacy progress migration, twelve first-time rewards and existing six-story progress, replay deduplication, and persisted reload.");

@@ -16,8 +16,8 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--force", action="store_true")
 args = parser.parse_args()
 phrases = re.findall(r'text: "([^"]+)", audio: `\$\{adventureAudioRoot\}/([a-z-]+)\.mp3', SOURCE)
-if len(phrases) != 17 or len({name for _,name in phrases}) != len(phrases):
-    raise ValueError("Expected 17 unique adventure phrases")
+if not phrases or len({name for _,name in phrases}) != len(phrases):
+    raise ValueError("Expected a nonempty catalog with unique adventure phrase filenames")
 voice = PiperVoice.load(Path(os.environ["PIPER_MODEL"]))
 rate = voice.config.sample_rate
 OUTPUT.mkdir(parents=True, exist_ok=True)
