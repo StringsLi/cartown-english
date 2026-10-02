@@ -45,11 +45,11 @@ export const playgroundTopics: PlaygroundTopic[] = [
     tint: "#fff0e7",
     accent: "#d57451",
     items: [
-      { id: "red", word: "red", label: "红色", symbol: "🚗", prompt: "Find something red.", audio: `${audioRoot}/colors-red.mp3`, wordAudio: `${audioRoot}/colors-red-word.mp3`, art: `${artRoot}/colors-red.png` },
-      { id: "blue", word: "blue", label: "蓝色", symbol: "🚙", prompt: "Find something blue.", audio: `${audioRoot}/colors-blue.mp3`, wordAudio: `${audioRoot}/colors-blue-word.mp3`, art: `${artRoot}/colors-blue.png` },
-      { id: "yellow", word: "yellow", label: "黄色", symbol: "🚕", prompt: "Find something yellow.", audio: `${audioRoot}/colors-yellow.mp3`, wordAudio: `${audioRoot}/colors-yellow-word.mp3`, art: `${artRoot}/colors-yellow.png` },
-      { id: "green", word: "green", label: "绿色", symbol: "🚗", prompt: "Find something green.", audio: `${audioRoot}/colors-green.mp3`, wordAudio: `${audioRoot}/colors-green-word.mp3`, art: `${artRoot}/colors-green.png` },
-      { id: "purple", word: "purple", label: "紫色", symbol: "🚗", prompt: "Find something purple.", audio: `${audioRoot}/colors-purple.mp3`, wordAudio: `${audioRoot}/colors-purple-word.mp3`, art: `${artRoot}/colors-purple.png` }
+      { id: "red", word: "red", label: "红色", symbol: "🚗", prompt: "Find something red.", audio: `${audioRoot}/colors-red.mp3`, wordAudio: `${audioRoot}/colors-red-word.mp3`, art: `${artRoot}/red-hatchback.png` },
+      { id: "blue", word: "blue", label: "蓝色", symbol: "🚙", prompt: "Find something blue.", audio: `${audioRoot}/colors-blue.mp3`, wordAudio: `${audioRoot}/colors-blue-word.mp3`, art: `${artRoot}/blue-suv.png` },
+      { id: "yellow", word: "yellow", label: "黄色", symbol: "🚕", prompt: "Find something yellow.", audio: `${audioRoot}/colors-yellow.mp3`, wordAudio: `${audioRoot}/colors-yellow-word.mp3`, art: `${artRoot}/yellow-taxi.png` },
+      { id: "green", word: "green", label: "绿色", symbol: "🚗", prompt: "Find something green.", audio: `${audioRoot}/colors-green.mp3`, wordAudio: `${audioRoot}/colors-green-word.mp3`, art: `${artRoot}/green-bus.png` },
+      { id: "purple", word: "purple", label: "紫色", symbol: "🚗", prompt: "Find something purple.", audio: `${audioRoot}/colors-purple.mp3`, wordAudio: `${audioRoot}/colors-purple-word.mp3`, art: `${artRoot}/purple-pickup.png` }
     ],
     parentPhrase: "Find something blue!",
     parentTip: "在家里找一件蓝色的东西，找到后一起说 “I found it!”。",

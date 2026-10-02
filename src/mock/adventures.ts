@@ -43,10 +43,20 @@ export type CarId = "red" | "blue" | "yellow";
 export type FruitId = "apple" | "banana" | "strawberry";
 export type ActivityId = "wash" | "repair" | "fuel";
 export type AdventureChapterId = "first-trip" | "car-life";
-export const deliveryCars: Array<{ id: CarId; label: string; art: string }> = [
-  { id: "red", label: "红色小车", art: `${adventureArtRoot}/colors-red.png` },
-  { id: "blue", label: "蓝色小车", art: `${adventureArtRoot}/colors-blue.png` },
-  { id: "yellow", label: "黄色小车", art: `${adventureArtRoot}/colors-yellow.png` }
+export const adventureVehicles = {
+  "red-hatchback": { label: "红色小轿车", art: `${adventureArtRoot}/red-hatchback.png` },
+  "blue-suv": { label: "蓝色越野车", art: `${adventureArtRoot}/blue-suv.png` },
+  "yellow-taxi": { label: "黄色出租车", art: `${adventureArtRoot}/yellow-taxi.png` },
+  "green-bus": { label: "绿色小巴士", art: `${adventureArtRoot}/green-bus.png` },
+  "purple-pickup": { label: "紫色小皮卡", art: `${adventureArtRoot}/purple-pickup.png` },
+  "delivery-van": { label: "橙色送货车", art: `${adventureArtRoot}/delivery-van.png` }
+};
+export type AdventureVehicleId = keyof typeof adventureVehicles;
+export const deliveryCarVehicles: Record<CarId, AdventureVehicleId> = { red: "red-hatchback", blue: "blue-suv", yellow: "yellow-taxi" };
+export const deliveryCars: Array<{ id: CarId; label: string; model: string; art: string }> = [
+  { id: "red", label: "红色小车", model: "小轿车", art: adventureVehicles["red-hatchback"].art },
+  { id: "blue", label: "蓝色小车", model: "越野车", art: adventureVehicles["blue-suv"].art },
+  { id: "yellow", label: "黄色小车", model: "出租车", art: adventureVehicles["yellow-taxi"].art }
 ];
 export const deliveryFruits: Array<{ id: FruitId; label: string; art: string }> = [
   { id: "apple", label: "苹果", art: `${adventureArtRoot}/food-apple.png` },
@@ -77,10 +87,10 @@ export interface RoleplayLine { role: "first" | "second"; phrase: AdventurePhras
 export interface RoleplayScene {
   id: string; title: string; subtitle: string; tint: string; destination: DestinationId;
   roles: { first: string; second: string }; lines: RoleplayLine[]; offlineTask: string;
-  chapter?: AdventureChapterId; activity?: ActivityId;
+  chapter?: AdventureChapterId; activity?: ActivityId; vehicle: AdventureVehicleId;
 }
 export const roleplayScenes: RoleplayScene[] = [
-  { id: "taxi-zoo", title: "车车去动物园", subtitle: "小司机和乘客的一趟旅行", tint: "#e8f1f7", destination: "zoo", roles: { first: "司机", second: "乘客" }, lines: [
+  { id: "taxi-zoo", vehicle: "yellow-taxi", title: "车车去动物园", subtitle: "小司机和乘客的一趟旅行", tint: "#e8f1f7", destination: "zoo", roles: { first: "司机", second: "乘客" }, lines: [
     { role: "first", phrase: "hello", translation: "你好！", action: "挥挥手，和乘客打个招呼。" },
     { role: "second", phrase: "hello", translation: "你好！", action: "挥挥手，回应小司机。" },
     { role: "first", phrase: "whereTo", translation: "去哪里？", action: "假装握住方向盘，问一问。" },
@@ -88,7 +98,7 @@ export const roleplayScenes: RoleplayScene[] = [
     { role: "first", phrase: "letsGo", translation: "出发吧！", action: "转一转想象中的方向盘。" },
     { role: "second", phrase: "thankYou", translation: "谢谢！", action: "到站啦，笑着谢谢司机。" }
   ], offlineTask: "两把椅子当小汽车，家长和孩子轮流当司机、乘客。先去动物园，再用中文商量一个新的目的地。" },
-  { id: "fruit-shop", title: "开一家水果小店", subtitle: "小店员和顾客买卖水果", tint: "#eef2e3", destination: "park", roles: { first: "店员", second: "顾客" }, lines: [
+  { id: "fruit-shop", vehicle: "purple-pickup", title: "开一家水果小店", subtitle: "小店员和顾客买卖水果", tint: "#eef2e3", destination: "park", roles: { first: "店员", second: "顾客" }, lines: [
     { role: "first", phrase: "hello", translation: "你好！", action: "摆好水果，笑着欢迎顾客。" },
     { role: "second", phrase: "hello", translation: "你好！", action: "走进小店，和店员打个招呼。" },
     { role: "first", phrase: "whatWould", translation: "你想要什么？", action: "指着水果，问一问。" },
@@ -96,7 +106,7 @@ export const roleplayScenes: RoleplayScene[] = [
     { role: "first", phrase: "hereYouAre", translation: "给你！", action: "把两个假装的苹果递给顾客。" },
     { role: "second", phrase: "thankYou", translation: "谢谢！", action: "接过水果，和店员说谢谢。" }
   ], offlineTask: "用积木、纸片或真实水果摆一个小摊。家长和孩子交换角色，练习下订单和递东西。" },
-  { id: "bus-trip", title: "坐上快乐小巴士", subtitle: "听懂一句，做一个小动作", tint: "#fff0df", destination: "garden", roles: { first: "司机", second: "乘客" }, lines: [
+  { id: "bus-trip", vehicle: "green-bus", title: "坐上快乐小巴士", subtitle: "听懂一句，做一个小动作", tint: "#fff0df", destination: "garden", roles: { first: "司机", second: "乘客" }, lines: [
     { role: "first", phrase: "hello", translation: "你好！", action: "挥挥手，欢迎乘客上车。" },
     { role: "second", phrase: "hello", translation: "你好！", action: "找把椅子坐好，回应司机。" },
     { role: "first", phrase: "ready", translation: "准备好了吗？", action: "看看乘客，问一问。" },
@@ -104,7 +114,7 @@ export const roleplayScenes: RoleplayScene[] = [
     { role: "first", phrase: "letsGo", translation: "出发吧！", action: "转转方向盘，假装开巴士。" },
     { role: "second", phrase: "thankYou", translation: "谢谢！", action: "到花园啦，和司机说谢谢。" }
   ], offlineTask: "把椅子排成小巴士，带上玩具乘客。家长问 “Ready?”，孩子点头说 “Yes!” 后一起出发。" },
-  { id: "car-wash", chapter: "car-life", activity: "wash", title: "泡泡洗车屋", subtitle: "小车脏了，洗出亮晶晶", tint: "#e5f1f2", destination: "park", roles: { first: "小司机", second: "洗车员" }, lines: [
+  { id: "car-wash", vehicle: "red-hatchback", chapter: "car-life", activity: "wash", title: "泡泡洗车屋", subtitle: "小车脏了，洗出亮晶晶", tint: "#e5f1f2", destination: "park", roles: { first: "小司机", second: "洗车员" }, lines: [
     { role: "first", phrase: "dirtyCar", translation: "我的小车脏了。", action: "指一指玩具小车，看看哪里需要清洁。" },
     { role: "second", phrase: "letsWash", translation: "我们来洗洗它吧！", action: "拿起想象中的小海绵，准备洗车。" },
     { role: "first", phrase: "washWash", translation: "洗一洗，洗一洗！", action: "和家长一起轻轻擦擦玩具车。" },
@@ -112,7 +122,7 @@ export const roleplayScenes: RoleplayScene[] = [
     { role: "first", phrase: "thankYou", translation: "谢谢！", action: "笑一笑，谢谢洗车员。" },
     { role: "second", phrase: "youreWelcome", translation: "不客气！", action: "摆摆手，和小司机打个招呼。" }
   ], offlineTask: "用干净的干布擦一辆玩具车，轮流当司机和洗车员。一边擦一边说 “Wash, wash, wash!”，擦好后一起说 “All clean!”。" },
-  { id: "repair-shop", chapter: "car-life", activity: "repair", title: "修车小工坊", subtitle: "车车不走了，一起找找原因", tint: "#fff0dc", destination: "park", roles: { first: "修车师傅", second: "小司机" }, lines: [
+  { id: "repair-shop", vehicle: "blue-suv", chapter: "car-life", activity: "repair", title: "修车小工坊", subtitle: "车车不走了，一起找找原因", tint: "#fff0dc", destination: "park", roles: { first: "修车师傅", second: "小司机" }, lines: [
     { role: "first", phrase: "howCanHelp", translation: "需要我帮什么忙？", action: "看看小司机，伸出手表示愿意帮忙。" },
     { role: "second", phrase: "carWontGo", translation: "我的小车开不动了。", action: "指着玩具车，请师傅一起看看。" },
     { role: "first", phrase: "checkWheels", translation: "我们检查一下车轮吧。", action: "指一指玩具车的轮子，轻轻转一转。" },
@@ -120,7 +130,7 @@ export const roleplayScenes: RoleplayScene[] = [
     { role: "first", phrase: "allFixed", translation: "修好啦！", action: "把小车轻轻推过去，假装已经修好了。" },
     { role: "second", phrase: "thankYou", translation: "谢谢！", action: "接过小车，笑着谢谢师傅。" }
   ], offlineTask: "用纸盒当修车店，玩具车停进去。家长和孩子轮流指车轮、推小车，假装修理，不需要拆零件或使用真正的工具。" },
-  { id: "fuel-stop", chapter: "car-life", activity: "fuel", title: "小小加油站", subtitle: "补充能量，礼貌道别再出发", tint: "#eaf0e2", destination: "park", roles: { first: "加油员", second: "小司机" }, lines: [
+  { id: "fuel-stop", vehicle: "delivery-van", chapter: "car-life", activity: "fuel", title: "小小加油站", subtitle: "补充能量，礼貌道别再出发", tint: "#eaf0e2", destination: "park", roles: { first: "加油员", second: "小司机" }, lines: [
     { role: "first", phrase: "hello", translation: "你好！", action: "挥挥手，欢迎小车停靠。" },
     { role: "second", phrase: "fillItUp", translation: "请加满！", action: "把玩具车停好，礼貌地提出请求。" },
     { role: "first", phrase: "allDone", translation: "加好啦！", action: "假装用纸画的加油枪给玩具车补充能量。" },

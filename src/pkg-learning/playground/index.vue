@@ -92,7 +92,7 @@ const stars = ref(0);
 const completedCount = computed(() => playgroundTopics.filter(topic => completedIds.value.includes(topic.id)).length);
 const heardCount = computed(() => playgroundTopics.reduce((count, topic) => count + topic.items.filter(item => heardIds.value.includes(`${topic.id}:${item.id}`)).length, 0));
 const suggestedTopic = computed(() => getSuggestedPlaygroundTopic(completedIds.value));
-const sceneArt = (id: string) => `/pkg-learning/static/playground/art/scene-${id}.png`;
+const sceneArt = (id: string) => `/pkg-learning/static/playground/art/${id === "colors" ? "blue-suv" : `scene-${id}`}.png`;
 onShow(() => {
   const progress = getCartownProgress();
   completedIds.value = [...progress.playgroundCompletedTopicIds];

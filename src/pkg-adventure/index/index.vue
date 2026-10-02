@@ -6,7 +6,7 @@
     <text class="page-subtitle">{{ activeChapter === "car-life" ? "洗车、修车、再出发，一起演生活里的英语。" : "开一辆小车，把英语玩进故事里。" }}</text>
     <view class="town-hero">
       <view class="town-hero__copy"><text>今天的小司机，准备好了吗？</text><text>听一句 · 动一动 · 一起演</text></view>
-      <AdventureScene destination="park" />
+      <AdventureScene destination="park" :vehicle="activeChapter === 'car-life' ? 'delivery-van' : 'red-hatchback'" />
       <view class="town-stats"><view><text>{{ deliveryCount }} / {{ deliveryMissions.length }}</text><text>水果送到了</text></view><view><text>{{ roleplayCount }} / {{ roleplayScenes.length }}</text><text>小剧场演过了</text></view><view><text>★ {{ progress.stars }}</text><text>我的小星星</text></view></view>
     </view>
     <view class="chapter-tabs" role="tablist"><button v-for="chapter in chapters" :key="chapter.id" class="chapter-tab" :class="{ 'chapter-tab--active': activeChapter === chapter.id }" role="tab" :aria-selected="activeChapter === chapter.id" @tap="switchChapter(chapter.id)">{{ chapter.label }}<text v-if="chapter.id === 'car-life'">新</text></button></view>
