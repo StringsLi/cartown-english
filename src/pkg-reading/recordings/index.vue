@@ -23,21 +23,22 @@
       <!-- #endif -->
     </view>
     <view v-if="!records.length" class="soft-card empty-card"><text class="empty-icon">♫</text><text class="card-title">还没有录音小纪念</text><text class="card-note">读一本绘本，点“跟我读”，录完会自动保存到这里。</text><BigButton label="去选一本绘本 ›" variant="ghost" @tap="goBooks" /></view>
-    <view v-if="records.length" class="record-filter"><input v-model="search" aria-label="按句子查找录音" placeholder="按英文句子查找录音" /><scroll-view scroll-x class="book-filter"><button :aria-pressed="!selectedBook" :class="{'book-filter__active': !selectedBook}" @tap="selectedBook = ''">全部 {{ records.length }}</button><button v-for="choice in bookChoices" :key="choice.id" :aria-pressed="selectedBook === choice.id" :class="{'book-filter__active': selectedBook === choice.id}" @tap="selectedBook = choice.id">{{ choice.title }} · {{ choice.count }}</button></scroll-view><text class="card-note">找到 {{ visibleRecords.length }} 条声音小纪念</text></view>
+    <view v-if="records.length" class="record-filter"><input v-model="search" aria-label="按句子查找录音" placeholder="按英文句子查找录音" /><scroll-view scroll-x class="book-filter"><button role="button" :aria-pressed="!selectedBook" :class="{'book-filter__active': !selectedBook}" @tap="selectedBook = ''">全部 {{ records.length }}</button><button role="button" v-for="choice in bookChoices" :key="choice.id" :aria-pressed="selectedBook === choice.id" :class="{'book-filter__active': selectedBook === choice.id}" @tap="selectedBook = choice.id">{{ choice.title }} · {{ choice.count }}</button></scroll-view><text class="card-note">找到 {{ visibleRecords.length }} 条声音小纪念</text></view>
     <view v-if="records.length && !visibleRecords.length" class="soft-card empty-card"><text class="card-title">换个句子找找看</text><BigButton label="显示全部录音" variant="ghost" @tap="search = ''; selectedBook = ''" /></view>
     <view v-for="(record,index) in visibleRecords" :key="record.createdAt + ':' + record.sentence" class="soft-card record-card">
       <text class="record-index">{{ String(index + 1).padStart(2,'0') }} · {{ getBookById(record.bookId)?.title || '跟读练习' }}</text>
       <text class="record-sentence">{{ record.sentence }}</text>
       <text class="card-note">{{ record.createdAt }}{{ record.durationSeconds ? ` · ${record.durationSeconds} 秒` : '' }}</text>
       <view class="action-row"><BigButton label="听我的录音 ▶" variant="ghost" :disabled="busy" @tap="listen(record)" /><BigButton label="导出音频 ↓" :disabled="busy" @tap="prepareAudio(record)" /></view>
-      <view v-if="recordPlaybackState.path === record.audioUrl" class="playback-note" role="status"><text>{{ playbackNote }}</text><button v-if="['loading','playing'].includes(recordPlaybackState.phase)" @tap="stopRecordPlayback">停止 ■</button></view>
-      <button v-if="getBookById(record.bookId)" class="read-again" @tap="readAgain(record)">回绘本，再读这句 ›</button>
+      <view v-if="recordPlaybackState.path === record.audioUrl" class="playback-note" role="status"><text>{{ playbackNote }}</text><button role="button" v-if="['loading','playing'].includes(recordPlaybackState.phase)" @tap="stopRecordPlayback">停止 ■</button></view>
+      <button role="button" v-if="getBookById(record.bookId)" class="read-again" @tap="readAgain(record)">回绘本，再读这句 ›</button>
     </view>
     <text class="privacy-note">录音默认保存在这台设备，仅在你点击保存并选择接收方后分享。</text>
     <BigButton label="返回家长中心" variant="ghost" @tap="goParent" />
   </view>
 </template>
 <script setup lang="ts">
+import { navigate } from "@/services/navigationService";
 import { computed, ref } from "vue";
 import { onShow, onHide, onUnload } from "@dcloudio/uni-app";
 import BigButton from "@/components/BigButton.vue";
@@ -88,9 +89,9 @@ async function importBackup() {
   catch (e) { uni.showToast({ title: recordExportError(e), icon: "none" }); }
   finally { busy.value = false; }
 }
-function goBooks() { uni.reLaunch({ url: "/pages/books/index" }); }
-function goParent() { uni.reLaunch({ url: "/pkg-user/parent/index" }); }
-function readAgain(record: RepeatRecord) { stopRecordPlayback(); uni.navigateTo({ url: `/pkg-reading/repeat/index?bookId=${encodeURIComponent(record.bookId)}&sentence=${encodeURIComponent(record.sentence)}` }); }
+function goBooks() { navigate({ url: "/pages/books/index" }, "reLaunch"); }
+function goParent() { navigate({ url: "/pkg-user/parent/index" }, "reLaunch"); }
+function readAgain(record: RepeatRecord) { stopRecordPlayback(); navigate({ url: `/pkg-reading/repeat/index?bookId=${encodeURIComponent(record.bookId)}&sentence=${encodeURIComponent(record.sentence)}` }); }
 </script>
 <style scoped lang="scss">
 .recordings-page { padding-bottom: 52rpx; }.archive-card,.ready-card,.record-card,.empty-card { padding: 28rpx; margin-top: 24rpx; }.archive-card { background: #e8efe2; }.ready-card { background: #fff1da; }.card-title { display: block; font-size: 29rpx; font-weight: 900; line-height: 1.5; }.card-note { display: block; color: $color-muted; font-size: 23rpx; line-height: 1.6; margin: 12rpx 0; }.action-row { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14rpx; margin-top: 22rpx; }.action-row :deep(.big-button) { padding: 0 12rpx; font-size: 24rpx; }.record-index { font-size: 20rpx; color: $color-coral; font-weight: 800; }.record-sentence { display: block; font-size: 34rpx; font-weight: 800; line-height: 1.5; margin-top: 14rpx; word-break: break-word; }.file-name { display: block; font-size: 20rpx; color: $color-muted; word-break: break-all; margin-bottom: 20rpx; }.empty-card { text-align: center; }.empty-icon { display: block; font-size: 65rpx; color: #b69b73; margin-bottom: 20rpx; }.privacy-note { display: block; padding: 28rpx 10rpx; font-size: 21rpx; line-height: 1.6; text-align: center; color: $color-muted; }

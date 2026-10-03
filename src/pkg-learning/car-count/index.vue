@@ -1,13 +1,16 @@
 <template>
   <view class="page car-page">
+    <PageTopbar section="点一点 · 数一数" fallback="/pages/vehicles/index" />
+    <AudioFeedback />
     <view class="car-hero soft-card">
       <text class="section-kicker">Count Cars</text>
       <text class="page-title">{{ challenge.count }}</text>
       <text class="page-subtitle">{{ challenge.task }} · {{ feedback }}</text>
     </view>
 
+    <view class="count-status" role="status">已点 {{ tapped.length }} / {{ challenge.count }} 辆 · 每辆只点一次</view>
     <view class="count-grid">
-      <view
+      <button role="button"
         v-for="slot in slots"
         :key="slot"
         class="count-card soft-card"
@@ -17,17 +20,19 @@
         <view class="count-card__vehicle">
           <PremiumVehicleImage :name="challenge.kind" :alt="challenge.vehicleZh" />
         </view>
-      </view>
+      </button>
     </view>
 
     <view class="count-actions">
       <BigButton label="再听一次" variant="ghost" @tap="askAgain" />
-      <BigButton label="下一题" variant="warm" @tap="nextChallenge" />
+      <BigButton label="下一题" variant="warm" :disabled="tapped.length !== challenge.count" @tap="nextChallenge" />
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
+import AudioFeedback from "@/components/AudioFeedback.vue";
+import PageTopbar from "@/components/PageTopbar.vue";
 import { computed, ref } from "vue";
 import BigButton from "@/components/BigButton.vue";
 import PremiumVehicleImage from "@/components/PremiumVehicleImage.vue";
@@ -42,14 +47,14 @@ const challengeIndex = ref(progress.countQuestionsDone % countingChallenges.leng
 const tapped = ref<number[]>([]);
 const feedback = ref("Tap and count!");
 const challenge = computed(() => countingChallenges[challengeIndex.value]);
-const slots = computed(() => Array.from({ length: challenge.value.count + 1 }, (_, index) => index));
+const slots = computed(() => Array.from({ length: challenge.value.count }, (_, index) => index));
 
 function askAgain() {
   speakEnglish(challenge.value.task);
 }
 
 function tapCar(slot: number) {
-  if (tapped.value.includes(slot)) {
+  if (slot < 0 || slot >= challenge.value.count || tapped.value.length >= challenge.value.count || tapped.value.includes(slot)) {
     return;
   }
 
@@ -58,7 +63,6 @@ function tapCar(slot: number) {
 
   if (tapped.value.length === challenge.value.count) {
     feedback.value = "Great job!";
-    speakEnglish("Great job!");
     addCartownStar();
     const nextDone = getCartownProgress().countQuestionsDone + 1;
     saveCartownProgress({ countQuestionsDone: nextDone });
@@ -66,6 +70,7 @@ function tapCar(slot: number) {
 }
 
 function nextChallenge() {
+  if (tapped.value.length !== challenge.value.count) return;
   challengeIndex.value = (challengeIndex.value + 1) % countingChallenges.length;
   tapped.value = [];
   feedback.value = "Tap and count!";
@@ -74,15 +79,16 @@ function nextChallenge() {
 </script>
 
 <style scoped lang="scss">
+.count-status { margin-top:22rpx; padding:18rpx 22rpx; border-radius:20rpx; background:#e8efe6; font-size:24rpx; color:#527769; }
 .car-page {
-  padding-bottom: 56rpx;
+  padding-bottom: calc(56rpx + env(safe-area-inset-bottom));
 }
 
 .car-hero {
   padding: 32rpx;
   background:
-    radial-gradient(circle at 92% 20%, rgba(255, 214, 107, 0.34), transparent 34%),
-    linear-gradient(135deg, #ffffff 0%, #eaf6ff 58%, #fff0dd 100%);
+    radial-gradient(circle at 92% 20%, rgba(223, 166, 45, 0.16), transparent 34%),
+    linear-gradient(135deg, #fffdf9 0%, #edf2e9 58%, #f7edda 100%);
 }
 
 .count-grid {

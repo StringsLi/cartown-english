@@ -1,12 +1,13 @@
 <template>
   <view class="bottom-nav">
-    <button
+    <button role="button"
       v-for="item in navItems"
       :key="item.id"
       class="bottom-nav__item"
       :class="{ 'bottom-nav__item--active': props.active === item.id }"
       :aria-label="item.label"
       @tap="go(item.path)"
+      :aria-current="props.active === item.id ? 'page' : undefined"
     >
       <text class="bottom-nav__icon">{{ item.icon }}</text>
       <text class="bottom-nav__label">{{ item.label }}</text>
@@ -15,6 +16,7 @@
 </template>
 
 <script setup lang="ts">
+import { navigate } from "@/services/navigationService";
 type NavId = "home" | "books" | "learn" | "parent";
 
 const props = defineProps<{
@@ -29,7 +31,7 @@ const navItems: Array<{ id: NavId; label: string; icon: string; path: string }> 
 ];
 
 function go(path: string) {
-  uni.reLaunch({ url: path });
+  navigate({ url: path }, "reLaunch");
 }
 </script>
 
@@ -57,7 +59,7 @@ function go(path: string) {
   align-items: center;
   justify-content: center;
   gap: 5rpx;
-  min-height: 80rpx;
+  min-height: 44px;
   border-radius: 22rpx;
   color: #8b857e;
 }

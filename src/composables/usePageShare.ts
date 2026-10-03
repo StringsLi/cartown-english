@@ -1,4 +1,7 @@
-import { onShareAppMessage, onShareTimeline, onShow } from "@dcloudio/uni-app";
+import { onShareAppMessage, onShareTimeline, onShow, onHide, onUnload } from "@dcloudio/uni-app";
+
+import { onBeforeUnmount, onDeactivated } from "vue";
+import { stopAudio } from "@/services/audioService";
 
 type ShareQueryValue = string | number | boolean | null | undefined;
 
@@ -65,6 +68,10 @@ function resolveTitle(options: PageShareOptions): string {
 }
 
 export function usePageShare(options: PageShareOptions = {}) {
+  onBeforeUnmount(stopAudio);
+  onDeactivated(stopAudio);
+  onHide(stopAudio);
+  onUnload(stopAudio);
   onShow(() => {
     // #ifdef MP-WEIXIN
     uni.showShareMenu({

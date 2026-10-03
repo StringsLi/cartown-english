@@ -59,7 +59,7 @@ export function getLearningState(): LearningState {
     const stored = getStorage<LearningState>(STORAGE_KEY);
     cachedState = {
       userId: stored?.userId ?? defaultState.userId,
-      childNickname: stored?.childNickname ?? defaultState.childNickname,
+      childNickname: typeof stored?.childNickname === "string" ? stored.childNickname : defaultState.childNickname,
       streakDays: stored?.streakDays ?? defaultState.streakDays,
       lastStudyDate: stored?.lastStudyDate ?? defaultState.lastStudyDate,
       readBookIds: stored?.readBookIds ?? [],

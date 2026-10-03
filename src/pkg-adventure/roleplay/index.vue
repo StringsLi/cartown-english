@@ -1,15 +1,15 @@
 <template>
   <view class="page adventure-page roleplay-page">
-    <view class="adventure-topbar"><button class="adventure-back" @tap="backToAdventure">‹ 小冒险</button><text class="adventure-topbar__note">亲子小剧场</text></view>
+    <view class="adventure-topbar"><button role="button" class="adventure-back" @tap="backToAdventure">‹ 小冒险</button><text class="adventure-topbar__note">亲子小剧场</text></view>
     <text class="section-kicker">LET'S PLAY TOGETHER</text><text class="page-title">{{ scene.title }}</text><text class="page-subtitle">{{ scene.subtitle }}</text>
     <AudioFeedback />
     <view v-if="!started || finished" class="theater-scene" :style="{ backgroundColor: scene.tint }"><AdventureScene :destination="scene.destination" :activity="scene.activity" :vehicle="scene.vehicle" :arrived="finished" /><view class="theater-scene__caption"><text>{{ scene.roles.first }} × {{ scene.roles.second }}</text><text>你一句，我一句</text></view></view>
 
     <view v-if="!started && !finished" class="adventure-card role-setup">
       <text class="adventure-kicker">孩子想当谁？</text>
-      <view class="role-choices"><button v-for="role in roleOptions" :key="role" class="role-choice" :class="{ 'role-choice--selected': childRole === role }" :aria-pressed="childRole === role" @tap="childRole = role"><view class="role-choice__icon">{{ role === 'first' ? '01' : '02' }}</view><text>我当{{ scene.roles[role] }}</text><text>{{ childRole === role ? '✓ 选好啦' : '点我选角色' }}</text></button></view>
+      <view class="role-choices"><button role="button" v-for="role in roleOptions" :key="role" class="role-choice" :class="{ 'role-choice--selected': childRole === role }" :aria-pressed="childRole === role" @tap="childRole = role"><view class="role-choice__icon">{{ role === 'first' ? '01' : '02' }}</view><text>我当{{ scene.roles[role] }}</text><text>{{ childRole === role ? '✓ 选好啦' : '点我选角色' }}</text></button></view>
       <text class="role-setup__note">家长当{{ scene.roles[parentRole] }}。不用背台词，点一句听一句，跟着说或做动作就可以。</text>
-      <button class="adventure-primary role-start" @tap="start">开始表演 ›</button>
+      <button role="button" class="adventure-primary role-start" @tap="start">开始表演 ›</button>
     </view>
 
     <view v-else-if="!finished" class="adventure-card role-dialog">
@@ -17,22 +17,22 @@
       <view class="dialog-progress"><view v-for="(_, index) in scene.lines" :key="index" :class="{ 'dialog-progress--done': index < lineIndex, 'dialog-progress--current': index === lineIndex }" /></view>
       <view class="speaker-row"><image :src="`${adventureArtRoot}/actions-wave.png`" mode="aspectFit" /><view><text>{{ scene.roles[currentLine.role] }}</text><text>{{ currentLine.role === childRole ? '孩子的角色' : '家长的角色' }}</text></view><text class="speaker-row__tag">{{ currentLine.role === childRole ? 'YOUR TURN' : 'TOGETHER' }}</text></view>
       <view class="dialog-bubble" :class="{ 'dialog-bubble--child': currentLine.role === childRole }"><text>{{ currentPhrase.text }}</text><text v-if="showTranslation" class="dialog-bubble__translation">{{ currentLine.translation }}</text></view>
-      <button class="adventure-listen" @tap="listenCurrent">▶ 听这句，跟着说</button>
+      <button role="button" class="adventure-listen" @tap="listenCurrent">▶ 听这句，跟着说</button>
       <text class="dialog-action">{{ currentLine.action }}</text>
-      <button class="translation-toggle" :aria-expanded="showTranslation" @tap="showTranslation = !showTranslation">{{ showTranslation ? '收起中文提示' : '家长看中文提示' }} {{ showTranslation ? '⌃' : '⌄' }}</button>
-      <button class="adventure-primary dialog-next" @tap="nextLine">{{ nextLabel }}</button>
+      <button role="button" class="translation-toggle" :aria-expanded="showTranslation" @tap="showTranslation = !showTranslation">{{ showTranslation ? '收起中文提示' : '家长看中文提示' }} {{ showTranslation ? '⌃' : '⌄' }}</button>
+      <button role="button" class="adventure-primary dialog-next" @tap="nextLine">{{ nextLabel }}</button>
       <text class="dialog-note">一起说或做动作，准备好了再下一句。</text>
-      <view class="dialog-controls"><button v-if="lineIndex > 0" @tap="previousLine">‹ 上一句</button><button @tap="swapRoles">交换角色，从头再演 ⇄</button></view>
+      <view class="dialog-controls"><button role="button" v-if="lineIndex > 0" @tap="previousLine">‹ 上一句</button><button role="button" @tap="swapRoles">交换角色，从头再演 ⇄</button></view>
     </view>
 
     <view v-else class="adventure-card adventure-complete">
       <text class="adventure-complete__star">★</text><text class="adventure-complete__title">小剧场，演完啦！</text><text class="adventure-complete__note">{{ earned ? '收集一枚剧场印章，获得 1 颗小星星。' : '又演完一个故事，熟悉的台词也能玩出新花样。' }}</text>
       <view class="adventure-offline"><text>离开屏幕，再演一遍</text><text>{{ scene.offlineTask }}</text></view>
-      <button class="adventure-primary role-swap" @tap="swapRoles">交换角色，再演一遍 ⇄</button><button class="adventure-text-button" @tap="backToAdventure">返回小冒险</button>
+      <button role="button" class="adventure-primary role-swap" @tap="swapRoles">交换角色，再演一遍 ⇄</button><button role="button" class="adventure-text-button" @tap="backToAdventure">返回小冒险</button>
     </view>
 
-    <button class="adventure-text-button script-toggle" :aria-expanded="showScript" @tap="showScript = !showScript">{{ showScript ? '收起完整台词 ⌃' : '家长看完整台词 ⌄' }}</button>
-    <view v-if="showScript" class="script-card"><button v-for="(line, index) in scene.lines" :key="index" class="script-line" :aria-label="`点读第${index + 1}句：${adventurePhrases[line.phrase].text}`" @tap="listenLine(index)"><text class="script-line__role">{{ scene.roles[line.role] }} · {{ line.role === childRole ? '孩子' : '家长' }}</text><text class="script-line__phrase">{{ adventurePhrases[line.phrase].text }}</text><text class="script-line__translation">{{ line.translation }}</text><text class="script-line__play">▶</text></button></view>
+    <button role="button" class="adventure-text-button script-toggle" :aria-expanded="showScript" @tap="showScript = !showScript">{{ showScript ? '收起完整台词 ⌃' : '家长看完整台词 ⌄' }}</button>
+    <view v-if="showScript" class="script-card"><button role="button" v-for="(line, index) in scene.lines" :key="index" class="script-line" :aria-label="`点读第${index + 1}句：${adventurePhrases[line.phrase].text}`" @tap="listenLine(index)"><text class="script-line__role">{{ scene.roles[line.role] }} · {{ line.role === childRole ? '孩子' : '家长' }}</text><text class="script-line__phrase">{{ adventurePhrases[line.phrase].text }}</text><text class="script-line__translation">{{ line.translation }}</text><text class="script-line__play">▶</text></button></view>
   </view>
 </template>
 <script setup lang="ts">

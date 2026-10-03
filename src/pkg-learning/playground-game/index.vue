@@ -1,43 +1,44 @@
 <template>
   <view class="page playground-game-page">
-    <view class="topbar"><button class="back-link" @tap="goTopics">‹ 乐园地图</button><text class="topbar__tag">{{ topic.english }} · {{ topic.items.length }} 个小伙伴</text></view>
+    <view class="topbar"><button role="button" class="back-link" @tap="goTopics">‹ 乐园地图</button><text class="topbar__tag">{{ topic.english }} · {{ topic.items.length }} 个小伙伴</text></view>
     <view class="game-heading"><text class="section-kicker">LET'S PLAY TOGETHER</text><text class="page-title">{{ reviewOnly ? '老朋友，再见面' : topic.title }}</text><text class="page-subtitle">{{ mode === 'learn' ? '点点图片，听听它的英语名字。' : '听一听，找到正确的图片。' }}</text></view>
     <AudioFeedback /><view v-if="reviewOnly" class="review-note">先听一遍，再找图片。想听几遍都可以。</view>
-    <view v-else class="mode-tabs"><button :class="{ 'mode-tabs__active': mode === 'learn' }" @tap="switchMode('learn')">① 点图听词</button><button :class="{ 'mode-tabs__active': mode === 'quiz' }" @tap="switchMode('quiz')">② 听音找图</button></view>
+    <view v-else class="mode-tabs"><button role="button" :class="{ 'mode-tabs__active': mode === 'learn' }" @tap="switchMode('learn')">① 点图听词</button><button role="button" :class="{ 'mode-tabs__active': mode === 'quiz' }" @tap="switchMode('quiz')">② 听音找图</button></view>
 
     <view v-if="mode === 'learn'" class="learn-panel">
       <view class="flashcard" :style="{ backgroundColor: topic.tint }">
         <view class="flashcard__top"><text>认识新朋友</text><text>{{ wordIndex + 1 }} / {{ topic.items.length }}</text></view>
-        <button class="flashcard__picture" :aria-label="`听${learningItem.word}的发音`" @tap="playWord"><image :src="learningItem.art" mode="aspectFit" /></button>
+        <button role="button" class="flashcard__picture" :aria-label="`听${learningItem.word}的发音`" @tap="playWord"><image :src="learningItem.art" mode="aspectFit" /></button>
         <text class="flashcard__word">{{ learningItem.word }}</text><text class="flashcard__label">{{ learningItem.label }}</text>
-        <button class="word-play" :style="{ backgroundColor: topic.accent }" @tap="playWord">▶ 听一听，再说一说</button>
+        <button role="button" class="word-play" :style="{ backgroundColor: topic.accent }" @tap="playWord">▶ 听一听，再说一说</button>
         <text class="flashcard__hint">{{ heardIds.includes(`${topic.id}:${learningItem.id}`) ? '听过啦，随时可以再听一次' : '轻轻点一下图片，也可以听哦' }}</text>
       </view>
-      <view class="word-navigation"><button :disabled="wordIndex === 0" @tap="moveWord(-1)">‹ 上一个</button><view class="word-dots"><view v-for="(item, index) in topic.items" :key="item.id" :class="{ 'word-dots__active': index === wordIndex }" /></view><button :disabled="wordIndex === topic.items.length - 1" @tap="moveWord(1)">下一个 ›</button></view>
-      <view class="word-strip"><button v-for="(item, index) in topic.items" :key="item.id" :class="{ 'word-strip__active': index === wordIndex }" :aria-label="`点读${item.word}`" @tap="selectWord(index)"><image :src="item.art" mode="aspectFit" /><text>{{ item.label }}</text></button></view>
+      <view class="word-navigation"><button role="button" :disabled="wordIndex === 0" @tap="moveWord(-1)">‹ 上一个</button><view class="word-dots"><view v-for="(item, index) in topic.items" :key="item.id" :class="{ 'word-dots__active': index === wordIndex }" /></view><button role="button" :disabled="wordIndex === topic.items.length - 1" @tap="moveWord(1)">下一个 ›</button></view>
+      <view class="word-strip"><button role="button" v-for="(item, index) in topic.items" :key="item.id" :class="{ 'word-strip__active': index === wordIndex }" :aria-label="`点读${item.word}`" @tap="selectWord(index)"><image :src="item.art" mode="aspectFit" /><text>{{ item.label }}</text></button></view>
       <BigButton class="start-quiz" label="认识啦，去听音找图 ›" @tap="switchMode('quiz')" />
     </view>
 
     <view v-else-if="!finished" class="question-card">
       <view class="question-card__head"><text>小耳朵，准备好了吗？</text><text>{{ questionIndex + 1 }} / {{ questionOrder.length }}</text></view>
       <view class="question-progress"><view v-for="(item, index) in questionOrder" :key="item.id" :class="{ 'question-progress__done': index < questionIndex || (index === questionIndex && answered), 'question-progress__current': index === questionIndex }" /></view>
-      <text class="question-card__prompt">{{ currentItem.prompt }}</text><button class="listen-button" @tap="playPrompt"><text class="listen-button__icon">▶</text><text>听英语提示</text><text class="listen-button__again">可以反复听</text></button>
-      <view class="choice-grid"><button v-for="choice in choices" :key="choice.id" class="choice-card" :class="{ 'choice-card--correct': answered && choice.id === currentItem.id, 'choice-card--wrong': wrongChoiceId === choice.id }" :disabled="answered" :aria-label="choice.label" @tap="choose(choice.id)"><image class="choice-card__art" :src="choice.art" mode="aspectFit" /><text class="choice-card__label">{{ choice.label }}</text><text v-if="answered && choice.id === currentItem.id" class="choice-card__check">✓</text></button></view>
+      <text class="question-card__prompt">{{ currentItem.prompt }}</text><button role="button" class="listen-button" @tap="playPrompt"><text class="listen-button__icon">▶</text><text>听英语提示</text><text class="listen-button__again">可以反复听</text></button>
+      <view class="choice-grid"><button role="button" v-for="choice in choices" :key="choice.id" class="choice-card" :class="{ 'choice-card--correct': answered && choice.id === currentItem.id, 'choice-card--wrong': wrongChoiceId === choice.id }" :disabled="answered" :aria-label="choice.label" @tap="choose(choice.id)"><image class="choice-card__art" :src="choice.art" mode="aspectFit" /><text class="choice-card__label">{{ choice.label }}</text><text v-if="answered && choice.id === currentItem.id" class="choice-card__check">✓</text></button></view>
       <view class="question-card__feedback" :class="{ 'question-card__feedback--retry': wrongChoiceId && !answered }" aria-live="polite"><text>{{ feedback || '选一张图片，试一试吧。' }}</text></view>
       <BigButton v-if="answered" :label="isLastQuestion ? (reviewOnly ? '复习好了 ✓' : '完成冒险，收集印章 ★') : '下一题 ›'" variant="warm" @tap="next" />
     </view>
 
-    <view v-else class="complete-card"><view class="complete-card__medal"><image :src="topic.items[0].art" mode="aspectFit" /><text>★</text></view><text class="complete-card__title">{{ reviewOnly ? '老朋友，复习好了！' : '冒险完成啦！' }}</text><text class="complete-card__subtitle">{{ reviewOnly ? '今天先玩到这里，明天可以再见面。' : earnedStar ? '新印章 +1 · 获得一颗星星' : '又探索了一次，真棒！' }}</text><view class="offline-task"><text class="offline-task__heading">♡ 现在，到生活里玩一玩</text><text class="offline-task__body">{{ topic.offlineTask }}</text></view><BigButton :label="`下一站：${nextTopic.title} ›`" @tap="goNextTopic" /><button class="replay-button" @tap="goHome">回首页，看看今天的旅程 ›</button><button v-if="!reviewOnly" class="replay-button" @tap="restart">↻ 再玩一次这个主题</button></view>
+    <view v-else class="complete-card"><view class="complete-card__medal"><image :src="topic.items[0].art" mode="aspectFit" /><text>★</text></view><text class="complete-card__title">{{ reviewOnly ? '老朋友，复习好了！' : '冒险完成啦！' }}</text><text class="complete-card__subtitle">{{ reviewOnly ? '今天先玩到这里，明天可以再见面。' : earnedStar ? '新印章 +1 · 获得一颗星星' : '又探索了一次，真棒！' }}</text><view class="offline-task"><text class="offline-task__heading">♡ 现在，到生活里玩一玩</text><text class="offline-task__body">{{ topic.offlineTask }}</text></view><BigButton :label="`下一站：${nextTopic.title} ›`" @tap="goNextTopic" /><button role="button" class="replay-button" @tap="goHome">回首页，看看今天的旅程 ›</button><button role="button" v-if="!reviewOnly" class="replay-button" @tap="restart">↻ 再玩一次这个主题</button></view>
 
     <view class="section-head"><text class="section-title">③ 听故事，唱儿歌</text><text class="section-caption">和家长一起</text></view>
-    <view class="story-card"><view class="media-heading"><view class="media-heading__icon">▤</view><view><text class="media-heading__kicker">MINI STORY · 迷你故事</text><text class="media-heading__title">{{ topic.storyTitle }}</text></view><button class="round-play" aria-label="播放迷你故事" @tap="playStory">▶</button></view><text class="story-card__body">{{ topic.story }}</text><button class="translation-toggle" @tap="showTranslation = !showTranslation">{{ showTranslation ? '收起中文提示 −' : '家长看中文提示 +' }}</button><text v-if="showTranslation" class="story-card__translation">{{ topic.storyTranslation }}</text></view>
-    <view class="story-card chant-card" :style="{ backgroundColor: topic.tint }"><view class="media-heading"><view class="media-heading__icon">♫</view><view><text class="media-heading__kicker">SING & MOVE · 节奏跟读</text><text class="media-heading__title">{{ topic.chantTitle }}</text></view><button class="round-play" :aria-label="`播放${topic.chantTitle}`" @tap="playChant">▶</button></view><text v-for="line in topic.chantLyrics" :key="line" class="story-card__body">{{ line }}</text></view>
-    <button class="stop-button" @tap="stopAudio">■ 停止播放</button>
+    <view class="story-card"><view class="media-heading"><view class="media-heading__icon">▤</view><view><text class="media-heading__kicker">MINI STORY · 迷你故事</text><text class="media-heading__title">{{ topic.storyTitle }}</text></view><button role="button" class="round-play" aria-label="播放迷你故事" @tap="playStory">▶</button></view><text class="story-card__body">{{ topic.story }}</text><button role="button" class="translation-toggle" @tap="showTranslation = !showTranslation">{{ showTranslation ? '收起中文提示 −' : '家长看中文提示 +' }}</button><text v-if="showTranslation" class="story-card__translation">{{ topic.storyTranslation }}</text></view>
+    <view class="story-card chant-card" :style="{ backgroundColor: topic.tint }"><view class="media-heading"><view class="media-heading__icon">♫</view><view><text class="media-heading__kicker">SING & MOVE · 节奏跟读</text><text class="media-heading__title">{{ topic.chantTitle }}</text></view><button role="button" class="round-play" :aria-label="`播放${topic.chantTitle}`" @tap="playChant">▶</button></view><text v-for="line in topic.chantLyrics" :key="line" class="story-card__body">{{ line }}</text></view>
+    <button role="button" class="stop-button" @tap="stopAudio">■ 停止播放</button>
     <view class="parent-card"><text class="parent-card__kicker">陪玩锦囊</text><text class="parent-card__phrase">“{{ topic.parentPhrase }}”</text><text class="parent-card__tip">{{ topic.parentTip }}</text></view>
   </view>
 </template>
 
 <script setup lang="ts">
+import { navigate } from "@/services/navigationService";
 import { computed, ref } from "vue";
 import { onHide, onLoad, onUnload } from "@dcloudio/uni-app";
 import BigButton from "@/components/BigButton.vue";
@@ -127,9 +128,9 @@ function next() {
   finished.value = true; remember();
 }
 function restart() { stopAudio(); resetQuiz(); remember(); }
-function goTopics() { stopAudio(); uni.redirectTo({ url: "/pkg-learning/playground/index" }); }
-function goHome() { stopAudio(); uni.reLaunch({ url: "/pages/index/index" }); }
-function goNextTopic() { stopAudio(); uni.redirectTo({ url: `/pkg-learning/playground-game/index?topic=${nextTopic.value.id}` }); }
+function goTopics() { stopAudio(); navigate({ url: "/pkg-learning/playground/index" }, "redirectTo"); }
+function goHome() { stopAudio(); navigate({ url: "/pages/index/index" }, "reLaunch"); }
+function goNextTopic() { stopAudio(); navigate({ url: `/pkg-learning/playground-game/index?topic=${nextTopic.value.id}` }, "redirectTo"); }
 </script>
 
 <style scoped lang="scss">

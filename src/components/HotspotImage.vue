@@ -1,7 +1,7 @@
 <template>
   <view class="hotspot-image">
     <CachedImage class="hotspot-image__image" :src="props.image" mode="aspectFill" />
-    <button
+    <button role="button"
       v-for="hotspot in props.hotspots"
       :key="`${hotspot.word}-${hotspot.x}-${hotspot.y}`"
       class="hotspot-image__spot"

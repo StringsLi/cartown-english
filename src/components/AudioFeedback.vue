@@ -1,8 +1,8 @@
 <template>
   <view v-if="audioPlaybackState.phase !== 'idle'" class="audio-feedback" :class="`audio-feedback--${audioPlaybackState.phase}`" role="status" aria-live="polite">
     <view class="audio-feedback__copy"><text>{{ phaseLabel }}</text><text>{{ audioPlaybackState.label }}</text></view>
-    <button v-if="active" aria-label="停止播放声音" @tap="stopAudio">停止 ■</button>
-    <button v-else-if="audioPlaybackState.canReplay" @tap="replayAudio">{{ audioPlaybackState.phase === 'error' ? '再试一次 ↻' : '再听一次 ↻' }}</button>
+    <button role="button" v-if="active" aria-label="停止播放声音" @tap="stopAudio">停止 ■</button>
+    <button role="button" v-else-if="audioPlaybackState.canReplay" @tap="replayAudio">{{ audioPlaybackState.phase === 'error' ? '再试一次 ↻' : '再听一次 ↻' }}</button>
   </view>
 </template>
 <script setup lang="ts">

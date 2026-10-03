@@ -23,7 +23,7 @@ onLaunch(() => {
     highResolutionAsset("/static/cartown-logos/toyota.webp")
   ];
   criticalImages.forEach((src) => {
-    if (src) void resolveCachedMedia(src, "image");
+    if (src) void resolveCachedMedia(src, "image").catch(() => {});
   });
 
   console.log("车车英语乐园 launched", { cloudReady });

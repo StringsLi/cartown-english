@@ -11,14 +11,14 @@
         <text class="daily-card__tag">今日小冒险 · 约 5–10 分钟</text>
         <text class="daily-card__title">{{ suggestedTopic.title }}</text>
         <text class="daily-card__subtitle">{{ suggestedTopic.description }}</text>
-        <button class="daily-card__button" @tap="openTopic(suggestedTopic.id)">一起出发 <text>↗</text></button>
+        <button role="button" class="daily-card__button" @tap="openTopic(suggestedTopic.id)">一起出发 <text>↗</text></button>
       </view>
       <image class="daily-card__art" :src="sceneArt(suggestedTopic.id)" mode="aspectFit" />
       <text class="daily-card__spark">✦</text>
     </view>
 
     <AudioFeedback />
-    <button v-if="reviewTopic" class="review-entry" @tap="openReview"><view><text>老朋友，再见面</text><text>{{ reviewTopic.title }} · 今天先复习 {{ reviewCount }} 个词</text></view><text>去听听 ›</text></button>
+    <button role="button" v-if="reviewTopic" class="review-entry" @tap="openReview"><view><text>老朋友，再见面</text><text>{{ reviewTopic.title }} · 今天先复习 {{ reviewCount }} 个词</text></view><text>去听听 ›</text></button>
     <view class="progress-card">
       <view class="progress-card__head"><text>我们的探索地图</text><text class="progress-card__count">{{ completedCount }} / {{ playgroundTopics.length }} 个主题</text></view>
       <view class="progress-track"><view class="progress-track__fill" :style="{ width: `${completedCount / playgroundTopics.length * 100}%` }" /></view>
@@ -29,12 +29,12 @@
       <button v-for="tab in tabs" :key="tab.id" class="content-tabs__tab" :class="{ 'content-tabs__tab--active': activeTab === tab.id }" role="tab" :aria-selected="activeTab === tab.id" @tap="switchTab(tab.id)">{{ tab.label }}</button>
     </view>
 
-    <button class="town-entry" @tap="openAdventure"><view><text>去车车小镇冒险</text><text>开车送水果，和家长演一出小故事</text></view><text>↗</text></button>
+    <button role="button" class="town-entry" @tap="openAdventure"><view><text>去车车小镇冒险</text><text>开车送水果，和家长演一出小故事</text></view><text>↗</text></button>
 
     <view v-if="activeTab === 'topics'">
       <view class="section-head"><text class="section-title">今天想去哪里？</text><text class="section-caption">8 站，慢慢探索</text></view>
       <view class="topic-grid">
-        <button v-for="topic in playgroundTopics" :key="topic.id" class="topic-card" :style="{ backgroundColor: topic.tint }" :aria-label="`开始${topic.title}英语游戏`" @tap="openTopic(topic.id)">
+        <button role="button" v-for="topic in playgroundTopics" :key="topic.id" class="topic-card" :style="{ backgroundColor: topic.tint }" :aria-label="`开始${topic.title}英语游戏`" @tap="openTopic(topic.id)">
           <text class="topic-card__stamp" :class="{ 'topic-card__stamp--done': completedIds.includes(topic.id) }">{{ completedIds.includes(topic.id) ? '✓ 已探索' : `${topic.items.length} 个小伙伴` }}</text>
           <image class="topic-card__art" :src="sceneArt(topic.id)" mode="aspectFit" />
           <view class="topic-card__head"><text class="topic-card__title">{{ topic.title }}</text><text class="topic-card__arrow" :style="{ color: topic.accent }">↗</text></view>
@@ -54,11 +54,11 @@
       <view class="section-head"><text class="section-title">小小儿歌电台</text><text class="section-caption">{{ playgroundTopics.length }} 首原创跟读儿歌</text></view>
       <text class="section-intro">听着轻柔的旋律，和孩子一起念、一起动。</text>
       <view v-for="topic in playgroundTopics" :key="`chant-${topic.id}`" class="chant-card" :style="{ backgroundColor: topic.tint }">
-        <view class="chant-card__heading"><image class="chant-card__art" :src="topic.items[0].art" mode="aspectFit" /><view><text class="chant-card__title">{{ topic.chantTitle }}</text><text class="chant-card__tag">{{ topic.english }} · 节奏跟读</text></view><button class="round-play" :aria-label="`播放${topic.chantTitle}`" @tap="playChant(topic.chantAudio, topic.chantTitle)">▶</button></view>
+        <view class="chant-card__heading"><image class="chant-card__art" :src="topic.items[0].art" mode="aspectFit" /><view><text class="chant-card__title">{{ topic.chantTitle }}</text><text class="chant-card__tag">{{ topic.english }} · 节奏跟读</text></view><button role="button" class="round-play" :aria-label="`播放${topic.chantTitle}`" @tap="playChant(topic.chantAudio, topic.chantTitle)">▶</button></view>
         <text v-for="line in topic.chantLyrics" :key="line" class="chant-card__lyric">{{ line }}</text>
-        <button class="chant-card__link" @tap="openTopic(topic.id)">去认识这首歌的小伙伴 ›</button>
+        <button role="button" class="chant-card__link" @tap="openTopic(topic.id)">去认识这首歌的小伙伴 ›</button>
       </view>
-      <button class="stop-button" @tap="stopAudio">■ 停止播放</button>
+      <button role="button" class="stop-button" @tap="stopAudio">■ 停止播放</button>
     </view>
 
     <view v-else>
@@ -76,6 +76,7 @@
 </template>
 
 <script setup lang="ts">
+import { navigate } from "@/services/navigationService";
 import { computed, ref } from "vue";
 import AudioFeedback from "@/components/AudioFeedback.vue";
 import { getReviewTopic, getReviewItems } from "@/services/playgroundLearningService";
@@ -109,11 +110,11 @@ onShow(() => {
 });
 onHide(stopAudio);
 onUnload(stopAudio);
-function openReview() { if (reviewTopic.value) uni.navigateTo({ url: `/pkg-learning/playground-game/index?topic=${reviewTopic.value.id}&mode=quiz&review=1` }); }
-function openTopic(topicId: PlaygroundTopicId) { stopAudio(); uni.navigateTo({ url: `/pkg-learning/playground-game/index?topic=${topicId}` }); }
+function openReview() { if (reviewTopic.value) navigate({ url: `/pkg-learning/playground-game/index?topic=${reviewTopic.value.id}&mode=quiz&review=1` }); }
+function openTopic(topicId: PlaygroundTopicId) { stopAudio(); navigate({ url: `/pkg-learning/playground-game/index?topic=${topicId}` }); }
 function switchTab(id: TabId) { stopAudio(); activeTab.value = id; }
 function playChant(audio: string, title: string) { playAudio(audio, title); }
-function openAdventure() { stopAudio(); uni.navigateTo({ url: "/pkg-adventure/index/index" }); }
+function openAdventure() { stopAudio(); navigate({ url: "/pkg-adventure/index/index" }); }
 </script>
 
 <style scoped lang="scss">

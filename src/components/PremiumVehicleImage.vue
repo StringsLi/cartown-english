@@ -1,5 +1,5 @@
 <template>
-  <image
+  <CachedImage
     class="premium-vehicle"
     :src="vehicleIcon(props.name)"
     mode="aspectFit"
@@ -9,6 +9,7 @@
 </template>
 
 <script setup lang="ts">
+import CachedImage from "@/components/CachedImage.vue";
 import { vehicleIcon } from "@/mock/topicAssets";
 
 defineOptions({

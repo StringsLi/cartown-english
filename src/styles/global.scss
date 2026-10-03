@@ -104,3 +104,15 @@ button::after {
   font-weight: 700;
   color: $color-primary;
 }
+
+/* Shared mobile baseline for every content page. */
+.page { padding-bottom: calc(48rpx + env(safe-area-inset-bottom)); }
+.screen-with-nav { padding-bottom: calc(156rpx + env(safe-area-inset-bottom)); }
+input { min-width: 0; }
+button { cursor: pointer; }
+button[disabled] { cursor: default; }
+button:active:not([disabled]) { opacity: .84; }
+/* #ifdef H5 */
+button:focus-visible, input:focus-visible, [role="button"]:focus-visible { outline: 3px solid #527769; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+/* #endif */

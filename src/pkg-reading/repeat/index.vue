@@ -1,7 +1,7 @@
 <template>
   <view class="page repeat-page">
     <view class="repeat-header">
-      <button class="repeat-header__back" @tap="goReader">‹ 返回阅读</button>
+      <button role="button" class="repeat-header__back" @tap="goReader">‹ 返回阅读</button>
       <text class="repeat-header__page">跟读练习</text>
     </view>
 
@@ -25,7 +25,7 @@
       </view>
       <text class="record-stage__hint">{{ recordHint }}</text>
       <text v-if="isRecording" class="record-stage__timer">{{ recordTimeLabel }} / 00:10</text>
-      <button class="record-button" :class="{ 'record-button--active': isRecording }" :disabled="isStarting || isFinishing || !!unsavedPath" @tap="toggleRecord">
+      <button role="button" class="record-button" :class="{ 'record-button--active': isRecording }" :disabled="isStarting || isFinishing || !!unsavedPath" @tap="toggleRecord">
         <text>{{ isRecording ? '■' : '●' }}</text>
         <text>{{ isStarting ? '正在准备…' : isFinishing ? '正在保存…' : isRecording ? '停止录音' : '开始录音' }}</text>
       </button>
@@ -60,11 +60,12 @@
 </template>
 
 <script setup lang="ts">
+import { backTo, navigate } from "@/services/navigationService";
 import { computed, ref } from "vue";
 import { onLoad, onShow, onHide, onUnload } from "@dcloudio/uni-app";
 import AudioButton from "@/components/AudioButton.vue";
 import BigButton from "@/components/BigButton.vue";
-import { getBookById, getBookPages, getTodayBook } from "@/services/bookService";
+import { decodeRouteText, resolveBookId, getBookById, getBookPages, getTodayBook } from "@/services/bookService";
 import { playRecord, startRecord, stopRecord, stopRecordPlayback, cancelPendingRecord, RecordPermissionError, RecordSaveError, saveRecordFile, type SavedRecording } from "@/services/recordService";
 import { getRepeatRecords, saveRepeatRecord, flushLearningState } from "@/services/progressService";
 import { usePageShare } from "@/composables/usePageShare";
@@ -101,8 +102,8 @@ const recordHint = computed(() => {
 
 onLoad((query) => {
   const params = query as Record<string, string | undefined>;
-  bookId.value = params.bookId || getTodayBook().id;
-  sentence.value = params.sentence ? decodeURIComponent(params.sentence) : "";
+  bookId.value = resolveBookId(params.bookId);
+  sentence.value = decodeRouteText(params.sentence);
   recordedPath.value = getRepeatRecords().find(r => r.bookId === book.value.id && r.sentence === activeSentence.value)?.audioUrl || "";
 });
 
@@ -196,14 +197,14 @@ function playMyRecord() {
   if (recordedPath.value) playRecord(recordedPath.value);
 }
 
-function goRecordings() { if (isStarting.value || isRecording.value || isFinishing.value || unsavedPath.value) { uni.showToast({ title: "先保存好这段录音，再导出", icon: "none" }); return; } stopRecordPlayback(); uni.navigateTo({ url: "/pkg-reading/recordings/index" }); }
+function goRecordings() { if (isStarting.value || isRecording.value || isFinishing.value || unsavedPath.value) { uni.showToast({ title: "先保存好这段录音，再导出", icon: "none" }); return; } stopRecordPlayback(); navigate({ url: "/pkg-reading/recordings/index" }); }
 
 function goReader() {
-  uni.redirectTo({ url: `/pkg-reading/reader/index?bookId=${book.value.id}&pageIndex=${currentPageNumber.value}` });
+  navigate({ url: `/pkg-reading/reader/index?bookId=${book.value.id}&pageIndex=${currentPageNumber.value}` }, "redirectTo");
 }
 
 function goBack() {
-  uni.navigateBack();
+  backTo("/pages/books/index");
 }
 </script>
 

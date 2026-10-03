@@ -1,5 +1,6 @@
 <template>
-  <button class="audio-button" :class="[`audio-button--${props.size}`, { 'audio-button--disabled': props.disabled }]" :disabled="props.disabled" @tap="handlePlay">
+  <button role="button" class="audio-button" :class="[`audio-button--${props.size}`, { 'audio-button--disabled': props.disabled }]" :disabled="props.disabled"
+    :aria-disabled="props.disabled" @tap="handlePlay">
     <text class="audio-button__icon">▶</text>
     <text class="audio-button__label">{{ props.label }}</text>
   </button>
@@ -42,7 +43,7 @@ function handlePlay() {
   align-items: center;
   justify-content: center;
   gap: 14rpx;
-  min-height: 70rpx;
+  min-height: 44px;
   padding: 0 24rpx;
   border-radius: $radius-pill;
   color: $color-primary;

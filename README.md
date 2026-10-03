@@ -131,7 +131,7 @@ apps/cartown-english/source-assets/
 | `npm run validate:content` | 校验课程、图片和音频资源 |
 | `npm run check:release` | 执行发布前严格内容检查 |
 | `npm run test:adventures` | 校验货物判断、旧进度迁移、首次奖励与持久化 |
-| `npm run test` | 执行类型检查、内容校验与冒险进度检查 |
+| `npm run test` | 类型、内容、冒险、学习、录音、页面行为和媒体缓存回归检查 |
 
 ## 项目结构
 
@@ -218,3 +218,9 @@ npm run build:mp-weixin
 ### 2026-10-03：车辆插画升级
 
 小冒险和乐园颜色卡片采用六款独立的透明 3D 车辆插画，按故事和颜色对应车型。素材提示词、页面截图与验证记录见 [车辆升级记录](docs/ui-audit/vehicle-refresh/README.md)。
+
+### 全页面体验与工程检查
+
+统一 24 个页面的导航、声音清理、卡片视觉与按钮语义。绘本增加续读和配图游戏，颜色/车标/动作答对后主动下一题，数车数量一致；车库刷新收藏，国家当天点读独立记录，家长报告使用可核对的数量。79 张基础绘本、车辆和词汇图片随包离线提供。
+
+新增 `npm run test:pages` 和 `npm run test:media-cache`，GitHub Actions 执行测试、严格内容校验与包体检查。手机宽度检查、效果图、包体余量和微信真机未验收项见 [全页面检查记录](docs/ui-audit/pages/README.md)。

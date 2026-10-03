@@ -1,5 +1,5 @@
 import { phraseAudioPath } from "@/services/audioCatalog";
-import { resolveCachedMedia } from "@/services/mediaCacheService";
+import { invalidateCachedMedia, resolveCachedMedia } from "@/services/mediaCacheService";
 import { ref, readonly } from "vue";
 import { getStorage, setStorage } from "@/utils/storage";
 
@@ -87,6 +87,7 @@ async function startPlayback(url: string, fallbackText: string | undefined, requ
     audio.onError(() => {
       if (currentAudio !== audio || requestId !== playbackRequest) return;
       destroyCurrentAudio();
+      invalidateCachedMedia(url);
       handleAudioFailure();
     });
     audio.volume = getAudioVolume();
@@ -121,7 +122,7 @@ function handleAudioFailure(): void {
   });
 }
 
-export function speakEnglish(text: string): void {
+export function speakEnglish(text: string, onStarted?: () => void): void {
   if (!text) return;
-  playAudio(phraseAudioPath(text), text);
+  playAudio(phraseAudioPath(text), text, onStarted);
 }

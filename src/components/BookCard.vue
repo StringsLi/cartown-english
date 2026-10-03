@@ -1,5 +1,5 @@
 <template>
-  <view class="book-card soft-card" :class="`book-card--${props.variant}`" @tap="emit('select', props.book)">
+  <button role="button" class="book-card soft-card" :aria-label="`打开绘本 ${props.book.title}`" :class="`book-card--${props.variant}`" @tap="emit('select', props.book)">
     <view class="book-card__cover" :class="`book-card__cover--${props.book.theme.toLowerCase().replace(' ', '-')}`">
       <CachedImage v-if="!imageFailed" class="book-card__image" :src="props.book.cover" mode="aspectFill" @error="imageFailed = true" />
       <view v-else class="book-card__fallback">
@@ -16,7 +16,7 @@
         <text v-for="word in props.book.keywords" :key="word" class="book-card__word">{{ word }}</text>
       </view>
     </view>
-  </view>
+  </button>
 </template>
 
 <script setup lang="ts">
@@ -54,6 +54,9 @@ watch(
 
 <style scoped lang="scss">
 .book-card {
+  width: 100%;
+  text-align: left;
+  line-height: 1.5;
   display: flex;
   flex-direction: column;
   overflow: hidden;

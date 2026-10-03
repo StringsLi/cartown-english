@@ -1,6 +1,6 @@
 <template>
   <view class="page adventure-page delivery-page">
-    <view class="adventure-topbar"><button class="adventure-back" @tap="backToAdventure">‹ 小冒险</button><text class="adventure-topbar__note">送货小司机</text></view>
+    <view class="adventure-topbar"><button role="button" class="adventure-back" @tap="backToAdventure">‹ 小冒险</button><text class="adventure-topbar__note">送货小司机</text></view>
     <text class="section-kicker">A LITTLE DELIVERY</text><text class="page-title">{{ mission.title }}</text><text class="page-subtitle">{{ mission.subtitle }}</text>
     <AudioFeedback />
     <view v-if="step !== 1 || finished" class="delivery-scene" :style="{ backgroundColor: mission.tint }"><AdventureScene :destination="mission.destination" :car="selectedCar || mission.car" :arrived="finished" /><view class="delivery-scene__caption"><image :src="mission.recipientArt" mode="aspectFit" /><text>{{ finished ? '谢谢你，小司机！' : '有一位小伙伴在等水果点心。' }}</text></view></view>
@@ -9,33 +9,34 @@
     <view v-if="!finished" class="adventure-card delivery-task">
       <text class="adventure-kicker">{{ step === 0 ? '先选一辆小汽车' : step === 1 ? '听订单，点水果装车' : '听一听，开车去哪里？' }}</text>
       <text class="adventure-prompt">{{ currentPhrase.text }}</text>
-      <button class="adventure-listen" @tap="listen"><text>▶</text><text>{{ step === 0 ? '听选车提示' : step === 1 ? '听水果订单' : '听目的地' }}</text></button>
+      <button role="button" class="adventure-listen" @tap="listen"><text>▶</text><text>{{ step === 0 ? '听选车提示' : step === 1 ? '听水果订单' : '听目的地' }}</text></button>
 
       <view v-if="step === 0" class="delivery-choices">
-        <button v-for="car in deliveryCars" :key="car.id" class="delivery-choice car-choice" :aria-label="car.label" @tap="chooseCar(car.id)"><image :src="car.art" mode="aspectFit" /><text>{{ car.label }}</text><text class="car-choice__model">{{ car.model }}</text></button>
+        <button role="button" v-for="car in deliveryCars" :key="car.id" class="delivery-choice car-choice" :aria-label="car.label" @tap="chooseCar(car.id)"><image :src="car.art" mode="aspectFit" /><text>{{ car.label }}</text><text class="car-choice__model">{{ car.model }}</text></button>
       </view>
       <view v-else-if="step === 1">
-        <view class="delivery-choices"><button v-for="fruit in deliveryFruits" :key="fruit.id" class="delivery-choice fruit-choice" :aria-label="`装一个${fruit.label}`" @tap="addFruit(fruit.id)"><image :src="fruit.art" mode="aspectFit" /><text>＋ {{ fruit.label }}</text></button></view>
-        <view class="cargo-head"><text>我的小货箱 · {{ cargo.length }} 件</text><button @tap="clearCargo">清空重装</button></view>
-        <view class="cargo-box"><view v-for="index in 3" :key="index" class="cargo-slot"><button v-if="cargo[index - 1]" :aria-label="`取出第${index}件${fruitFor(cargo[index - 1]).label}`" @tap="removeFruit(index - 1)"><image :src="fruitFor(cargo[index - 1]).art" mode="aspectFit" /><text>×</text></button><text v-else class="cargo-slot__empty">·</text></view></view>
+        <view class="delivery-choices"><button role="button" v-for="fruit in deliveryFruits" :key="fruit.id" class="delivery-choice fruit-choice" :aria-label="`装一个${fruit.label}`" @tap="addFruit(fruit.id)"><image :src="fruit.art" mode="aspectFit" /><text>＋ {{ fruit.label }}</text></button></view>
+        <view class="cargo-head"><text>我的小货箱 · {{ cargo.length }} 件</text><button role="button" @tap="clearCargo">清空重装</button></view>
+        <view class="cargo-box"><view v-for="index in 3" :key="index" class="cargo-slot"><button role="button" v-if="cargo[index - 1]" :aria-label="`取出第${index}件${fruitFor(cargo[index - 1]).label}`" @tap="removeFruit(index - 1)"><image :src="fruitFor(cargo[index - 1]).art" mode="aspectFit" /><text>×</text></button><text v-else class="cargo-slot__empty">·</text></view></view>
         <text class="cargo-note">点货箱里的水果，可以取出来。</text>
       </view>
-      <view v-else class="delivery-choices destination-choices"><button v-for="destination in deliveryDestinations" :key="destination.id" class="delivery-choice destination-choice" :aria-label="`送到${destination.label}`" @tap="chooseDestination(destination.id)"><view v-if="destination.id === 'park'" class="destination-park"><view /><view /><view /></view><image v-else-if="destination.id === 'zoo'" :src="`${adventureArtRoot}/animals-lion.png`" mode="aspectFit" /><view v-else class="destination-garden"><text>✿</text><text>✿</text></view><text>{{ destination.label }}</text><text class="destination-choice__english">{{ destination.english }}</text></button></view>
+      <view v-else class="delivery-choices destination-choices"><button role="button" v-for="destination in deliveryDestinations" :key="destination.id" class="delivery-choice destination-choice" :aria-label="`送到${destination.label}`" @tap="chooseDestination(destination.id)"><view v-if="destination.id === 'park'" class="destination-park"><view /><view /><view /></view><image v-else-if="destination.id === 'zoo'" :src="`${adventureArtRoot}/animals-lion.png`" mode="aspectFit" /><view v-else class="destination-garden"><text>✿</text><text>✿</text></view><text>{{ destination.label }}</text><text class="destination-choice__english">{{ destination.english }}</text></button></view>
       <text class="adventure-feedback" aria-live="polite">{{ feedback || '慢慢听，想听几遍都可以。' }}</text>
-      <button v-if="step === 1" class="adventure-primary cargo-submit" @tap="submitCargo">装好了，去送货 ›</button>
-      <button class="adventure-text-button" @tap="restart">从头再来</button>
+      <button role="button" v-if="step === 1" class="adventure-primary cargo-submit" @tap="submitCargo">装好了，去送货 ›</button>
+      <button role="button" class="adventure-text-button" @tap="restart">从头再来</button>
     </view>
 
     <view v-else class="adventure-card adventure-complete">
       <text class="adventure-complete__star">★</text><text class="adventure-complete__title">送到啦！</text><text class="adventure-complete__note">{{ earned ? '收集一枚送达印章，获得 1 颗小星星。' : '又完成了一趟送货，老朋友很开心。' }}</text>
-      <button class="adventure-listen" @tap="playPhrase('hereYouAre')">▶ Here you are!</button>
+      <button role="button" class="adventure-listen" @tap="playPhrase('hereYouAre')">▶ Here you are!</button>
       <view class="adventure-offline"><text>拿出玩具，接着玩</text><text>{{ mission.offlineTask }}</text></view>
-      <button v-if="nextMission" class="adventure-primary next-mission" @tap="openNext">下一趟 · {{ nextMission.title }}</button>
-      <button class="adventure-text-button" @tap="restart">再送一次</button><button class="adventure-text-button" @tap="backToAdventure">返回小冒险</button>
+      <button role="button" v-if="nextMission" class="adventure-primary next-mission" @tap="openNext">下一趟 · {{ nextMission.title }}</button>
+      <button role="button" class="adventure-text-button" @tap="restart">再送一次</button><button role="button" class="adventure-text-button" @tap="backToAdventure">返回小冒险</button>
     </view>
   </view>
 </template>
 <script setup lang="ts">
+import { navigate } from "@/services/navigationService";
 import { computed, ref } from "vue";
 import { onLoad, onHide, onUnload } from "@dcloudio/uni-app";
 import AudioFeedback from "@/components/AudioFeedback.vue";
@@ -64,7 +65,7 @@ function submitCargo() { if (finished.value || step.value !== 1) return; stopAud
 function chooseDestination(id: DestinationId) { if (finished.value || step.value !== 2) return; stopAudio(); if (id !== mission.value.destination) { feedback.value = "再听一遍，找找小伙伴等在哪里。"; listen(); return; } earned.value = completeDeliveryMission(mission.value.id).earned; finished.value = true; scrollToTop(); }
 function scrollToTop() { uni.pageScrollTo({ scrollTop: 0, duration: 0 }); }
 function restart() { stopAudio(); step.value = 0; selectedCar.value = null; cargo.value = []; feedback.value = ""; finished.value = false; earned.value = false; uni.pageScrollTo({ scrollTop: 0, duration: 0 }); }
-function openNext() { const next = nextMission.value; if (!next) return; stopAudio(); uni.redirectTo({ url: `/pkg-adventure/delivery/index?mission=${next.id}` }); }
+function openNext() { const next = nextMission.value; if (!next) return; stopAudio(); navigate({ url: `/pkg-adventure/delivery/index?mission=${next.id}` }, "redirectTo"); }
 </script>
 <style scoped lang="scss">
 @use "../adventure.scss";

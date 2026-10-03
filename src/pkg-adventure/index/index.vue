@@ -1,6 +1,6 @@
 <template>
   <view class="page adventure-page adventure-hub">
-    <view class="adventure-topbar"><button class="adventure-back" @tap="goBack">‹ 返回乐园</button><text class="adventure-topbar__note">和家长一起玩</text></view>
+    <view class="adventure-topbar"><button role="button" class="adventure-back" @tap="goBack">‹ 返回乐园</button><text class="adventure-topbar__note">和家长一起玩</text></view>
     <text class="section-kicker">LITTLE TOWN, BIG ADVENTURES</text>
     <text class="page-title">车车英语小冒险</text>
     <text class="page-subtitle">{{ activeChapter === "car-life" ? "洗车、修车、再出发，一起演生活里的英语。" : "开一辆小车，把英语玩进故事里。" }}</text>
@@ -12,22 +12,23 @@
     </view>
     <view class="chapter-tabs" role="tablist"><button v-for="chapter in chapters" :key="chapter.id" class="chapter-tab" :class="{ 'chapter-tab--active': activeChapter === chapter.id }" role="tab" :aria-selected="activeChapter === chapter.id" @tap="switchChapter(chapter.id)">{{ chapter.label }}<text v-if="chapter.id === 'car-life'">新</text></button></view>
     <view class="section-head"><view><text class="section-kicker">SPECIAL DELIVERY</text><text class="section-title">送货小司机</text></view><text class="section-caption">每趟 3 个小任务</text></view>
-    <button v-for="mission in visibleMissions" :key="mission.id" class="mission-entry" :style="{ backgroundColor: mission.tint }" @tap="openDelivery(mission.id)">
+    <button role="button" v-for="mission in visibleMissions" :key="mission.id" class="mission-entry" :style="{ backgroundColor: mission.tint }" @tap="openDelivery(mission.id)">
       <image class="mission-entry__art" :src="mission.recipientArt" mode="aspectFit" />
       <view class="mission-entry__copy"><text class="mission-entry__badge">{{ progress.completedDeliveryMissionIds.includes(mission.id) ? '✓ 送达印章' : '选车 → 装货 → 送达' }}</text><text class="mission-entry__title">{{ mission.title }}</text><text class="mission-entry__note">{{ mission.subtitle }}</text></view><text class="mission-entry__arrow">↗</text>
     </button>
     <view class="section-head"><view><text class="section-kicker">LET'S PRETEND</text><text class="section-title">亲子小剧场</text></view><text class="section-caption">一人一个角色</text></view>
     <view class="theater-list">
-      <button v-for="(scene, index) in visibleScenes" :key="scene.id" class="theater-entry" @tap="openRoleplay(scene.id)">
+      <button role="button" v-for="(scene, index) in visibleScenes" :key="scene.id" class="theater-entry" @tap="openRoleplay(scene.id)">
         <view class="theater-entry__ticket" :style="{ backgroundColor: scene.tint }"><text>0{{ index + 1 }}</text><text>{{ ticketFor(scene) }}</text></view>
         <view class="theater-entry__copy"><text class="theater-entry__title">{{ scene.title }}</text><text class="theater-entry__roles">{{ scene.roles.first }} × {{ scene.roles.second }} · {{ scene.lines.length }} 句对话</text><text class="theater-entry__note">{{ progress.completedRoleplaySceneIds.includes(scene.id) ? '✓ 演过啦，换角色再来一遍' : '点一句听一句，再一起演出来' }}</text></view><text class="mission-entry__arrow">↗</text>
       </button>
     </view>
-    <view class="adventure-offline"><text>留一点时间，去真实的小世界里玩</text><text>屏幕里的小任务结束后，拿出玩具车或积木，再演一遍。想停就停，随时回来接着玩。</text></view>
+    <view class="adventure-offline"><text>留一点时间，去真实的小世界里玩</text><text>屏幕里的小任务结束后，拿出玩具车或积木，再演一遍。想停就停，完成的故事会保留印章，再来时可以重新演。</text></view>
     <text class="hub-footnote">离线语音 · 进度保存在本机 · 每个故事首次完成 +1 ★</text>
   </view>
 </template>
 <script setup lang="ts">
+import { backTo, navigate } from "@/services/navigationService";
 import { computed, ref } from "vue";
 import { onShow, onHide, onUnload } from "@dcloudio/uni-app";
 import AudioFeedback from "@/components/AudioFeedback.vue";
@@ -48,9 +49,9 @@ const deliveryCount = computed(() => deliveryMissions.filter(m => progress.value
 const roleplayCount = computed(() => roleplayScenes.filter(s => progress.value.completedRoleplaySceneIds.includes(s.id)).length);
 onShow(() => { progress.value = getCartownProgress(); });
 onHide(stopAudio); onUnload(stopAudio);
-function openDelivery(id: string) { stopAudio(); uni.navigateTo({ url: `/pkg-adventure/delivery/index?mission=${id}` }); }
-function openRoleplay(id: string) { stopAudio(); uni.navigateTo({ url: `/pkg-adventure/roleplay/index?scene=${id}` }); }
-function goBack() { stopAudio(); if (getCurrentPages().length > 1) uni.navigateBack(); else uni.reLaunch({ url: "/pkg-learning/playground/index" }); }
+function openDelivery(id: string) { stopAudio(); navigate({ url: `/pkg-adventure/delivery/index?mission=${id}` }); }
+function openRoleplay(id: string) { stopAudio(); navigate({ url: `/pkg-adventure/roleplay/index?scene=${id}` }); }
+function goBack() { stopAudio(); backTo("/pkg-learning/playground/index"); }
 </script>
 <style scoped lang="scss">
 @use "../adventure.scss";

@@ -42,17 +42,29 @@ const defaultProgress: CartownProgress = {
   completedRoleplaySceneIds: []
 };
 
+const counter = (value: unknown) => typeof value === "number" && Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
+const stringIds = (value: unknown): string[] => Array.isArray(value) ? [...new Set(value.filter((id): id is string => typeof id === "string" && id.length > 0))] : [];
+
 export function getCartownProgress(): CartownProgress {
   if (!cachedProgress) {
     const stored = getStorage<CartownProgress>(STORAGE_KEY);
     cachedProgress = {
       ...defaultProgress,
       ...(stored ?? {}),
-      learnedVehicleIds: stored?.learnedVehicleIds ?? [],
-      playgroundCompletedTopicIds: stored?.playgroundCompletedTopicIds ?? [],
-      playgroundHeardWordIds: stored?.playgroundHeardWordIds ?? [],
-      completedDeliveryMissionIds: stored?.completedDeliveryMissionIds ?? [],
-      completedRoleplaySceneIds: stored?.completedRoleplaySceneIds ?? []
+      trafficTurnsDone: counter(stored?.trafficTurnsDone),
+      countQuestionsDone: counter(stored?.countQuestionsDone),
+      colorQuestionsDone: counter(stored?.colorQuestionsDone),
+      storyPageIndex: counter(stored?.storyPageIndex),
+      storyBookIndex: counter(stored?.storyBookIndex),
+      logoQuizDone: counter(stored?.logoQuizDone),
+      logoIndex: counter(stored?.logoIndex),
+      learnedVehicleIndex: counter(stored?.learnedVehicleIndex),
+      stars: counter(stored?.stars),
+      learnedVehicleIds: stringIds(stored?.learnedVehicleIds),
+      playgroundCompletedTopicIds: stringIds(stored?.playgroundCompletedTopicIds),
+      playgroundHeardWordIds: stringIds(stored?.playgroundHeardWordIds),
+      completedDeliveryMissionIds: stringIds(stored?.completedDeliveryMissionIds),
+      completedRoleplaySceneIds: stringIds(stored?.completedRoleplaySceneIds)
     };
   }
   return cachedProgress;

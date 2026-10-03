@@ -11,7 +11,7 @@ const uni = {
     contexts.push(audio); return audio;
   }
 };
-modules.set(path.join(root, "services/mediaCacheService.ts"), { exports: { resolveCachedMedia: url => url === "slow" ? new Promise(resolve => slowResolve = resolve) : Promise.resolve(url) } });
+modules.set(path.join(root, "services/mediaCacheService.ts"), { exports: { invalidateCachedMedia() {}, resolveCachedMedia: url => url === "slow" ? new Promise(resolve => slowResolve = resolve) : Promise.resolve(url) } });
 modules.set(path.join(root, "services/audioCatalog.ts"), { exports: { phraseAudioPath: text => text + ".mp3" } });
 function load(file) {
   if (modules.has(file)) return modules.get(file).exports;

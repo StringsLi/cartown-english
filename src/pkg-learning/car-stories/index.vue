@@ -1,5 +1,7 @@
 <template>
   <view class="page vehicle-books-page">
+    <PageTopbar section="亲子故事" fallback="/pages/books/index" />
+    <AudioFeedback />
     <view class="vehicle-books-header">
       <view>
         <text class="section-kicker">VEHICLE STORIES</text>
@@ -42,6 +44,9 @@
 </template>
 
 <script setup lang="ts">
+import AudioFeedback from "@/components/AudioFeedback.vue";
+import PageTopbar from "@/components/PageTopbar.vue";
+import { navigate } from "@/services/navigationService";
 import BookCard from "@/components/BookCard.vue";
 import CachedImage from "@/components/CachedImage.vue";
 import { getBooks } from "@/services/bookService";
@@ -53,17 +58,17 @@ const vehicleBooks = getBooks({ theme: "Vehicles" });
 const featuredBook = vehicleBooks.find((book) => book.id === "book_red_car_001") ?? vehicleBooks[0];
 
 function goBookDetail(book: Book) {
-  uni.navigateTo({ url: `/pkg-reading/book-detail/index?bookId=${book.id}` });
+  navigate({ url: `/pkg-reading/book-detail/index?bookId=${book.id}` });
 }
 
 function goLibrary() {
-  uni.navigateTo({ url: "/pages/books/index" });
+  navigate({ url: "/pages/books/index" }, "reLaunch");
 }
 </script>
 
 <style scoped lang="scss">
 .vehicle-books-page {
-  padding-bottom: 56rpx;
+  padding-bottom: calc(56rpx + env(safe-area-inset-bottom));
 }
 
 .vehicle-books-header {

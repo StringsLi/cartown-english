@@ -1,5 +1,7 @@
 <template>
   <view class="page logos-page">
+    <PageTopbar section="图形认知" fallback="/pages/vehicles/index" />
+    <AudioFeedback />
     <view class="logos-hero soft-card">
       <view>
         <text class="section-kicker">Brand Badges</text>
@@ -31,26 +33,30 @@
         <text class="quiz-head__feedback">{{ feedback }}</text>
       </view>
       <view class="logo-options">
-        <view v-for="logo in quizOptions" :key="logo.id" class="logo-option soft-card" @tap="chooseLogo(logo.id)">
+        <button role="button" v-for="logo in quizOptions" :key="logo.id" class="logo-option soft-card" @tap="chooseLogo(logo.id)">
           <CartownLogoBadge :logo-id="logo.id" :name="logo.name" :badge-text="logo.badgeText" :shape="logo.shape" :primary="logo.primary" :secondary="logo.secondary" size="small" :show-name="false" />
           <text class="logo-option__name">{{ logo.name }}</text>
           <text class="logo-option__zh">{{ logo.zh }}</text>
-        </view>
+        </button>
       </view>
+      <BigButton class="round-next" label="下一题" variant="warm" :disabled="!answered" @tap="nextRound" />
       <BigButton class="logo-quiz__listen" label="再听一次" @tap="speakLogo(`Tap ${targetLogo.name}.`)" />
     </view>
 
     <text class="section-title">Logo Wall</text>
     <view class="logo-wall">
-      <view v-for="(logo, index) in carLogos" :key="logo.id" class="logo-wall__item soft-card" @tap="selectLogo(index)">
+      <button role="button" v-for="(logo, index) in carLogos" :key="logo.id" class="logo-wall__item soft-card" @tap="selectLogo(index)">
         <CartownLogoBadge :logo-id="logo.id" :name="logo.name" :badge-text="logo.badgeText" :shape="logo.shape" :primary="logo.primary" :secondary="logo.secondary" size="small" :show-name="false" />
         <text class="logo-wall__name">{{ logo.name }}</text>
-      </view>
+      </button>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
+import AudioFeedback from "@/components/AudioFeedback.vue";
+import PageTopbar from "@/components/PageTopbar.vue";
+import { shuffleChoices } from "@/utils/practice";
 import { computed, ref } from "vue";
 import BigButton from "@/components/BigButton.vue";
 import CartownLogoBadge from "@/components/CartownLogoBadge.vue";
@@ -63,10 +69,11 @@ usePageShare();
 const mode = ref<"learn" | "play">("learn");
 const activeIndex = ref(Math.min(getCartownProgress().logoIndex, carLogos.length - 1));
 const targetIndex = ref(0);
+const answered = ref(false);
 const feedback = ref("Listen and tap!");
 const activeLogo = computed(() => carLogos[activeIndex.value]);
 const targetLogo = computed(() => carLogos[targetIndex.value]);
-const quizOptions = computed(() => [targetLogo.value, carLogos[(targetIndex.value + 7) % carLogos.length], carLogos[(targetIndex.value + 19) % carLogos.length]]);
+const quizOptions = computed(() => shuffleChoices([targetLogo.value, carLogos[(targetIndex.value + 7) % carLogos.length], carLogos[(targetIndex.value + 19) % carLogos.length]]));
 
 function speakLogo(text: string) {
   speakEnglish(text);
@@ -86,31 +93,36 @@ function nextLogo() {
 }
 
 function startQuiz() {
+  answered.value = false;
   mode.value = "play";
-  targetIndex.value = (getCartownProgress().logoQuizDone * 5) % carLogos.length;
+  targetIndex.value = (getCartownProgress().logoQuizDone * 7) % carLogos.length;
   feedback.value = "Listen and tap!";
   speakLogo(`Tap ${targetLogo.value.name}.`);
 }
 
 function chooseLogo(id: string) {
+  if (answered.value) return;
   if (id !== targetLogo.value.id) {
     feedback.value = "Try again!";
     speakEnglish("Try again!");
     return;
   }
 
-  feedback.value = "Great job!";
+  answered.value = true;
+  feedback.value = "选对啦！准备好再继续。";
   speakEnglish("Great job!");
   addCartownStar();
   const nextDone = getCartownProgress().logoQuizDone + 1;
   saveCartownProgress({ logoQuizDone: nextDone });
-  targetIndex.value = (nextDone * 5) % carLogos.length;
+
 }
+function nextRound() { if (!answered.value) return; startQuiz(); }
 </script>
 
 <style scoped lang="scss">
+.round-next { margin-top:24rpx; }
 .logos-page {
-  padding-bottom: 56rpx;
+  padding-bottom: calc(56rpx + env(safe-area-inset-bottom));
 }
 
 .logos-hero {
@@ -119,8 +131,8 @@ function chooseLogo(id: string) {
   gap: 24rpx;
   padding: 32rpx;
   background:
-    radial-gradient(circle at 92% 20%, rgba(255, 214, 107, 0.34), transparent 34%),
-    linear-gradient(135deg, #ffffff 0%, #eaf6ff 58%, #fff0dd 100%);
+    radial-gradient(circle at 92% 20%, rgba(223, 166, 45, 0.16), transparent 34%),
+    linear-gradient(135deg, #fffdf9 0%, #edf2e9 58%, #f7edda 100%);
 }
 
 .logos-hero__count {

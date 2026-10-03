@@ -1,11 +1,13 @@
 <template>
-  <view class="page vehicles-page screen-with-nav">
+  <view class="page vehicles-page ">
+    <PageTopbar section="车车小镇" fallback="/pages/index/index" />
+    <AudioFeedback />
     <view class="topic-header">
       <view>
         <text class="page-title">交通工具 Vehicles</text>
         <text class="page-subtitle">看图认识车辆，点一下听自然英文发音。</text>
       </view>
-      <button class="header-audio" aria-label="播放示范句" @tap="playSentence">▶</button>
+      <button role="button" class="header-audio" aria-label="播放示范句" @tap="playSentence">▶</button>
     </view>
 
     <view class="vehicle-hero soft-card">
@@ -20,7 +22,7 @@
 
     <scroll-view class="station-scroll" scroll-x>
       <view class="station-scroll__inner">
-        <button v-for="station in stations" :key="station.path" class="station-tab" @tap="goStation(station.path)">
+        <button role="button" v-for="station in stations" :key="station.path" class="station-tab" @tap="goStation(station.path)">
           <text class="station-tab__tag">{{ station.tag }}</text>
           <text class="station-tab__title">{{ station.title }}</text>
         </button>
@@ -33,7 +35,7 @@
     </view>
 
     <view class="vehicle-grid">
-      <button v-for="item in featuredWords" :key="item.id" class="vehicle-word soft-card" @tap="playWord(item)">
+      <button role="button" v-for="item in featuredWords" :key="item.id" class="vehicle-word soft-card" @tap="playWord(item)">
         <view class="vehicle-word__image-wrap">
           <CachedImage class="vehicle-word__image" :src="item.image" mode="aspectFit" />
         </view>
@@ -43,7 +45,7 @@
       </button>
     </view>
 
-    <view class="brand-section soft-card" @tap="goStation('/pkg-learning/car-logos/index')">
+    <button role="button" class="brand-section soft-card" @tap="goStation('/pkg-learning/car-logos/index')">
       <view class="brand-section__head">
         <view>
           <text class="brand-section__eyebrow">品牌认知</text>
@@ -54,15 +56,18 @@
       <view class="brand-row">
         <CartownLogoBadge v-for="logo in featuredLogos" :key="logo.id" :logo-id="logo.id" :name="logo.name" :badge-text="logo.badgeText" :shape="logo.shape" :primary="logo.primary" :secondary="logo.secondary" size="small" :show-name="false" />
       </view>
-    </view>
+    </button>
 
-    <BottomNav active="learn" />
+
   </view>
 </template>
 
 <script setup lang="ts">
+import AudioFeedback from "@/components/AudioFeedback.vue";
+import PageTopbar from "@/components/PageTopbar.vue";
+import { navigate } from "@/services/navigationService";
 import CachedImage from "@/components/CachedImage.vue";
-import BottomNav from "@/components/BottomNav.vue";
+
 import CartownLogoBadge from "@/components/CartownLogoBadge.vue";
 import { carLogos } from "@/mock/cartown";
 import { vehicleGroups } from "@/mock/topics";
@@ -107,7 +112,7 @@ function playWord(item: TopicWord) {
 }
 
 function goStation(path: string) {
-  uni.navigateTo({ url: path });
+  navigate({ url: path });
 }
 </script>
 
