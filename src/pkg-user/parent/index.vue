@@ -101,6 +101,8 @@
 
     <button class="playground-report adventure-report soft-card" @tap="goAdventure"><view><text class="playground-report__title">车车英语小冒险</text><text class="playground-report__detail">已送达 {{ deliveryDoneCount }} / {{ deliveryMissions.length }} 个故事 · 已表演 {{ roleplayDoneCount }} / {{ roleplayScenes.length }} 个场景</text><text class="playground-report__detail">陪玩完成记录，随时可以换角色再演。</text></view><text class="playground-report__more">去玩 ›</text></button>
 
+    <button class="playground-report soft-card" @tap="goRecordings"><view><text class="playground-report__title">孩子的录音小册</text><text class="playground-report__detail">本机保存 {{ learningState.repeatRecords.length }} 条 · 回听、导出音频和备份</text></view><text class="playground-report__more">打开 ›</text></button>
+
     <view class="parent-advice soft-card">
       <view class="parent-advice__icon">♥</view>
       <view>
@@ -130,6 +132,7 @@ import { usePageShare } from "@/composables/usePageShare";
 
 usePageShare();
 const bookId = ref(getTodayBook().id);
+function goRecordings() { uni.navigateTo({ url: "/pkg-reading/recordings/index" }); }
 const stats = ref(getHomeStats());
 const learningState = ref(getLearningState());
 const cartownProgress = ref(getCartownProgress());

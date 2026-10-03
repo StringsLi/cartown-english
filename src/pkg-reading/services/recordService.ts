@@ -53,6 +53,11 @@ export function playRecord(filePath: string): void {
   });
 }
 
+export function stopRecordPlayback(): void {
+  const audio = recordAudio; recordAudio = null;
+  audio?.stop(); audio?.destroy();
+}
+
 function destroyRecordAudio(audio: UniApp.InnerAudioContext): void {
   if (recordAudio !== audio) return;
   audio.destroy();

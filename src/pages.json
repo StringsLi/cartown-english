@@ -79,6 +79,10 @@
       "root": "pkg-reading",
       "pages": [
         {
+          "path": "recordings/index",
+          "style": { "navigationBarTitleText": "孩子的录音小册" }
+        },
+        {
           "path": "book-detail/index",
           "style": { "navigationBarTitleText": "绘本详情" }
         },

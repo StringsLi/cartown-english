@@ -36,17 +36,18 @@
       <BigButton label="我的录音 ▶" variant="ghost" :disabled="!recordedPath" @tap="playMyRecord" />
     </view>
 
+    <view v-if="recordedPath" class="current-export"><BigButton label="保存 / 导出我的录音 ↓" variant="warm" @tap="goRecordings" /></view>
+
     <view class="record-backup soft-card">
       <view class="record-backup__head">
         <view>
-          <text class="record-backup__title">录音本地备份</text>
-          <text class="record-backup__desc">已保存 {{ savedRecordCount }} 条，可导出后在本机或微信文件中恢复。</text>
+          <text class="record-backup__title">孩子的录音小册</text>
+          <text class="record-backup__desc">已保存 {{ savedRecordCount }} 条。可以回听、导出单条音频或备份全部录音。</text>
         </view>
         <text class="record-backup__badge">LOCAL</text>
       </view>
       <view class="record-backup__actions">
-        <BigButton label="导出备份" variant="ghost" @tap="exportRecords" />
-        <BigButton label="导入备份" variant="warm" @tap="importRecords" />
+        <BigButton label="管理和导出录音 ›" variant="ghost" @tap="goRecordings" />
       </view>
     </view>
 
@@ -59,13 +60,12 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { onLoad, onUnload } from "@dcloudio/uni-app";
+import { onLoad, onShow, onHide, onUnload } from "@dcloudio/uni-app";
 import AudioButton from "@/components/AudioButton.vue";
 import BigButton from "@/components/BigButton.vue";
 import { getBookById, getBookPages, getTodayBook } from "@/services/bookService";
-import { exportRepeatRecordArchive, importRepeatRecordArchive } from "@/pkg-reading/services/recordArchiveService";
-import { playRecord, startRecord, stopRecord } from "@/pkg-reading/services/recordService";
-import { getRepeatRecords, mergeRepeatRecords, saveRepeatRecord } from "@/services/progressService";
+import { playRecord, startRecord, stopRecord, stopRecordPlayback } from "@/pkg-reading/services/recordService";
+import { getRepeatRecords, saveRepeatRecord, flushLearningState } from "@/services/progressService";
 import { usePageShare } from "@/composables/usePageShare";
 
 usePageShare();
@@ -99,9 +99,12 @@ onLoad((query) => {
   sentence.value = params.sentence ? decodeURIComponent(params.sentence) : "";
 });
 
+onShow(() => { savedRecordCount.value = getRepeatRecords().length; });
+onHide(() => { stopRecordPlayback(); if (isRecording.value) void finishRecord(); });
 onUnload(() => {
+  stopRecordPlayback();
   clearRecordTimer();
-  if (isRecording.value) void stopRecord();
+  if (isRecording.value && !isFinishing.value) void stopRecord();
 });
 
 async function toggleRecord() {
@@ -148,6 +151,7 @@ async function finishRecord() {
       durationSeconds: Math.max(1, recordSeconds.value)
     });
     savedRecordCount.value = getRepeatRecords().length;
+    flushLearningState();
     uni.showToast({ title: "录音已保存", icon: "none" });
   } catch {
     uni.showToast({ title: "录音保存失败", icon: "none" });
@@ -166,26 +170,7 @@ function playMyRecord() {
   if (recordedPath.value) playRecord(recordedPath.value);
 }
 
-async function exportRecords() {
-  try {
-    const count = await exportRepeatRecordArchive(getRepeatRecords());
-    uni.showToast({ title: count ? `已导出 ${count} 条录音` : "暂无录音可导出", icon: "none" });
-  } catch {
-    uni.showToast({ title: "导出失败，请重试", icon: "none" });
-  }
-}
-
-async function importRecords() {
-  try {
-    const archive = await importRepeatRecordArchive();
-    const result = mergeRepeatRecords(archive.records);
-    savedRecordCount.value = getRepeatRecords().length;
-    uni.showToast({ title: result.added ? `已恢复 ${result.added} 条录音` : "没有新的录音需要恢复", icon: "none" });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "导入失败，请选择录音备份文件";
-    uni.showToast({ title: message, icon: "none" });
-  }
-}
+function goRecordings() { if (isRecording.value || isFinishing.value) { uni.showToast({ title: "先停止录音，保存好再导出", icon: "none" }); return; } stopRecordPlayback(); uni.navigateTo({ url: "/pkg-reading/recordings/index" }); }
 
 function goReader() {
   uni.redirectTo({ url: `/pkg-reading/reader/index?bookId=${book.value.id}&pageIndex=${currentPageNumber.value}` });
@@ -367,7 +352,8 @@ function goBack() {
   background: #e4eee0;
 }
 
-.record-backup__actions { margin-top: 22rpx; }
+.record-backup__actions { display: block; margin-top: 22rpx; }
+.current-export { margin-top: 16rpx; }
 
 .repeat-footer {
   position: fixed;
