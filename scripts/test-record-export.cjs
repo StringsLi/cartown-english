@@ -21,9 +21,13 @@ const record=(audioUrl="/saved/voice.mp3")=>({userId:"local_child",bookId:"mom",
  await output.savePreparedRecord(file);assert.equal(env.shares.length,1);assert.equal(env.shares[0].filePath,file.filePath);
  env.setShareError({errMsg:"shareFileMessage:fail cancel"});await assert.rejects(output.savePreparedRecord(file));assert.match(output.recordExportError({errMsg:"fail cancel"}),/取消/);env.setShareError(undefined);
  await assert.rejects(archive.prepareRepeatRecordArchive([]),/暂无/);await assert.rejects(archive.prepareRepeatRecordAudio(record("/missing.mp3")),/失效/);
- const backup=await archive.prepareRepeatRecordArchive([record(),record("/missing.mp3"),record("/saved/voice.wav")]);assert.equal(backup.count,2);assert.equal(backup.skipped,1);
+ const backup=await archive.prepareRepeatRecordArchive([record(),record("/missing.mp3"),{...record("/saved/voice.wav"),sentence:"Hello, Dad!"}]);assert.equal(backup.count,2);assert.equal(backup.skipped,1);
+ const secondFile=await archive.prepareRepeatRecordAudio(record());assert.notEqual(secondFile.filePath,file.filePath);
  const json=env.files.get(backup.filePath).toString(),parsed=JSON.parse(json);assert.equal(parsed.records[0].audio.value,Buffer.from("ID3-original-audio").toString("base64"));
  const restored=await archive.restoreArchive(json);assert.equal(restored.records.length,2);assert.notEqual(restored.records[0].audioUrl,restored.records[1].audioUrl);assert.ok(restored.records[1].audioUrl.endsWith(".wav"));assert.equal(env.files.get(restored.records[0].audioUrl).toString(),"ID3-original-audio");
+ const fileCount=env.files.size;const duplicate=await archive.restoreArchive(json,restored.records);assert.equal(duplicate.duplicates,2);assert.equal(duplicate.records.length,0);assert.equal(env.files.size,fileCount);
+ env.files.delete(restored.records[0].audioUrl);const repair=await archive.restoreArchive(json,restored.records);assert.equal(repair.duplicates,1);assert.equal(repair.records.length,1);assert.equal(env.files.get(repair.records[0].audioUrl).toString(),"ID3-original-audio");
+ const repeated=JSON.parse(json);repeated.records=[...repeated.records,...repeated.records];const unique=await archive.restoreArchive(JSON.stringify(repeated));assert.equal(unique.duplicates,2);assert.equal(unique.records.length,2);
  parsed.records.push(null,{audio:{encoding:"base64",value:"%%%"}});const partial=await archive.restoreArchive(JSON.stringify(parsed));assert.equal(partial.skipped,2);assert.equal(partial.records.length,2);
  await assert.rejects(archive.restoreArchive("bad"),/格式/);await assert.rejects(archive.restoreArchive('{}'),/备份/);
  env.setWriteFailure(true);await assert.rejects(archive.prepareRepeatRecordAudio(record()));env.setWriteFailure(false);

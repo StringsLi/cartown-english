@@ -1,4 +1,6 @@
 export interface PreparedRecordFile { filePath: string; fileName: string }
+let fileSequence = 0;
+export function recordFileStamp(): string { return `${Date.now()}-${++fileSequence}`; }
 declare const wx: typeof uni & { env: { USER_DATA_PATH: string }; shareFileMessage(options: { filePath: string; fileName: string; success(): void; fail(error: unknown): void }): void };
 
 export async function prepareRecordFile(content: string, fileName: string, encoding: "utf8" | "base64", mimeType: string): Promise<PreparedRecordFile> {

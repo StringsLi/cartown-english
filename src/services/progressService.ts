@@ -177,8 +177,18 @@ export function getRepeatRecords(): RepeatRecord[] {
   return getLearningState().repeatRecords;
 }
 
-export function mergeRepeatRecords(records: RepeatRecord[]): { added: number; total: number } {
+export function mergeRepeatRecords(records: RepeatRecord[], repairExisting = false): { added: number; total: number; repaired: number } {
   const state = getLearningState();
+  let repaired = 0;
+  if (repairExisting) {
+    const replacements = new Map(records.map(r => [repeatRecordKey(r), r]));
+    state.repeatRecords = state.repeatRecords.map(existing => {
+      const replacement = replacements.get(repeatRecordKey(existing));
+      if (!replacement || replacement.audioUrl === existing.audioUrl) return existing;
+      repaired += 1;
+      return { ...existing, audioUrl: replacement.audioUrl, durationSeconds: replacement.durationSeconds };
+    });
+  }
   const currentKeys = new Set(state.repeatRecords.map(repeatRecordKey));
   const incoming = records.filter((record) => {
     const key = repeatRecordKey(record);
@@ -194,7 +204,7 @@ export function mergeRepeatRecords(records: RepeatRecord[]): { added: number; to
 
   const savedKeys = new Set(state.repeatRecords.map(repeatRecordKey));
   const added = incoming.filter((record) => savedKeys.has(repeatRecordKey(record))).length;
-  return { added, total: state.repeatRecords.length };
+  return { added, total: state.repeatRecords.length, repaired };
 }
 
 export function saveGameRecord(record: Omit<GameRecord, "userId" | "createdAt">): GameRecord {

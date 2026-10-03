@@ -1,5 +1,5 @@
 import type { RepeatRecord } from "@/types/book";
-import { prepareRecordFile, type PreparedRecordFile } from "./recordExportService";
+import { prepareRecordFile, recordFileStamp, type PreparedRecordFile } from "./recordExportService";
 declare const wx: { env: { USER_DATA_PATH: string } };
 
 const ARCHIVE_VERSION = 1;
@@ -29,6 +29,8 @@ interface RepeatArchive {
 export interface RecordArchiveResult {
   total: number;
   skipped: number;
+  duplicates: number;
+  limited: number;
   records: RepeatRecord[];
 }
 
@@ -44,7 +46,7 @@ export async function prepareRepeatRecordArchive(sourceRecords: RepeatRecord[]):
     exportedAt: new Date().toISOString(),
     records: available
   };
-  const file = await prepareRecordFile(JSON.stringify(archive, null, 2), `cartown-records-${dateStamp()}-${Date.now()}.json`, "utf8", "application/json");
+  const file = await prepareRecordFile(JSON.stringify(archive, null, 2), `cartown-records-${dateStamp()}-${recordFileStamp()}.json`, "utf8", "application/json");
   return { ...file, count: available.length, skipped: all.length - available.length };
 }
 
@@ -57,20 +59,27 @@ export async function prepareRepeatRecordAudio(record: RepeatRecord): Promise<Pr
   const mimeType = audio.encoding === "base64" ? audio.mimeType : `audio/${match![1]}`;
   const format = ({ "audio/mpeg": "mp3", "audio/mp3": "mp3", "audio/mp4": "m4a", "audio/wav": "wav", "audio/ogg": "ogg", "audio/webm": "webm" } as Record<string,string>)[mimeType] || "mp3";
   const sentence = record.sentence.replace(/[^A-Za-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 36) || "repeat";
-  return prepareRecordFile(base64, `cartown-${sentence}-${Date.now()}.${format}`, "base64", mimeType);
+  const date = record.createdAt.replace(/[^0-9]/g, "").slice(0, 14);
+  return prepareRecordFile(base64, `cartown-${sentence}-${date}-${recordFileStamp()}.${format}`, "base64", mimeType);
 }
 
-export async function importRepeatRecordArchive(): Promise<RecordArchiveResult> {
-  return restoreArchive(await chooseArchiveFile());
+export async function importRepeatRecordArchive(existingRecords: RepeatRecord[] = []): Promise<RecordArchiveResult> {
+  return restoreArchive(await chooseArchiveFile(), existingRecords);
 }
 
-export async function restoreArchive(content: string): Promise<RecordArchiveResult> {
+export async function restoreArchive(content: string, existingRecords: RepeatRecord[] = []): Promise<RecordArchiveResult> {
   const archive = parseArchive(content);
   const restored: RepeatRecord[] = [];
-  let skipped = 0;
+  let skipped = 0, duplicates = 0;
+  const key = (r: Pick<RepeatRecord,"bookId" | "sentence" | "createdAt">) => JSON.stringify([r.bookId,r.sentence,r.createdAt]);
+  const seen = new Set<string>(), existing = new Map(existingRecords.map(r => [key(r),r]));
 
   for (const record of archive.records.slice(0, MAX_ARCHIVE_RECORDS)) {
     if (!record || typeof record.bookId !== "string" || !record.bookId || typeof record.sentence !== "string" || !record.sentence || typeof record.createdAt !== "string" || !record.createdAt) { skipped += 1; continue; }
+    const identity = key(record);
+    if (seen.has(identity)) { duplicates += 1; continue; }
+    const old = existing.get(identity);
+    if (old && (await serialiseAudio(old.audioUrl)).encoding !== "unavailable") { seen.add(identity); duplicates += 1; continue; }
     let audioUrl: string | null = null;
     try { if (record && typeof record === "object" && record.audio) audioUrl = await restoreAudio(record.audio); } catch { /* 跳过损坏的单条录音 */ }
     if (!audioUrl) {
@@ -82,14 +91,17 @@ export async function restoreArchive(content: string): Promise<RecordArchiveResu
       bookId: record.bookId,
       sentence: record.sentence,
       audioUrl,
-      durationSeconds: record.durationSeconds,
+      durationSeconds: typeof record.durationSeconds === "number" && Number.isFinite(record.durationSeconds) ? Math.max(1, Math.min(60, record.durationSeconds)) : undefined,
       createdAt: record.createdAt
     });
+    seen.add(identity);
   }
 
   return {
     total: archive.records.length,
     skipped,
+    duplicates,
+    limited: Math.max(0,archive.records.length - MAX_ARCHIVE_RECORDS),
     records: restored
   };
 }
