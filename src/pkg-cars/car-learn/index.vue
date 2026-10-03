@@ -1,5 +1,7 @@
 <template>
   <view class="page car-page">
+    <PageTopbar section="真车声音卡" fallback="/pages/vehicles/index" />
+    <AudioFeedback />
     <view class="ranking-header">
       <view class="ranking-header__copy">
         <text class="section-kicker">50 REAL CARS</text>
@@ -7,7 +9,7 @@
         <text class="page-subtitle">看大图，听一听，一次认识一辆车。</text>
       </view>
       <view class="ranking-header__actions">
-        <button
+        <button role="button"
           class="map-shortcut"
           aria-label="切换到世界地图"
           hover-class="map-shortcut--pressed"
@@ -23,7 +25,7 @@
           <text class="ranking-header__current">{{ currentIndex + 1 }}</text>
           <text class="ranking-header__total">/ 50</text>
         </view>
-        <text class="ranking-header__learned">已认识 {{ learnedCount }}</text>
+        <text class="ranking-header__learned">已听过 {{ learnedCount }}</text>
       </view>
     </view>
 
@@ -36,12 +38,12 @@
             <text class="vehicle-facts__cn">{{ vehicle.brand }} · {{ vehicle.model }}</text>
           </view>
           <view class="vehicle-facts__pronunciation">
-            <button class="vehicle-facts__pronounce" :aria-label="`播放 ${vehicle.englishName} 读音`" @tap.stop="playName">▶</button>
+            <button role="button" class="vehicle-facts__pronounce" :aria-label="`播放 ${vehicle.englishName} 读音`" @tap.stop="playName">▶</button>
             <text>听一听</text>
           </view>
         </view>
         <text class="vehicle-facts__sentence">{{ vehicle.sentence }}</text>
-        <view v-if="currentIsLearned" class="vehicle-learned">✓ 已认识</view>
+        <view v-if="currentIsLearned" class="vehicle-learned">✓ 已听过</view>
       </view>
     </view>
 
@@ -59,6 +61,10 @@
 </template>
 
 <script setup lang="ts">
+import AudioFeedback from "@/components/AudioFeedback.vue";
+import PageTopbar from "@/components/PageTopbar.vue";
+import { navigate } from "@/services/navigationService";
+import { onShow } from "@dcloudio/uni-app";
 import { computed, ref } from "vue";
 import BigButton from "@/components/BigButton.vue";
 import BestSellingCarPhoto from "@/pkg-cars/BestSellingCarPhoto.vue";
@@ -70,15 +76,21 @@ import { usePageShare } from "@/composables/usePageShare";
 usePageShare();
 const worldMapIcon = "/pkg-cars/static/world-outline.png";
 const savedProgress = getCartownProgress();
-const currentIndex = ref(Math.min(savedProgress.learnedVehicleIndex, bestSellingCars.length - 1));
+const currentIndex = ref(Math.max(0, Math.min(savedProgress.learnedVehicleIndex, bestSellingCars.length - 1)));
 const learnedVehicleIds = ref<string[]>(savedProgress.learnedVehicleIds);
 const vehicle = computed(() => bestSellingCars[currentIndex.value]);
 const progressWidth = computed(() => `${((currentIndex.value + 1) / bestSellingCars.length) * 100}%`);
+onShow(() => { learnedVehicleIds.value = getCartownProgress().learnedVehicleIds; });
 const learnedCount = computed(() => learnedVehicleIds.value.length);
 const currentIsLearned = computed(() => learnedVehicleIds.value.includes(vehicle.value.id));
 
 function playVehicleName() {
-  playAudio(vehicle.value.audio, vehicle.value.englishName);
+  const item = vehicle.value;
+  playAudio(item.audio, item.englishName, () => {
+    const result = completeCartownVehicle(item.id);
+    learnedVehicleIds.value = result.progress.learnedVehicleIds;
+    if (result.earned) uni.showToast({ title: "听过新车型，获得 1 颗星", icon: "none" });
+  });
 }
 
 function playName() {
@@ -86,15 +98,10 @@ function playName() {
 }
 
 function goWorld() {
-  uni.navigateTo({ url: "/pkg-world/world/index" });
+  navigate({ url: "/pkg-world/world/index" });
 }
 
 function nextVehicle() {
-  const result = completeCartownVehicle(vehicle.value.id);
-  learnedVehicleIds.value = result.progress.learnedVehicleIds;
-  if (result.earned) {
-    uni.showToast({ title: "获得 1 颗星", icon: "none" });
-  }
   currentIndex.value = (currentIndex.value + 1) % bestSellingCars.length;
   saveCartownProgress({ learnedVehicleIndex: currentIndex.value });
   playVehicleName();
@@ -109,7 +116,7 @@ function previousVehicle() {
 
 <style scoped lang="scss">
 .car-page {
-  padding-bottom: 56rpx;
+  padding-bottom: calc(56rpx + env(safe-area-inset-bottom));
   background: #f7f4ec;
 }
 

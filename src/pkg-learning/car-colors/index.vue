@@ -1,5 +1,7 @@
 <template>
   <view class="page car-page">
+    <PageTopbar section="听颜色 · 找小车" fallback="/pages/vehicles/index" />
+    <AudioFeedback />
     <view class="car-hero soft-card">
       <text class="section-kicker">Color Cars</text>
       <text class="page-title">颜色汽车</text>
@@ -12,18 +14,22 @@
     </view>
 
     <view class="choice-grid">
-      <view v-for="car in choices" :key="car.id" class="choice-card soft-card" @tap="choose(car.id)">
+      <button role="button" v-for="car in choices" :key="car.id" class="choice-card soft-card" @tap="choose(car.id)">
         <view class="choice-card__vehicle">
-          <PremiumVehicleImage :name="`color-car-${car.id}`" :alt="`${car.zh}???`" />
+          <PremiumVehicleImage :name="`color-car-${car.id}`" :alt="`${car.zh}小汽车`" />
         </view>
         <text class="choice-card__word">{{ car.label }}</text>
         <text class="choice-card__zh">{{ car.zh }}</text>
-      </view>
+      </button>
     </view>
+    <BigButton class="round-next" label="下一题" variant="warm" :disabled="!answered" @tap="nextRound" />
   </view>
 </template>
 
 <script setup lang="ts">
+import AudioFeedback from "@/components/AudioFeedback.vue";
+import PageTopbar from "@/components/PageTopbar.vue";
+import { shuffleChoices } from "@/utils/practice";
 import { computed, ref } from "vue";
 import BigButton from "@/components/BigButton.vue";
 import PremiumVehicleImage from "@/components/PremiumVehicleImage.vue";
@@ -35,33 +41,44 @@ import { usePageShare } from "@/composables/usePageShare";
 usePageShare();
 const progress = getCartownProgress();
 const targetIndex = ref(progress.colorQuestionsDone % colorCars.length);
+const answered = ref(false);
 const feedback = ref("听一听，选对颜色车。");
 const target = computed(() => colorCars[targetIndex.value]);
-const choices = computed(() => [target.value, colorCars[(targetIndex.value + 2) % colorCars.length], colorCars[(targetIndex.value + 4) % colorCars.length]]);
+const choices = computed(() => shuffleChoices([target.value, colorCars[(targetIndex.value + 2) % colorCars.length], colorCars[(targetIndex.value + 4) % colorCars.length]]));
 
 function askAgain() {
   speakEnglish(target.value.task);
 }
 
 function choose(id: string) {
+  if (answered.value) return;
   if (id !== target.value.id) {
     feedback.value = "Try again!";
     speakEnglish("Try again!");
     return;
   }
 
-  feedback.value = "Great job!";
+  answered.value = true;
+  feedback.value = "选对啦！准备好再继续。";
   speakEnglish("Great job!");
   addCartownStar();
   const nextDone = getCartownProgress().colorQuestionsDone + 1;
   saveCartownProgress({ colorQuestionsDone: nextDone });
-  targetIndex.value = nextDone % colorCars.length;
+
+}
+function nextRound() {
+  if (!answered.value) return;
+  answered.value = false;
+  targetIndex.value = (getCartownProgress().colorQuestionsDone) % colorCars.length;
+  feedback.value = "先听一遍，再试一试。";
+  speakEnglish(target.value.task);
 }
 </script>
 
 <style scoped lang="scss">
+.round-next { margin-top:24rpx; }
 .car-page {
-  padding-bottom: 56rpx;
+  padding-bottom: calc(56rpx + env(safe-area-inset-bottom));
 }
 
 .car-hero,
@@ -71,8 +88,8 @@ function choose(id: string) {
 
 .car-hero {
   background:
-    radial-gradient(circle at 92% 20%, rgba(255, 214, 107, 0.34), transparent 34%),
-    linear-gradient(135deg, #ffffff 0%, #eaf6ff 58%, #fff0dd 100%);
+    radial-gradient(circle at 92% 20%, rgba(223, 166, 45, 0.16), transparent 34%),
+    linear-gradient(135deg, #fffdf9 0%, #edf2e9 58%, #f7edda 100%);
 }
 
 .quiz-card {

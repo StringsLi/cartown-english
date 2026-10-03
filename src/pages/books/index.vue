@@ -5,17 +5,17 @@
         <text class="page-title">绘本馆</text>
         <text class="page-subtitle">按兴趣和阅读等级，选一本刚刚好的故事。</text>
       </view>
-      <button class="search-button" aria-label="搜索绘本" @tap="showSearchHint">⌕</button>
+      <button role="button" class="search-button" aria-label="搜索绘本" @tap="showSearchHint">⌕</button>
     </view>
 
     <view v-if="searchOpen" class="search-panel soft-card">
       <input v-model="searchQuery" class="search-input" type="text" confirm-type="search" placeholder="搜索书名、简介或单词" />
-      <button v-if="searchQuery" class="search-clear" aria-label="清除搜索" @tap="searchQuery = ''">×</button>
+      <button role="button" v-if="searchQuery" class="search-clear" aria-label="清除搜索" @tap="searchQuery = ''">×</button>
     </view>
 
     <scroll-view class="theme-scroll" scroll-x>
       <view class="theme-scroll__inner">
-        <button
+        <button role="button"
           v-for="theme in themeFilters"
           :key="theme.value"
           class="theme-chip"
@@ -27,11 +27,13 @@
       </view>
     </scroll-view>
 
+    <button role="button" v-if="recentBook && recent" class="resume-book soft-card" @tap="navigate({ url: `/pkg-reading/reader/index?bookId=${recentBook.id}&pageIndex=${recent.currentPage}` })"><view><text>接着上次的故事</text><text>{{ recentBook.title }} · 第 {{ recent.currentPage }} 页</text></view><text>继续读 ›</text></button>
+
     <view class="reading-system soft-card">
-      <CachedImage class="reading-system__image" :src="highResolutionAsset('/static/books/bear/cover.webp')" mode="aspectFill" />
+      <CachedImage class="reading-system__image" :src="'/static/first-books/bear/cover.webp'" mode="aspectFill" />
       <view class="reading-system__copy">
-        <text class="reading-system__eyebrow">分级阅读体系</text>
-        <text class="reading-system__title">科学选册，成长看得见</text>
+        <text class="reading-system__eyebrow">短句 · 听读 · 陪伴</text>
+        <text class="reading-system__title">从一本喜欢的故事开始</text>
         <text class="reading-system__desc">从短句和高频词开始，每天稳稳读一点。</text>
       </view>
     </view>
@@ -65,7 +67,7 @@
     <view v-if="!filteredBooks.length" class="empty-library soft-card">
       <text class="empty-library__title">没有找到合适的绘本</text>
       <text class="empty-library__desc">换个关键词或筛选条件试试。</text>
-      <button class="empty-library__reset" @tap="resetFilters">查看全部绘本</button>
+      <button role="button" class="empty-library__reset" @tap="resetFilters">查看全部绘本</button>
     </view>
 
     <BottomNav active="books" />
@@ -73,19 +75,22 @@
 </template>
 
 <script setup lang="ts">
+import { navigate } from "@/services/navigationService";
 import CachedImage from "@/components/CachedImage.vue";
 import { computed, ref } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import BookCard from "@/components/BookCard.vue";
 import BottomNav from "@/components/BottomNav.vue";
-import { getBooks, themeFilters } from "@/services/bookService";
-import { getLearningState } from "@/services/progressService";
+import { getBookById, getBooks, themeFilters } from "@/services/bookService";
+import { getLearningState, getRecentProgress } from "@/services/progressService";
 import { highResolutionAsset } from "@/services/assetService";
 import type { Book, BookLevel } from "@/types/book";
 import type { ThemeFilterValue } from "@/mock/books";
 import { usePageShare } from "@/composables/usePageShare";
 
 usePageShare();
+const recent = ref(getRecentProgress().find(p => p.readStatus === "reading"));
+const recentBook = computed(() => recent.value ? getBookById(recent.value.bookId) : undefined);
 const activeTheme = ref<ThemeFilterValue>("All");
 const readBookIds = ref(getLearningState().readBookIds);
 const searchOpen = ref(false);
@@ -119,11 +124,12 @@ const filteredBooks = computed(() => {
 });
 
 onShow(() => {
+  recent.value = getRecentProgress().find(p => p.readStatus === "reading");
   readBookIds.value = getLearningState().readBookIds;
 });
 
 function goBookDetail(book: Book) {
-  uni.navigateTo({ url: `/pkg-reading/book-detail/index?bookId=${book.id}` });
+  navigate({ url: `/pkg-reading/book-detail/index?bookId=${book.id}` });
 }
 
 function showSearchHint() {
@@ -148,6 +154,7 @@ function resetFilters() {
 </script>
 
 <style scoped lang="scss">
+.resume-book { display:flex; width:100%; align-items:center; justify-content:space-between; gap:20rpx; padding:24rpx; margin-bottom:20rpx; background:#f7ead9; text-align:left; font-size:24rpx; color:$color-primary; } .resume-book view { min-width:0; } .resume-book view text { display:block; line-height:1.5; } .resume-book view text:first-child { font-size:20rpx; color:$color-muted; } .resume-book > text { flex:none; }
 .books-header {
   display: flex;
   align-items: flex-start;

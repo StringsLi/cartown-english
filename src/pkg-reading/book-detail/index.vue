@@ -1,5 +1,7 @@
 <template>
   <view class="page detail-page">
+    <PageTopbar section="绘本馆" fallback="/pages/books/index" />
+    <AudioFeedback />
     <view class="detail-hero">
       <view class="detail-cover soft-card">
         <RedCarMascot v-if="book.vehicleStoryId === 'red-car'" class="detail-cover__image" />
@@ -44,14 +46,17 @@
 </template>
 
 <script setup lang="ts">
+import AudioFeedback from "@/components/AudioFeedback.vue";
+import PageTopbar from "@/components/PageTopbar.vue";
+import { navigate } from "@/services/navigationService";
 import CachedImage from "@/components/CachedImage.vue";
 import RedCarMascot from "@/components/RedCarMascot.vue";
 import { computed, ref, watch } from "vue";
-import { onLoad } from "@dcloudio/uni-app";
+import { onLoad, onShow } from "@dcloudio/uni-app";
 import BigButton from "@/components/BigButton.vue";
 import ParentTipCard from "@/components/ParentTipCard.vue";
 import WordChip from "@/components/WordChip.vue";
-import { getBookById, getBookWords, getParentTip, getThemeLabel, getTodayBook } from "@/services/bookService";
+import { resolveBookId, getBookById, getBookWords, getParentTip, getThemeLabel, getTodayBook } from "@/services/bookService";
 import { getProgress } from "@/services/progressService";
 import type { UserProgress } from "@/types/book";
 import { usePageShare } from "@/composables/usePageShare";
@@ -63,13 +68,14 @@ const book = computed(() => getBookById(bookId.value) ?? getTodayBook());
 const words = computed(() => getBookWords(book.value.id));
 const parentTip = computed(() => getParentTip(book.value.id));
 const themeLabel = computed(() => getThemeLabel(book.value.theme));
-const savedProgress = computed(() => getProgress(book.value.id) as UserProgress | undefined);
+const savedProgress = ref<UserProgress>();
+onShow(() => { const value = getProgress(book.value.id) as UserProgress | undefined; savedProgress.value = value ? { ...value } : undefined; });
 const resumePage = computed(() => savedProgress.value?.readStatus === "reading" ? savedProgress.value.currentPage : 1);
 const readingButtonLabel = computed(() => resumePage.value > 1 ? `继续阅读 · 第 ${resumePage.value} 页` : "开始阅读");
 
 onLoad((query) => {
   const params = query as Record<string, string | undefined>;
-  bookId.value = params.bookId || getTodayBook().id;
+  bookId.value = resolveBookId(params.bookId);
 });
 
 watch(
@@ -80,13 +86,13 @@ watch(
 );
 
 function startReading() {
-  uni.navigateTo({
+  navigate({
     url: `/pkg-reading/reader/index?bookId=${book.value.id}&pageIndex=${resumePage.value}`
   });
 }
 
 function goParent() {
-  uni.navigateTo({
+  navigate({
     url: `/pkg-user/parent/index?bookId=${book.value.id}`
   });
 }

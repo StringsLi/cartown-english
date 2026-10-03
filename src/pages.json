@@ -3,7 +3,7 @@
     {
       "path": "pages/index/index",
       "style": {
-        "navigationBarTitleText": "车车探索小助手"
+        "navigationBarTitleText": "车车英语乐园"
       }
     },
     {
@@ -46,6 +46,14 @@
         {
           "path": "car-garage/index",
           "style": { "navigationBarTitleText": "奖励车库" }
+        },
+        {
+          "path": "playground/index",
+          "style": { "navigationBarTitleText": "小小英语乐园" }
+        },
+        {
+          "path": "playground-game/index",
+          "style": { "navigationBarTitleText": "英语主题游戏" }
         }
       ]
     },
@@ -70,6 +78,10 @@
     {
       "root": "pkg-reading",
       "pages": [
+        {
+          "path": "recordings/index",
+          "style": { "navigationBarTitleText": "孩子的录音小册" }
+        },
         {
           "path": "book-detail/index",
           "style": { "navigationBarTitleText": "绘本详情" }
@@ -102,6 +114,29 @@
         {
           "path": "profile/index",
           "style": { "navigationBarTitleText": "我的" }
+        }
+      ]
+    },
+    {
+      "root": "pkg-adventure",
+      "pages": [
+        {
+          "path": "index/index",
+          "style": {
+            "navigationBarTitleText": "车车英语小冒险"
+          }
+        },
+        {
+          "path": "delivery/index",
+          "style": {
+            "navigationBarTitleText": "送货小司机"
+          }
+        },
+        {
+          "path": "roleplay/index",
+          "style": {
+            "navigationBarTitleText": "亲子小剧场"
+          }
         }
       ]
     }

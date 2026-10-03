@@ -1,4 +1,6 @@
 import { getStorage, removeStorage, setStorage } from "@/utils/storage";
+import { getDeliveryMission, getRoleplayScene } from "@/mock/adventures";
+import { recordPlaygroundListening, recordAdventureToday, clearPlaygroundLearning } from "@/services/playgroundLearningService";
 
 const STORAGE_KEY = "cartown_english_progress";
 const DEBOUNCE_MS = 300;
@@ -17,6 +19,10 @@ export interface CartownProgress {
   colorQuestionsDone: number;
   countQuestionsDone: number;
   trafficTurnsDone: number;
+  playgroundCompletedTopicIds: string[];
+  playgroundHeardWordIds: string[];
+  completedDeliveryMissionIds: string[];
+  completedRoleplaySceneIds: string[];
 }
 
 const defaultProgress: CartownProgress = {
@@ -29,8 +35,15 @@ const defaultProgress: CartownProgress = {
   storyPageIndex: 0,
   colorQuestionsDone: 0,
   countQuestionsDone: 0,
-  trafficTurnsDone: 0
+  trafficTurnsDone: 0,
+  playgroundCompletedTopicIds: [],
+  playgroundHeardWordIds: [],
+  completedDeliveryMissionIds: [],
+  completedRoleplaySceneIds: []
 };
+
+const counter = (value: unknown) => typeof value === "number" && Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
+const stringIds = (value: unknown): string[] => Array.isArray(value) ? [...new Set(value.filter((id): id is string => typeof id === "string" && id.length > 0))] : [];
 
 export function getCartownProgress(): CartownProgress {
   if (!cachedProgress) {
@@ -38,7 +51,20 @@ export function getCartownProgress(): CartownProgress {
     cachedProgress = {
       ...defaultProgress,
       ...(stored ?? {}),
-      learnedVehicleIds: stored?.learnedVehicleIds ?? []
+      trafficTurnsDone: counter(stored?.trafficTurnsDone),
+      countQuestionsDone: counter(stored?.countQuestionsDone),
+      colorQuestionsDone: counter(stored?.colorQuestionsDone),
+      storyPageIndex: counter(stored?.storyPageIndex),
+      storyBookIndex: counter(stored?.storyBookIndex),
+      logoQuizDone: counter(stored?.logoQuizDone),
+      logoIndex: counter(stored?.logoIndex),
+      learnedVehicleIndex: counter(stored?.learnedVehicleIndex),
+      stars: counter(stored?.stars),
+      learnedVehicleIds: stringIds(stored?.learnedVehicleIds),
+      playgroundCompletedTopicIds: stringIds(stored?.playgroundCompletedTopicIds),
+      playgroundHeardWordIds: stringIds(stored?.playgroundHeardWordIds),
+      completedDeliveryMissionIds: stringIds(stored?.completedDeliveryMissionIds),
+      completedRoleplaySceneIds: stringIds(stored?.completedRoleplaySceneIds)
     };
   }
   return cachedProgress;
@@ -70,6 +96,39 @@ export function addCartownStar(count = 1): CartownProgress {
   });
 }
 
+export function completePlaygroundTopic(topicId: string): { earned: boolean; progress: CartownProgress } {
+  const current = getCartownProgress();
+  if (!topicId || current.playgroundCompletedTopicIds.includes(topicId)) {
+    return { earned: false, progress: current };
+  }
+
+  const progress = saveCartownProgress({
+    playgroundCompletedTopicIds: [...current.playgroundCompletedTopicIds, topicId],
+    stars: current.stars + 1
+  });
+  return { earned: true, progress };
+}
+
+export function recordPlaygroundWord(topicId: string, itemId: string): CartownProgress {
+  recordPlaygroundListening(topicId, itemId);
+  const current = getCartownProgress();
+  const wordId = `${topicId}:${itemId}`;
+  if (current.playgroundHeardWordIds.includes(wordId)) return current;
+  return saveCartownProgress({
+    playgroundHeardWordIds: [...current.playgroundHeardWordIds, wordId]
+  });
+}
+
+function completeAdventure(key: "completedDeliveryMissionIds" | "completedRoleplaySceneIds", id: string): { earned: boolean; progress: CartownProgress } {
+  const current = getCartownProgress();
+  const valid = key === "completedDeliveryMissionIds" ? getDeliveryMission(id) : getRoleplayScene(id);
+  if (valid) recordAdventureToday(`${key}:${id}`);
+  if (!valid || current[key].includes(id)) return { earned: false, progress: current };
+  return { earned: true, progress: saveCartownProgress({ [key]: [...current[key], id], stars: current.stars + 1 }) };
+}
+export function completeDeliveryMission(id: string) { return completeAdventure("completedDeliveryMissionIds", id); }
+export function completeRoleplayScene(id: string) { return completeAdventure("completedRoleplaySceneIds", id); }
+
 export function completeCartownVehicle(vehicleId: string): { earned: boolean; progress: CartownProgress } {
   const current = getCartownProgress();
   if (!vehicleId || current.learnedVehicleIds.includes(vehicleId)) {
@@ -84,6 +143,7 @@ export function completeCartownVehicle(vehicleId: string): { earned: boolean; pr
 }
 
 export function clearCartownProgress(): void {
+  clearPlaygroundLearning();
   cachedProgress = null;
   if (saveTimer) {
     clearTimeout(saveTimer);

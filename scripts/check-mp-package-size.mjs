@@ -10,8 +10,7 @@ const mediaLimit = 200 * 1024;
 const mediaExtensions = new Set([".png", ".bmp", ".jpg", ".jpeg", ".gif", ".webp", ".mp3", ".wav", ".m4a", ".aac"]);
 const forbiddenMainFiles = [
   "mock/bestSellingCars.js",
-  "services/recordArchiveService.js",
-  "services/recordService.js"
+  "services/recordArchiveService.js"
 ];
 const packageSizes = new Map();
 const outputFiles = await listFiles(outputRoot);
@@ -40,6 +39,19 @@ for (const relativePath of forbiddenMainFiles) {
   } catch (error) {
     if (error?.code !== "ENOENT") throw error;
   }
+}
+
+// 录音服务现在由 App 在切后台时停止录制/回放，放在主包供页面共享。
+// 仍检查主包的服务是否有真实入口引用，避免旧构建残留被打包。
+try {
+  await stat(path.join(outputRoot, "services", "recordService.js"));
+  const appJs = await readFile(path.join(outputRoot, "app.js"), "utf8");
+  if (!/require\(["']\.\/services\/recordService\.js["']\)/.test(appJs)) {
+    console.error("Unused main-package module detected: services/recordService.js");
+    hasQualityFailure = true;
+  }
+} catch (error) {
+  if (error?.code !== "ENOENT") throw error;
 }
 
 for (const filePath of outputFiles) {

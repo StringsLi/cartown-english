@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { onLaunch, onHide } from "@dcloudio/uni-app";
 import { initCloudEnvironment } from "@/services/cloudService";
-import { configureAudioPlayback } from "@/services/audioService";
+import { configureAudioPlayback, stopAudio } from "@/services/audioService";
+import { cancelPendingRecord, stopRecord, stopRecordPlayback } from "@/services/recordService";
+import { flushPlaygroundLearning } from "@/services/playgroundLearningService";
 import { flushLearningState } from "@/services/progressService";
 import { flushCartownProgress } from "@/services/cartownProgressService";
 import { resolveCachedMedia } from "@/services/mediaCacheService";
@@ -21,13 +23,18 @@ onLaunch(() => {
     highResolutionAsset("/static/cartown-logos/toyota.webp")
   ];
   criticalImages.forEach((src) => {
-    if (src) void resolveCachedMedia(src, "image");
+    if (src) void resolveCachedMedia(src, "image").catch(() => {});
   });
 
-  console.log("车车探索小助手 launched", { cloudReady });
+  console.log("车车英语乐园 launched", { cloudReady });
 });
 
 onHide(() => {
+  cancelPendingRecord();
+  stopRecordPlayback();
+  void stopRecord().catch(() => {});
+  stopAudio();
+  flushPlaygroundLearning();
   flushLearningState();
   flushCartownProgress();
 });

@@ -1,0 +1,25 @@
+name: Mini program quality
+on:
+  push:
+    branches: [main, feat/fuse-english-playground]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run check:release
+      - run: npm run build:mp-weixin
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cartown-mp-weixin
+          path: dist/build/mp-weixin
+          if-no-files-found: error

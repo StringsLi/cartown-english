@@ -1,12 +1,13 @@
 <template>
   <view class="bottom-nav">
-    <button
+    <button role="button"
       v-for="item in navItems"
       :key="item.id"
       class="bottom-nav__item"
       :class="{ 'bottom-nav__item--active': props.active === item.id }"
       :aria-label="item.label"
       @tap="go(item.path)"
+      :aria-current="props.active === item.id ? 'page' : undefined"
     >
       <text class="bottom-nav__icon">{{ item.icon }}</text>
       <text class="bottom-nav__label">{{ item.label }}</text>
@@ -15,6 +16,7 @@
 </template>
 
 <script setup lang="ts">
+import { navigate } from "@/services/navigationService";
 type NavId = "home" | "books" | "learn" | "parent";
 
 const props = defineProps<{
@@ -24,12 +26,12 @@ const props = defineProps<{
 const navItems: Array<{ id: NavId; label: string; icon: string; path: string }> = [
   { id: "home", label: "首页", icon: "⌂", path: "/pages/index/index" },
   { id: "books", label: "绘本馆", icon: "▤", path: "/pages/books/index" },
-  { id: "learn", label: "主题学习", icon: "A·Z", path: "/pages/vehicles/index" },
+  { id: "learn", label: "英语乐园", icon: "A·Z", path: "/pkg-learning/playground/index" },
   { id: "parent", label: "家长", icon: "◎", path: "/pkg-user/parent/index" }
 ];
 
 function go(path: string) {
-  uni.reLaunch({ url: path });
+  navigate({ url: path }, "reLaunch");
 }
 </script>
 
@@ -57,7 +59,8 @@ function go(path: string) {
   align-items: center;
   justify-content: center;
   gap: 5rpx;
-  min-height: 80rpx;
+  min-height: 44px;
+  border-radius: 22rpx;
   color: #8b857e;
 }
 
@@ -75,5 +78,6 @@ function go(path: string) {
 
 .bottom-nav__item--active {
   color: $color-primary;
+  background: #f5ebdf;
 }
 </style>

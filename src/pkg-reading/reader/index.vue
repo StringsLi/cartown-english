@@ -1,5 +1,7 @@
 <template>
   <view class="page reader-page">
+    <PageTopbar section="亲子阅读" fallback="/pages/books/index" />
+    <AudioFeedback />
     <view class="reader-header">
       <view>
         <text class="reader-header__eyebrow">NOW READING</text>
@@ -27,11 +29,11 @@
         <text class="reader-art__page">Page {{ currentPageNumber }}</text>
       </view>
 
-      <button class="page-arrow page-arrow--left" :disabled="isFirstPage" aria-label="上一页" @tap="previousPage">‹</button>
-      <button class="page-arrow page-arrow--right" aria-label="下一页" @tap="nextPage">›</button>
+      <button role="button" class="page-arrow page-arrow--left" :disabled="isFirstPage" aria-label="上一页" @tap="previousPage">‹</button>
+      <button role="button" class="page-arrow page-arrow--right" :aria-label="isLastPage ? '完成阅读' : '下一页'" @tap="nextPage">›</button>
 
       <view v-if="currentPage?.hotspots.length" class="reader-hotspots">
-        <button v-for="hotspot in currentPage.hotspots" :key="hotspot.word" class="reader-hotspot" @tap="playHotspot(hotspot)">
+        <button role="button" v-for="hotspot in currentPage.hotspots" :key="hotspot.word" class="reader-hotspot" @tap="playHotspot(hotspot)">
           <text class="reader-hotspot__word">{{ hotspot.word }}</text>
           <text class="reader-hotspot__cn">{{ hotspot.wordCn }}</text>
         </button>
@@ -44,28 +46,29 @@
     </view>
 
     <view class="reader-tools">
-      <button class="reader-tool" @tap="goRepeat">
+      <button role="button" class="reader-tool" @tap="goRepeat">
         <text class="reader-tool__icon">●</text>
         <text class="reader-tool__label">跟读</text>
       </button>
-      <button class="reader-tool reader-tool--play" @tap="playCurrentPage">
+      <button role="button" class="reader-tool reader-tool--play" @tap="playCurrentPage">
         <text class="reader-tool__play">▶</text>
+        <text class="reader-tool__label">听这一页</text>
       </button>
-      <button class="reader-tool" @tap="goPointRead">
+      <button role="button" class="reader-tool" @tap="goPointRead">
         <text class="reader-tool__icon">♫</text>
         <text class="reader-tool__label">点读</text>
       </button>
     </view>
 
     <view class="page-dots">
-      <button
+      <button role="button"
         v-for="(_, index) in pages"
         :key="index"
         class="page-dot"
         :class="{ 'page-dot--active': index === activePageIndex }"
         :aria-label="`第 ${index + 1} 页`"
         @tap="goPage(index)"
-      />
+      ><view class="page-dot__mark" /></button>
     </view>
 
     <view v-if="showCompletion" class="completion-card soft-card">
@@ -80,15 +83,18 @@
 </template>
 
 <script setup lang="ts">
+import AudioFeedback from "@/components/AudioFeedback.vue";
+import PageTopbar from "@/components/PageTopbar.vue";
+import { navigate } from "@/services/navigationService";
 import { computed, ref, watch } from "vue";
 import { onHide, onLoad, onShow, onUnload } from "@dcloudio/uni-app";
 import BigButton from "@/components/BigButton.vue";
 import CachedImage from "@/components/CachedImage.vue";
 import VehicleStoryArt from "@/components/VehicleStoryArt.vue";
-import { playAudio } from "@/services/audioService";
+import { playAudio, stopAudio } from "@/services/audioService";
 import { phraseAudioPath } from "@/services/audioCatalog";
 import { preloadCachedMedia, type MediaPreloadItem } from "@/services/mediaCacheService";
-import { getBookById, getBookPages, getTodayBook } from "@/services/bookService";
+import { normalizeBookPage, resolveBookId, getBookById, getBookPages, getTodayBook } from "@/services/bookService";
 import { addReadingDuration, completeBook, getProgress, saveProgress } from "@/services/progressService";
 import type { Hotspot, UserProgress } from "@/types/book";
 import { usePageShare } from "@/composables/usePageShare";
@@ -110,10 +116,10 @@ const isLastPage = computed(() => activePageIndex.value >= totalPages.value - 1)
 
 onLoad((query) => {
   const params = query as Record<string, string | undefined>;
-  bookId.value = params.bookId || getTodayBook().id;
+  bookId.value = resolveBookId(params.bookId);
   const storedProgress = getProgress(bookId.value) as UserProgress | undefined;
   const pageIndex = params.pageIndex || String(storedProgress?.currentPage ?? 1);
-  activePageIndex.value = normalizePageIndex(pageIndex);
+  activePageIndex.value = normalizeBookPage(pageIndex, totalPages.value);
   persistCurrentPage();
 });
 
@@ -127,6 +133,7 @@ onUnload(flushReadingDuration);
 watch(
   () => currentPage.value?.image,
   () => {
+    stopAudio();
     imageFailed.value = false;
   }
 );
@@ -144,10 +151,6 @@ watch(
   { immediate: true }
 );
 
-function normalizePageIndex(pageIndex?: string): number {
-  const parsed = Number(pageIndex);
-  return Number.isFinite(parsed) && parsed >= 1 ? parsed - 1 : 0;
-}
 
 function previousPage() {
   if (isFirstPage.value) return;
@@ -157,6 +160,7 @@ function previousPage() {
 }
 
 function nextPage() {
+  stopAudio();
   if (isLastPage.value) {
     if (!showCompletion.value) completeBook(book.value.id);
     showCompletion.value = true;
@@ -168,12 +172,14 @@ function nextPage() {
 }
 
 function goPage(index: number) {
+  stopAudio();
   showCompletion.value = false;
   activePageIndex.value = index;
   persistCurrentPage();
 }
 
 function restartReading() {
+  stopAudio();
   showCompletion.value = false;
   activePageIndex.value = 0;
   persistCurrentPage();
@@ -215,16 +221,16 @@ function playHotspot(hotspot: Hotspot) {
 }
 
 function goPointRead() {
-  uni.navigateTo({ url: `/pkg-reading/point-read/index?bookId=${book.value.id}&pageIndex=${currentPageNumber.value}` });
+  navigate({ url: `/pkg-reading/point-read/index?bookId=${book.value.id}&pageIndex=${currentPageNumber.value}` });
 }
 
 function goRepeat() {
   const sentence = encodeURIComponent(currentPage.value?.sentence ?? book.value.targetSentence);
-  uni.navigateTo({ url: `/pkg-reading/repeat/index?bookId=${book.value.id}&sentence=${sentence}` });
+  navigate({ url: `/pkg-reading/repeat/index?bookId=${book.value.id}&sentence=${sentence}` });
 }
 
 function goDetail() {
-  uni.redirectTo({ url: `/pkg-reading/book-detail/index?bookId=${book.value.id}` });
+  navigate({ url: `/pkg-reading/book-detail/index?bookId=${book.value.id}` }, "redirectTo");
 }
 </script>
 
@@ -439,18 +445,9 @@ function goDetail() {
   margin-top: 22rpx;
 }
 
-.page-dot {
-  width: 11rpx;
-  height: 11rpx;
-  border-radius: 50%;
-  background: #d8d2c9;
-}
-
-.page-dot--active {
-  width: 28rpx;
-  border-radius: $radius-pill;
-  background: $color-primary;
-}
+.page-dot { display:flex; align-items:center; justify-content:center; width:44px; height:44px; background:transparent; }
+.page-dot__mark { width:11rpx; height:11rpx; border-radius:50%; background:#d8d2c9; }
+.page-dot--active .page-dot__mark { width:28rpx; border-radius:$radius-pill; background:$color-primary; }
 
 .completion-card {
   margin-top: 26rpx;

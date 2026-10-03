@@ -1,5 +1,6 @@
 <template>
-  <button class="audio-button" :class="`audio-button--${props.size}`" @tap="handlePlay">
+  <button role="button" class="audio-button" :class="[`audio-button--${props.size}`, { 'audio-button--disabled': props.disabled }]" :disabled="props.disabled"
+    :aria-disabled="props.disabled" @tap="handlePlay">
     <text class="audio-button__icon">▶</text>
     <text class="audio-button__label">{{ props.label }}</text>
   </button>
@@ -14,12 +15,14 @@ const props = withDefaults(
     src?: string;
     fallbackText?: string;
     size?: "medium" | "large";
+    disabled?: boolean;
   }>(),
   {
     label: "播放",
     src: "",
     fallbackText: "",
-    size: "medium"
+    size: "medium",
+    disabled: false
   }
 );
 
@@ -28,6 +31,7 @@ const emit = defineEmits<{
 }>();
 
 function handlePlay() {
+  if (props.disabled) return;
   playAudio(props.src, props.fallbackText);
   emit("play", props.src);
 }
@@ -39,7 +43,7 @@ function handlePlay() {
   align-items: center;
   justify-content: center;
   gap: 14rpx;
-  min-height: 70rpx;
+  min-height: 44px;
   padding: 0 24rpx;
   border-radius: $radius-pill;
   color: $color-primary;
@@ -52,6 +56,7 @@ function handlePlay() {
 .audio-button:active {
   transform: scale(0.98);
 }
+.audio-button--disabled { opacity: 0.5; }
 
 .audio-button--large {
   min-height: 108rpx;

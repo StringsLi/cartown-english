@@ -1,4 +1,7 @@
-import { onShareAppMessage, onShareTimeline, onShow } from "@dcloudio/uni-app";
+import { onShareAppMessage, onShareTimeline, onShow, onHide, onUnload } from "@dcloudio/uni-app";
+
+import { onBeforeUnmount, onDeactivated } from "vue";
+import { stopAudio } from "@/services/audioService";
 
 type ShareQueryValue = string | number | boolean | null | undefined;
 
@@ -14,7 +17,7 @@ interface PageShareOptions {
 const HOME_ROUTE = "pages/index/index";
 
 const pageShareTitles: Record<string, string> = {
-  [HOME_ROUTE]: "车车探索小助手，开启今天的汽车探索",
+  [HOME_ROUTE]: "车车英语乐园，开启今天的亲子探索",
   "pages/books/index": "精选趣味绘本，陪孩子边听边探索",
   "pages/vehicles/index": "一起认识有趣的交通工具",
   "pkg-cars/car-learn/index": "听一听，认识生活中的车辆",
@@ -24,14 +27,19 @@ const pageShareTitles: Record<string, string> = {
   "pkg-learning/car-traffic/index": "红灯停绿灯行，一起认识交通规则",
   "pkg-learning/car-stories/index": "有趣的小汽车故事等你来听",
   "pkg-learning/car-garage/index": "来看看我的小汽车收藏",
+  "pkg-learning/playground/index": "八个英语主题，和孩子听一听、找一找",
+  "pkg-learning/playground-game/index": "一起玩小小英语主题游戏",
+  "pkg-adventure/index/index": "车车英语小冒险，开车送水果、一起演英语",
+  "pkg-adventure/delivery/index": "送货小司机，听英语完成一趟水果快递",
+  "pkg-adventure/roleplay/index": "亲子小剧场，你一句、我一句，演出英语小故事",
   "pkg-world/world/index": "跟着车车一起探索世界",
   "pkg-reading/book-detail/index": "亲子绘本时间，一起听故事",
   "pkg-reading/reader/index": "这本绘本真有趣，一起听一听",
   "pkg-reading/point-read/index": "点一点图片，发现更多英语声音",
   "pkg-reading/repeat/index": "跟我读一句，一起练习自然表达",
   "pkg-reading/game/index": "来玩一个轻松的英语小游戏",
-  "pkg-user/parent/index": "车车探索小助手，记录孩子的每次进步",
-  "pkg-user/profile/index": "车车探索小助手，陪孩子快乐探索"
+  "pkg-user/parent/index": "车车英语乐园，记录孩子的每次进步",
+  "pkg-user/profile/index": "车车英语乐园，陪孩子快乐探索"
 };
 
 function getCurrentPage(): RuntimePage {
@@ -60,6 +68,10 @@ function resolveTitle(options: PageShareOptions): string {
 }
 
 export function usePageShare(options: PageShareOptions = {}) {
+  onBeforeUnmount(stopAudio);
+  onDeactivated(stopAudio);
+  onHide(stopAudio);
+  onUnload(stopAudio);
   onShow(() => {
     // #ifdef MP-WEIXIN
     uni.showShareMenu({

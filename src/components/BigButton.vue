@@ -1,8 +1,9 @@
 <template>
-  <button
+  <button role="button"
     class="big-button"
     :class="[`big-button--${props.variant}`, { 'big-button--disabled': props.disabled }]"
     :disabled="props.disabled"
+    :aria-disabled="props.disabled"
     @tap.stop="handleTap"
   >
     <slot>{{ props.label }}</slot>
@@ -39,10 +40,10 @@ function handleTap() {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 82rpx;
+  min-height: 44px;
   padding: 0 30rpx;
   border-radius: $radius-pill;
-  font-size: 28rpx;
+  font-size: 16px;
   font-weight: 800;
   color: #ffffff;
   letter-spacing: 0;

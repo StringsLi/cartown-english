@@ -1,5 +1,7 @@
 <template>
   <view class="page garage-page">
+    <PageTopbar section="我的收藏" fallback="/pages/vehicles/index" />
+    <AudioFeedback />
     <view class="garage-hero soft-card">
       <view>
         <text class="section-kicker">Premium Garage</text>
@@ -12,20 +14,24 @@
       </view>
     </view>
 
+    <view class="garage-summary soft-card"><text>已收藏 {{ unlockedCount }} / {{ vehicles.length }} 辆</text><text>{{ unlockedCount < vehicles.length ? `再收集 ${unlockedCount * 2 - progress.stars} 颗星，遇见下一辆小车` : "所有小伙伴都到齐啦，点一辆听一听。" }}</text></view>
     <view class="garage-grid">
-      <view v-for="(vehicle, index) in vehicles" :key="vehicle.id" class="garage-card soft-card" :class="{ 'garage-card--locked': index >= unlockedCount }" @tap="playVehicle(vehicle, index)">
+      <button role="button" v-for="(vehicle, index) in vehicles" :key="vehicle.id" class="garage-card soft-card" :class="{ 'garage-card--locked': index >= unlockedCount }" @tap="playVehicle(vehicle, index)">
         <view v-if="index >= unlockedCount" class="garage-card__lock">★ {{ index * 2 }}</view>
         <view class="garage-card__vehicle">
           <PremiumVehicleImage :name="vehicle.id" :alt="vehicle.zh" />
         </view>
         <text class="garage-card__word">{{ vehicle.word }}</text>
         <text class="garage-card__zh">{{ vehicle.zh }}</text>
-      </view>
+      </button>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
+import AudioFeedback from "@/components/AudioFeedback.vue";
+import PageTopbar from "@/components/PageTopbar.vue";
+import { onShow } from "@dcloudio/uni-app";
 import { computed, ref } from "vue";
 import PremiumVehicleImage from "@/components/PremiumVehicleImage.vue";
 import { vehicles, type Vehicle } from "@/mock/cartown";
@@ -35,6 +41,7 @@ import { usePageShare } from "@/composables/usePageShare";
 
 usePageShare();
 const progress = ref(getCartownProgress());
+onShow(() => { progress.value = getCartownProgress(); });
 const unlockedCount = computed(() => Math.max(1, Math.min(vehicles.length, Math.floor(progress.value.stars / 2) + 1)));
 
 function playVehicle(vehicle: Vehicle, index: number) {
@@ -48,8 +55,9 @@ function playVehicle(vehicle: Vehicle, index: number) {
 </script>
 
 <style scoped lang="scss">
+.garage-summary { display:flex; flex-direction:column; gap:10rpx; margin-top:20rpx; padding:24rpx; font-size:25rpx; font-weight:800; color:$color-primary-dark; } .garage-summary text + text { font-size:22rpx; font-weight:400; color:$color-muted; }
 .garage-page {
-  padding-bottom: 56rpx;
+  padding-bottom: calc(56rpx + env(safe-area-inset-bottom));
 }
 
 .garage-hero {
@@ -58,8 +66,8 @@ function playVehicle(vehicle: Vehicle, index: number) {
   gap: 28rpx;
   padding: 32rpx;
   background:
-    radial-gradient(circle at 92% 20%, rgba(255, 214, 107, 0.34), transparent 34%),
-    linear-gradient(135deg, #ffffff 0%, #eaf6ff 58%, #fff0dd 100%);
+    radial-gradient(circle at 92% 20%, rgba(223, 166, 45, 0.16), transparent 34%),
+    linear-gradient(135deg, #fffdf9 0%, #edf2e9 58%, #f7edda 100%);
 }
 
 .garage-hero__stars {

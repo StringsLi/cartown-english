@@ -1,7 +1,7 @@
 <template>
   <view class="page repeat-page">
     <view class="repeat-header">
-      <button class="repeat-header__back" @tap="goReader">‹ 返回阅读</button>
+      <button role="button" class="repeat-header__back" @tap="goReader">‹ 返回阅读</button>
       <text class="repeat-header__page">跟读练习</text>
     </view>
 
@@ -15,7 +15,7 @@
       <text class="sentence-card__label">PAGE {{ currentPageNumber }} · {{ book.title }}</text>
       <text class="sentence-card__en">{{ activeSentence }}</text>
       <text v-if="activeSentenceCn" class="sentence-card__cn">{{ activeSentenceCn }}</text>
-      <AudioButton label="▶ 听原声" :src="activeAudio" size="large" />
+      <AudioButton label="▶ 听原声" :src="activeAudio" size="large" :disabled="isRecording || isStarting || isFinishing" />
     </view>
 
     <view class="record-stage soft-card" :class="{ 'record-stage--active': isRecording }">
@@ -25,28 +25,30 @@
       </view>
       <text class="record-stage__hint">{{ recordHint }}</text>
       <text v-if="isRecording" class="record-stage__timer">{{ recordTimeLabel }} / 00:10</text>
-      <button class="record-button" :class="{ 'record-button--active': isRecording }" @tap="toggleRecord">
+      <button role="button" class="record-button" :class="{ 'record-button--active': isRecording }" :disabled="isStarting || isFinishing || !!unsavedPath" @tap="toggleRecord">
         <text>{{ isRecording ? '■' : '●' }}</text>
-        <text>{{ isRecording ? '停止录音' : '开始录音' }}</text>
+        <text>{{ isStarting ? '正在准备…' : isFinishing ? '正在保存…' : isRecording ? '停止录音' : '开始录音' }}</text>
       </button>
     </view>
+    <view v-if="unsavedPath" class="record-backup soft-card"><text class="record-backup__title">这段声音还没保存好</text><text class="record-backup__desc">录音临时保留在当前设备，请先重新保存，再导出留作纪念。</text><BigButton label="重新保存这段录音" variant="warm" :disabled="isFinishing" @tap="retrySave" /></view>
 
     <view class="playback-grid">
-      <AudioButton label="原声  ▶" :src="activeAudio" size="large" />
-      <BigButton label="我的录音 ▶" variant="ghost" :disabled="!recordedPath" @tap="playMyRecord" />
+      <AudioButton label="原声  ▶" :src="activeAudio" size="large" :disabled="isRecording || isStarting || isFinishing" />
+      <BigButton label="我的录音 ▶" variant="ghost" :disabled="!recordedPath || isRecording || isStarting || isFinishing" @tap="playMyRecord" />
     </view>
+
+    <view v-if="recordedPath" class="current-export"><BigButton label="保存 / 导出我的录音 ↓" variant="warm" @tap="goRecordings" /></view>
 
     <view class="record-backup soft-card">
       <view class="record-backup__head">
         <view>
-          <text class="record-backup__title">录音本地备份</text>
-          <text class="record-backup__desc">已保存 {{ savedRecordCount }} 条，可导出后在本机或微信文件中恢复。</text>
+          <text class="record-backup__title">孩子的录音小册</text>
+          <text class="record-backup__desc">已保存 {{ savedRecordCount }} 条。可以回听、导出单条音频或备份全部录音。</text>
         </view>
         <text class="record-backup__badge">LOCAL</text>
       </view>
       <view class="record-backup__actions">
-        <BigButton label="导出备份" variant="ghost" @tap="exportRecords" />
-        <BigButton label="导入备份" variant="warm" @tap="importRecords" />
+        <BigButton label="管理和导出录音 ›" variant="ghost" @tap="goRecordings" />
       </view>
     </view>
 
@@ -58,14 +60,14 @@
 </template>
 
 <script setup lang="ts">
+import { backTo, navigate } from "@/services/navigationService";
 import { computed, ref } from "vue";
-import { onLoad, onUnload } from "@dcloudio/uni-app";
+import { onLoad, onShow, onHide, onUnload } from "@dcloudio/uni-app";
 import AudioButton from "@/components/AudioButton.vue";
 import BigButton from "@/components/BigButton.vue";
-import { getBookById, getBookPages, getTodayBook } from "@/services/bookService";
-import { exportRepeatRecordArchive, importRepeatRecordArchive } from "@/pkg-reading/services/recordArchiveService";
-import { playRecord, startRecord, stopRecord } from "@/pkg-reading/services/recordService";
-import { getRepeatRecords, mergeRepeatRecords, saveRepeatRecord } from "@/services/progressService";
+import { decodeRouteText, resolveBookId, getBookById, getBookPages, getTodayBook } from "@/services/bookService";
+import { playRecord, startRecord, stopRecord, stopRecordPlayback, cancelPendingRecord, RecordPermissionError, RecordSaveError, saveRecordFile, type SavedRecording } from "@/services/recordService";
+import { getRepeatRecords, saveRepeatRecord, flushLearningState } from "@/services/progressService";
 import { usePageShare } from "@/composables/usePageShare";
 
 usePageShare();
@@ -75,6 +77,8 @@ const recordedPath = ref("");
 const isRecording = ref(false);
 const recordSeconds = ref(0);
 const isFinishing = ref(false);
+const isStarting = ref(false), unsavedPath = ref("");
+let pageVisible = true;
 const savedRecordCount = ref(getRepeatRecords().length);
 const waveBars = [22, 38, 58, 34, 72, 46, 84, 56, 30, 66, 42, 24, 58, 36, 20];
 let recordTimer: ReturnType<typeof setInterval> | undefined;
@@ -88,6 +92,9 @@ const activeAudio = computed(() => matchedPage.value?.audio || "");
 const currentPageNumber = computed(() => matchedPage.value?.pageIndex ?? 1);
 const recordTimeLabel = computed(() => `00:${String(recordSeconds.value).padStart(2, "0")}`);
 const recordHint = computed(() => {
+  if (isStarting.value) return "准备好麦克风，再开始读。";
+  if (isFinishing.value) return "正在把这段声音保存到本机…";
+  if (unsavedPath.value) return "先保存好这段声音，再录下一句。";
   if (isRecording.value) return "读完这句后，点击停止录音。";
   if (recordedPath.value) return "录音已保存在本机，可以回放或再读一次。";
   return "点击录音按钮，读一遍就很好。";
@@ -95,16 +102,22 @@ const recordHint = computed(() => {
 
 onLoad((query) => {
   const params = query as Record<string, string | undefined>;
-  bookId.value = params.bookId || getTodayBook().id;
-  sentence.value = params.sentence ? decodeURIComponent(params.sentence) : "";
+  bookId.value = resolveBookId(params.bookId);
+  sentence.value = decodeRouteText(params.sentence);
+  recordedPath.value = getRepeatRecords().find(r => r.bookId === book.value.id && r.sentence === activeSentence.value)?.audioUrl || "";
 });
 
+onShow(() => { pageVisible = true; savedRecordCount.value = getRepeatRecords().length; if (!isRecording.value && !isStarting.value && !isFinishing.value && !unsavedPath.value) recordedPath.value = getRepeatRecords().find(r => r.bookId === book.value.id && r.sentence === activeSentence.value)?.audioUrl || ""; });
+onHide(() => { pageVisible = false; cancelPendingRecord(); stopRecordPlayback(); if (isRecording.value || isStarting.value) void finishRecord(); });
 onUnload(() => {
+  stopRecordPlayback();
   clearRecordTimer();
-  if (isRecording.value) void stopRecord();
+  pageVisible = false; cancelPendingRecord();
+  if (isRecording.value && !isFinishing.value) void stopRecord().catch(() => {});
 });
 
 async function toggleRecord() {
+  if (isStarting.value || isFinishing.value || unsavedPath.value) return;
   if (isRecording.value) {
     await finishRecord();
     return;
@@ -113,8 +126,14 @@ async function toggleRecord() {
 }
 
 async function beginRecord() {
+  if (isStarting.value || isFinishing.value || isRecording.value) return;
+  isStarting.value = true;
   try {
-    await startRecord();
+    const session = await startRecord();
+    void session.finished.then(result => saveFinished(result)).catch(error => handleCaptureError(error)).finally(() => { clearRecordTimer(); isRecording.value = false; isFinishing.value = false; });
+    await session.started;
+    if (!pageVisible) { void stopRecord().catch(() => {}); return; }
+    isStarting.value = false;
     isRecording.value = true;
     recordSeconds.value = 0;
     recordTimer = setInterval(() => {
@@ -122,8 +141,9 @@ async function beginRecord() {
       if (recordSeconds.value >= 10) void finishRecord();
     }, 1000);
     uni.showToast({ title: "开始录音", icon: "none" });
-  } catch {
-    uni.showModal({
+  } catch (error) {
+    if (!pageVisible) return;
+    if (error instanceof RecordPermissionError) uni.showModal({
       title: "需要麦克风权限",
       content: "跟读录音只保存在当前设备，请在系统设置中允许使用麦克风。",
       confirmText: "去设置",
@@ -131,7 +151,8 @@ async function beginRecord() {
         if (result.confirm) uni.openSetting({});
       }
     });
-  }
+    else uni.showToast({ title: error instanceof Error ? error.message : "录音启动失败，请重试", icon: "none" });
+  } finally { isStarting.value = false; }
 }
 
 async function finishRecord() {
@@ -140,21 +161,31 @@ async function finishRecord() {
   clearRecordTimer();
 
   try {
-    recordedPath.value = await stopRecord();
+    await stopRecord();
+  } catch { /* finished 统一处理保存与错误，避免重复提示 */ }
+}
+function saveFinished(result: SavedRecording) {
+    recordedPath.value = result.filePath; unsavedPath.value = "";
     saveRepeatRecord({
       bookId: book.value.id,
       sentence: activeSentence.value,
       audioUrl: recordedPath.value,
-      durationSeconds: Math.max(1, recordSeconds.value)
+      durationSeconds: result.durationSeconds
     });
     savedRecordCount.value = getRepeatRecords().length;
-    uni.showToast({ title: "录音已保存", icon: "none" });
-  } catch {
-    uni.showToast({ title: "录音保存失败", icon: "none" });
-  } finally {
-    isRecording.value = false;
-    isFinishing.value = false;
-  }
+    flushLearningState();
+    if (pageVisible) uni.showToast({ title: "录音已保存", icon: "none" });
+}
+function handleCaptureError(error: unknown) {
+  if (error instanceof RecordSaveError) { unsavedPath.value = error.tempFilePath; recordSeconds.value = error.durationSeconds || recordSeconds.value; }
+  if (pageVisible && (isRecording.value || isFinishing.value || error instanceof RecordSaveError)) uni.showToast({ title: error instanceof Error ? error.message : "录音中断，请再试一次", icon: "none" });
+}
+async function retrySave() {
+  if (!unsavedPath.value || isFinishing.value) return;
+  isFinishing.value = true;
+  try { saveFinished({ filePath: await saveRecordFile(unsavedPath.value), durationSeconds: Math.max(1, recordSeconds.value) }); }
+  catch (error) { handleCaptureError(error); }
+  finally { isFinishing.value = false; }
 }
 
 function clearRecordTimer() {
@@ -166,33 +197,14 @@ function playMyRecord() {
   if (recordedPath.value) playRecord(recordedPath.value);
 }
 
-async function exportRecords() {
-  try {
-    const count = await exportRepeatRecordArchive(getRepeatRecords());
-    uni.showToast({ title: count ? `已导出 ${count} 条录音` : "暂无录音可导出", icon: "none" });
-  } catch {
-    uni.showToast({ title: "导出失败，请重试", icon: "none" });
-  }
-}
-
-async function importRecords() {
-  try {
-    const archive = await importRepeatRecordArchive();
-    const result = mergeRepeatRecords(archive.records);
-    savedRecordCount.value = getRepeatRecords().length;
-    uni.showToast({ title: result.added ? `已恢复 ${result.added} 条录音` : "没有新的录音需要恢复", icon: "none" });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "导入失败，请选择录音备份文件";
-    uni.showToast({ title: message, icon: "none" });
-  }
-}
+function goRecordings() { if (isStarting.value || isRecording.value || isFinishing.value || unsavedPath.value) { uni.showToast({ title: "先保存好这段录音，再导出", icon: "none" }); return; } stopRecordPlayback(); navigate({ url: "/pkg-reading/recordings/index" }); }
 
 function goReader() {
-  uni.redirectTo({ url: `/pkg-reading/reader/index?bookId=${book.value.id}&pageIndex=${currentPageNumber.value}` });
+  navigate({ url: `/pkg-reading/reader/index?bookId=${book.value.id}&pageIndex=${currentPageNumber.value}` }, "redirectTo");
 }
 
 function goBack() {
-  uni.navigateBack();
+  backTo("/pages/books/index");
 }
 </script>
 
@@ -367,7 +379,8 @@ function goBack() {
   background: #e4eee0;
 }
 
-.record-backup__actions { margin-top: 22rpx; }
+.record-backup__actions { display: block; margin-top: 22rpx; }
+.current-export { margin-top: 16rpx; }
 
 .repeat-footer {
   position: fixed;

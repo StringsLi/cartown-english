@@ -1,5 +1,7 @@
 <template>
   <view class="page game-page">
+    <PageTopbar section="小耳朵练习" fallback="/pages/books/index" />
+    <AudioFeedback />
     <view class="game-hero soft-card">
       <text class="section-kicker">Listen and Choose</text>
       <text class="page-title">小游戏</text>
@@ -16,7 +18,7 @@
     </view>
 
     <view v-if="!showResult" class="choice-grid">
-      <button
+      <button role="button"
         v-for="word in choices"
         :key="word.id"
         class="choice-card soft-card"
@@ -24,13 +26,14 @@
         @tap="chooseWord(word.word)"
       >
         <view class="choice-card__visual">
-          <text class="choice-card__letter">{{ word.word.slice(0, 1).toUpperCase() }}</text>
+          <CachedImage :src="word.image" :alt="word.meaning" mode="aspectFit" />
         </view>
         <text class="choice-card__word">{{ word.word }}</text>
         <text class="choice-card__meaning">{{ word.meaning }}</text>
       </button>
     </view>
 
+    <view v-if="selectedWord && !showResult" class="answer-note" role="status">{{ selectedWord === currentWord?.word ? "找对啦！再听一次也可以。" : `这次答案是 ${currentWord?.word}，一起再听一遍吧。` }}</view>
     <view v-if="!showResult" class="game-next">
       <BigButton :label="isLastQuestion ? '完成游戏' : '下一题'" :disabled="!selectedWord" @tap="nextQuestion" />
     </view>
@@ -48,11 +51,16 @@
 </template>
 
 <script setup lang="ts">
+import CachedImage from "@/components/CachedImage.vue";
+import AudioFeedback from "@/components/AudioFeedback.vue";
+import PageTopbar from "@/components/PageTopbar.vue";
+import { navigate } from "@/services/navigationService";
+import { shuffleChoices } from "@/utils/practice";
 import { computed, ref } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import AudioButton from "@/components/AudioButton.vue";
 import BigButton from "@/components/BigButton.vue";
-import { getBookById, getBookWords, getTodayBook } from "@/services/bookService";
+import { resolveBookId, getBookById, getBookWords, getTodayBook } from "@/services/bookService";
 import { saveGameRecord } from "@/services/progressService";
 import type { Word } from "@/types/book";
 import { usePageShare } from "@/composables/usePageShare";
@@ -67,18 +75,19 @@ const savedResult = ref(false);
 
 const book = computed(() => getBookById(bookId.value) ?? getTodayBook());
 const words = computed(() => getBookWords(book.value.id));
-const choices = computed<Word[]>(() => words.value);
+const round = ref(0);
+const choices = computed<Word[]>(() => { void questionIndex.value; void round.value; return shuffleChoices(words.value); });
 const totalQuestions = computed(() => Math.max(words.value.length, 1));
 const currentWord = computed(() => words.value[questionIndex.value] ?? words.value[0]);
 const isLastQuestion = computed(() => questionIndex.value >= totalQuestions.value - 1);
 
 onLoad((query) => {
   const params = query as Record<string, string | undefined>;
-  bookId.value = params.bookId || getTodayBook().id;
+  bookId.value = resolveBookId(params.bookId);
 });
 
 function chooseWord(word: string) {
-  if (selectedWord.value || !currentWord.value) {
+  if (showResult.value || selectedWord.value || !currentWord.value) {
     return;
   }
 
@@ -102,6 +111,7 @@ function choiceClass(word: string) {
 }
 
 function nextQuestion() {
+  if (showResult.value) return;
   if (!selectedWord.value) {
     return;
   }
@@ -130,6 +140,7 @@ function finishGame() {
 }
 
 function restartGame() {
+  round.value += 1;
   questionIndex.value = 0;
   selectedWord.value = "";
   score.value = 0;
@@ -138,20 +149,21 @@ function restartGame() {
 }
 
 function goHome() {
-  uni.reLaunch({ url: "/pages/index/index" });
+  navigate({ url: "/pages/index/index" }, "reLaunch");
 }
 </script>
 
 <style scoped lang="scss">
+.answer-note { margin-top:24rpx; padding:22rpx; border-radius:20rpx; background:#e8efe6; font-size:24rpx; line-height:1.5; color:#527769; }
 .game-page {
-  padding-bottom: 56rpx;
+  padding-bottom: calc(56rpx + env(safe-area-inset-bottom));
 }
 
 .game-hero {
   padding: 32rpx;
   background:
-    radial-gradient(circle at 92% 20%, rgba(255, 214, 107, 0.34), transparent 34%),
-    linear-gradient(135deg, #ffffff 0%, #eaf6ff 58%, #fff0dd 100%);
+    radial-gradient(circle at 92% 20%, rgba(223, 166, 45, 0.16), transparent 34%),
+    linear-gradient(135deg, #fffdf9 0%, #edf2e9 58%, #f7edda 100%);
 }
 
 .quiz-card {
@@ -214,8 +226,8 @@ function goHome() {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100rpx;
-  height: 100rpx;
+  width: 100%;
+  height: 190rpx;
   margin: 0 auto 18rpx;
   border-radius: 30rpx;
   background: linear-gradient(135deg, $color-sky-soft 0%, #ffffff 100%);

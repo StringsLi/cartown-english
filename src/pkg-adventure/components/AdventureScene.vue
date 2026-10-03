@@ -1,0 +1,42 @@
+<template>
+  <view class="scene" :class="[`scene--${destination}`, activity ? `scene--${activity}` : '']" aria-hidden="true">
+    <view class="scene__sun" /><view class="scene__cloud scene__cloud--one" /><view class="scene__cloud scene__cloud--two" />
+    <view class="landmark">
+      <view v-if="activity === 'wash'" class="wash-house"><view class="wash-house__roof">WASH</view><view class="wash-house__arch" /><view class="bubble bubble--one" /><view class="bubble bubble--two" /><view class="bubble bubble--three" /></view>
+      <view v-else-if="activity === 'repair'" class="repair-house"><view class="repair-house__roof">FIX</view><view class="repair-house__door"><view class="spare-wheel" /><view class="tool" /></view></view>
+      <view v-else-if="activity === 'fuel'" class="fuel-house"><view class="fuel-house__roof">FUEL</view><view class="fuel-pump"><view class="fuel-pump__screen" /><view class="fuel-pump__hose" /></view><view class="fuel-house__post" /></view>
+      <view v-else-if="destination === 'park'" class="park"><view class="tree tree--one" /><view class="tree tree--two" /><view class="bench" /></view>
+      <view v-else-if="destination === 'zoo'" class="zoo"><view class="zoo__gate"><text>ZOO</text><image :src="lionArt" mode="aspectFit" /></view><view class="tree tree--zoo" /></view>
+      <view v-else class="garden"><view v-for="n in 3" :key="n" class="flower" :class="`flower--${n}`"><view /><text>✿</text></view></view>
+    </view>
+    <view class="scene__hill" /><view class="scene__road" />
+    <image class="scene__vehicle" :class="{ 'scene__vehicle--arrived': arrived }" :src="vehicleArt" mode="aspectFit" />
+  </view>
+</template>
+<script setup lang="ts">
+import { computed } from "vue";
+import { adventureVehicles, deliveryCarVehicles, type ActivityId, type AdventureVehicleId, type CarId, type DestinationId } from "@/mock/adventures";
+const props = withDefaults(defineProps<{ destination?: DestinationId; car?: CarId; vehicle?: AdventureVehicleId; arrived?: boolean; activity?: ActivityId }>(), { destination: "park", car: "red", arrived: false });
+const vehicleArt = computed(() => adventureVehicles[props.vehicle || deliveryCarVehicles[props.car]].art);
+const lionArt = "/pkg-adventure/static/art/animals-lion.png";
+</script>
+<style scoped lang="scss">
+.scene { position: relative; width: 100%; height: 260rpx; overflow: hidden; border-radius: 28rpx; background: #e6eef0; }
+.scene--zoo { background: #f8edd4; }.scene--garden { background: #f3e6eb; }
+.scene--wash { background: #e3f0f2; }.scene--repair { background: #fff0d9; }.scene--fuel { background: #ecf1df; }
+.wash-house,.repair-house,.fuel-house { position: relative; height: 116rpx; width: 170rpx; }
+.wash-house__roof,.repair-house__roof,.fuel-house__roof { position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center; width: 160rpx; height: 32rpx; border-radius: 12rpx 12rpx 3rpx 3rpx; font-size: 18rpx; font-weight: 900; letter-spacing: 2rpx; color: #fffaf0; background: #91b9c1; }
+.wash-house__arch { position: absolute; top: 30rpx; left: 10rpx; width: 140rpx; height: 86rpx; border: 14rpx solid #acd1d6; border-bottom: 0; border-radius: 7rpx 7rpx 0 0; background: #f4fbfc; }.wash-house__arch::after { content: ""; position: absolute; top: 0; left: 35rpx; width: 33rpx; height: 62rpx; border-radius: 0 0 15rpx 15rpx; background: repeating-linear-gradient(90deg,#a4c6bb 0,#a4c6bb 5rpx,#c4dfd0 5rpx,#c4dfd0 10rpx); }
+.bubble { position: absolute; z-index: 1; width: 19rpx; height: 19rpx; border: 3rpx solid #badce3; border-radius: 50%; background: #ffffffb0; }.bubble--one { left: -15rpx; top: 60rpx; }.bubble--two { right: -5rpx; top: 43rpx; width: 25rpx; height: 25rpx; }.bubble--three { right: 8rpx; bottom: 8rpx; width: 13rpx; height: 13rpx; }
+.repair-house__roof { background: #ccab74; }.repair-house__door { position: absolute; top: 32rpx; left: 10rpx; width: 140rpx; height: 84rpx; border: 12rpx solid #e2c89f; border-bottom: 0; background: #fff9ec; }.spare-wheel { position: absolute; left: 8rpx; bottom: 6rpx; width: 43rpx; height: 43rpx; border: 10rpx solid #687675; border-radius: 50%; background: #d7e0d6; }.tool { position: absolute; right: 24rpx; top: 16rpx; width: 10rpx; height: 39rpx; border-radius: 6rpx; background: #a1aba4; transform: rotate(25deg); }.tool::before { content: ""; position: absolute; top: -6rpx; left: -7rpx; width: 24rpx; height: 23rpx; border: 7rpx solid #a1aba4; border-top: 0; border-radius: 0 0 12rpx 12rpx; }
+.fuel-house__roof { width: 170rpx; background: #9caf85; }.fuel-pump { position: absolute; bottom: 0; left: 15rpx; width: 53rpx; height: 67rpx; border: 6rpx solid #ceaa72; border-radius: 9rpx 9rpx 2rpx 2rpx; background: #f7dfb2; }.fuel-pump__screen { width: 29rpx; height: 19rpx; margin: 7rpx 0 0 6rpx; border-radius: 3rpx; background: #fefbf3; }.fuel-pump__hose { position: absolute; top: 8rpx; right: -30rpx; width: 26rpx; height: 43rpx; border: 5rpx solid #84927b; border-left: 0; border-radius: 0 16rpx 16rpx 0; }.fuel-house__post { position: absolute; right: 11rpx; top: 32rpx; width: 10rpx; height: 84rpx; background: #b5c3a0; }
+.scene__sun { position: absolute; left: 44rpx; top: 28rpx; width: 42rpx; height: 42rpx; border-radius: 50%; background: #eacb7d; }
+.scene__cloud { position: absolute; width: 64rpx; height: 18rpx; border-radius: 25rpx; background: #ffffffa1; }.scene__cloud::before { content: ""; position: absolute; left: 12rpx; bottom: 3rpx; width: 32rpx; height: 26rpx; border-radius: 50%; background: inherit; }.scene__cloud--one { top: 50rpx; left: 135rpx; }.scene__cloud--two { top: 32rpx; right: 45rpx; }
+.scene__hill { position: absolute; left: -10%; bottom: 48rpx; width: 120%; height: 64rpx; border-radius: 50% 50% 0 0; background: #b9caaa; }.scene__road { position: absolute; bottom: 0; width: 100%; height: 60rpx; background: #e1d5c2; }.scene__road::after { content: ""; position: absolute; top: 30rpx; width: 100%; height: 3rpx; background: repeating-linear-gradient(90deg,transparent 0,transparent 26rpx,#fff9e8 26rpx,#fff9e8 50rpx); }
+.landmark { position: absolute; z-index: 1; right: 48rpx; bottom: 71rpx; width: 170rpx; height: 116rpx; }
+.tree { position: absolute; bottom: 0; width: 12rpx; height: 48rpx; background: #a88b6b; }.tree::before { content: ""; position: absolute; bottom: 20rpx; left: -27rpx; width: 66rpx; height: 75rpx; border-radius: 45% 45% 40% 40%; background: #92ad86; }.tree--one { left: 15rpx; }.tree--two { right: 10rpx; transform: scale(.85); }.bench { position: absolute; bottom: 1rpx; left: 56rpx; width: 65rpx; height: 30rpx; border-top: 12rpx solid #b89976; border-bottom: 8rpx solid #b89976; }.bench::after { content: ""; position: absolute; left: 5rpx; bottom: -14rpx; width: 56rpx; height: 12rpx; border-left: 7rpx solid #94795e; border-right: 7rpx solid #94795e; }
+.zoo__gate { position: absolute; bottom: 0; width: 119rpx; height: 98rpx; border: 12rpx solid #d6b985; border-radius: 55rpx 55rpx 0 0; background: #fff5df; text-align: center; }.zoo__gate text { display: block; margin-top: 1rpx; font-size: 18rpx; font-weight: 900; color: #92754e; }.zoo__gate image { position: absolute; left: 14rpx; bottom: -8rpx; width: 68rpx; height: 56rpx; }.tree--zoo { right: 0; transform: scale(.7); }
+.flower { position: absolute; bottom: 0; width: 34rpx; height: 80rpx; }.flower view { position: absolute; bottom: 0; left: 18rpx; height: 62rpx; width: 5rpx; background: #95ae84; }.flower text { position: absolute; top: -9rpx; left: -7rpx; color: #d38e9e; font-size: 67rpx; line-height: 1; }.flower--1 { left: 5rpx; transform: scale(.85); }.flower--2 { left: 58rpx; }.flower--3 { left: 117rpx; transform: scale(.75); }.flower--2 text { color: #dbb965; }
+.scene__vehicle { position: absolute; z-index: 2; bottom: 18rpx; left: 24rpx; width: 238rpx; height: 154rpx; transition: left .5s ease; }.scene__vehicle--arrived { left: calc(100% - 262rpx); }
+@media (prefers-reduced-motion: reduce) { .scene__vehicle { transition: none; } }
+</style>
