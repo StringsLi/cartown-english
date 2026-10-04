@@ -6,32 +6,33 @@
     </view>
     <text class="welcome-subtitle">把英语，藏进每天的小冒险里。</text>
 
-    <view class="daily-card" :style="{ backgroundColor: suggestedTopic.tint }">
-      <view class="daily-card__copy">
-        <text class="daily-card__tag">今日小冒险 · 约 5–10 分钟</text>
-        <text class="daily-card__title">{{ suggestedTopic.title }}</text>
-        <text class="daily-card__subtitle">{{ suggestedTopic.description }}</text>
-        <button role="button" class="daily-card__button" @tap="openTopic(suggestedTopic.id)">一起出发 <text>↗</text></button>
-      </view>
-      <image class="daily-card__art" :src="sceneArt(suggestedTopic.id)" mode="aspectFit" />
-      <text class="daily-card__spark">✦</text>
-    </view>
-
-    <AudioFeedback />
-    <button role="button" v-if="reviewTopic" class="review-entry" @tap="openReview"><view><text>老朋友，再见面</text><text>{{ reviewTopic.title }} · 今天先复习 {{ reviewCount }} 个词</text></view><text>去听听 ›</text></button>
-    <view class="progress-card">
-      <view class="progress-card__head"><text>我们的探索地图</text><text class="progress-card__count">{{ completedCount }} / {{ playgroundTopics.length }} 个主题</text></view>
-      <view class="progress-track"><view class="progress-track__fill" :style="{ width: `${completedCount / playgroundTopics.length * 100}%` }" /></view>
-      <text class="progress-card__note">已点读 {{ heardCount }} / {{ playgroundWordCount }} 个词 · 完成找图，收集一枚印章</text>
-    </view>
-
     <view class="content-tabs" role="tablist">
-      <button v-for="tab in tabs" :key="tab.id" class="content-tabs__tab" :class="{ 'content-tabs__tab--active': activeTab === tab.id }" role="tab" :aria-selected="activeTab === tab.id" @tap="switchTab(tab.id)">{{ tab.label }}</button>
+      <button v-for="tab in tabs" :key="tab.id" class="content-tabs__tab" :class="{ 'content-tabs__tab--active': activeTab === tab.id }" role="tab" :aria-selected="activeTab === tab.id" :aria-controls="tab.id + '-panel'" @tap="switchTab(tab.id)">{{ tab.label }}</button>
     </view>
+    <AudioFeedback />
+    <view v-if="activeTab === 'topics'" id="topics-panel" role="tabpanel">
 
-    <button role="button" class="town-entry" @tap="openAdventure"><view><text>去车车小镇冒险</text><text>开车送水果，和家长演一出小故事</text></view><text>↗</text></button>
+      <view class="daily-card" :style="{ backgroundColor: suggestedTopic.tint }">
+        <view class="daily-card__copy">
+          <text class="daily-card__tag">今日小冒险 · 约 5–10 分钟</text>
+          <text class="daily-card__title">{{ suggestedTopic.title }}</text>
+          <text class="daily-card__subtitle">{{ suggestedTopic.description }}</text>
+          <button role="button" class="daily-card__button" @tap="openTopic(suggestedTopic.id)">一起出发 <text>↗</text></button>
+        </view>
+        <image class="daily-card__art" :src="sceneArt(suggestedTopic.id)" mode="aspectFit" />
+        <text class="daily-card__spark">✦</text>
+      </view>
 
-    <view v-if="activeTab === 'topics'">
+      <button role="button" v-if="reviewTopic" class="review-entry" @tap="openReview"><view><text>老朋友，再见面</text><text>{{ reviewTopic.title }} · 今天先复习 {{ reviewCount }} 个词</text></view><text>去听听 ›</text></button>
+      <view class="progress-card">
+        <view class="progress-card__head"><text>我们的探索地图</text><text class="progress-card__count">{{ completedCount }} / {{ playgroundTopics.length }} 个主题</text></view>
+        <view class="progress-track"><view class="progress-track__fill" :style="{ width: `${completedCount / playgroundTopics.length * 100}%` }" /></view>
+        <text class="progress-card__note">已点读 {{ heardCount }} / {{ playgroundWordCount }} 个词 · 完成找图，收集一枚印章</text>
+      </view>
+
+      <button role="button" class="town-entry" @tap="openAdventure"><view><text>去车车小镇冒险</text><text>开车送水果，和家长演一出小故事</text></view><text>↗</text></button>
+
+      <button role="button" class="space-entry" @tap="openSpace"><view><text>✦ 新主题 · 太阳系小旅行</text><text>太阳、八大行星与月球 · 点读和找图</text></view><text>出发 ↗</text></button>
       <view class="section-head"><text class="section-title">今天想去哪里？</text><text class="section-caption">8 站，慢慢探索</text></view>
       <view class="topic-grid">
         <button role="button" v-for="topic in playgroundTopics" :key="topic.id" class="topic-card" :style="{ backgroundColor: topic.tint }" :aria-label="`开始${topic.title}英语游戏`" @tap="openTopic(topic.id)">
@@ -50,7 +51,7 @@
       </view>
     </view>
 
-    <view v-else-if="activeTab === 'chants'">
+    <view v-else-if="activeTab === 'chants'" id="chants-panel" role="tabpanel">
       <view class="section-head"><text class="section-title">小小儿歌电台</text><text class="section-caption">{{ playgroundTopics.length }} 首原创跟读儿歌</text></view>
       <text class="section-intro">听着轻柔的旋律，和孩子一起念、一起动。</text>
       <view v-for="topic in playgroundTopics" :key="`chant-${topic.id}`" class="chant-card" :style="{ backgroundColor: topic.tint }">
@@ -61,7 +62,7 @@
       <button role="button" class="stop-button" @tap="stopAudio">■ 停止播放</button>
     </view>
 
-    <view v-else>
+    <view v-else id="parent-panel" role="tabpanel">
       <view class="section-head"><text class="section-title">英语，玩进生活里</text></view>
       <view class="routine-card"><text class="routine-card__title">今天的陪玩小配方</text><view class="routine-steps"><view><text class="routine-steps__number">01</text><text>点图听词</text></view><text class="routine-steps__arrow">›</text><view><text class="routine-steps__number">02</text><text>听音找图</text></view><text class="routine-steps__arrow">›</text><view><text class="routine-steps__number">03</text><text>离屏玩一玩</text></view></view><text class="section-intro">孩子指出来、做出动作就很好。跟着兴趣走，想停就停。</text></view>
       <view v-for="topic in playgroundTopics" :key="`parent-${topic.id}`" class="parent-topic">
@@ -80,7 +81,7 @@ import { navigate } from "@/services/navigationService";
 import { computed, ref } from "vue";
 import AudioFeedback from "@/components/AudioFeedback.vue";
 import { getReviewTopic, getReviewItems } from "@/services/playgroundLearningService";
-import { onHide, onShow, onUnload } from "@dcloudio/uni-app";
+import { onLoad, onHide, onShow, onUnload } from "@dcloudio/uni-app";
 import BottomNav from "@/components/BottomNav.vue";
 import { playgroundTopics, playgroundWordCount, getSuggestedPlaygroundTopic, type PlaygroundTopicId } from "@/mock/playground";
 import { getCartownProgress } from "@/services/cartownProgressService";
@@ -91,6 +92,10 @@ usePageShare();
 type TabId = "topics" | "chants" | "parent";
 const tabs: Array<{ id: TabId; label: string }> = [{ id: "topics", label: "主题小世界" }, { id: "chants", label: "儿歌电台" }, { id: "parent", label: "亲子任务" }];
 const activeTab = ref<TabId>("topics");
+onLoad(options => {
+  const requested = options?.tab;
+  activeTab.value = typeof requested === "string" && tabs.some(tab => tab.id === requested) ? requested as TabId : "topics";
+});
 const reviewTopic = ref(getReviewTopic());
 const reviewCount = ref(reviewTopic.value ? getReviewItems(reviewTopic.value.id).length : 0);
 const completedIds = ref<string[]>([]);
@@ -110,6 +115,7 @@ onShow(() => {
 });
 onHide(stopAudio);
 onUnload(stopAudio);
+function openSpace() { navigate({ url: "/pkg-space/index/index" }); }
 function openReview() { if (reviewTopic.value) navigate({ url: `/pkg-learning/playground-game/index?topic=${reviewTopic.value.id}&mode=quiz&review=1` }); }
 function openTopic(topicId: PlaygroundTopicId) { stopAudio(); navigate({ url: `/pkg-learning/playground-game/index?topic=${topicId}` }); }
 function switchTab(id: TabId) { stopAudio(); activeTab.value = id; }
@@ -133,7 +139,7 @@ function openAdventure() { stopAudio(); navigate({ url: "/pkg-adventure/index/in
 .daily-card__tag { font-size: 18rpx; font-weight: 700; color: #787162; }
 .daily-card__title { margin-top: 16rpx; font-size: 37rpx; font-weight: 900; color: $color-primary-dark; }
 .daily-card__subtitle { margin-top: 10rpx; font-size: 21rpx; color: #797369; line-height: 1.5; }
-.daily-card__button { display: flex; align-items: center; justify-content: space-between; gap: 28rpx; width: 226rpx; min-height: 68rpx; margin-top: 24rpx; padding: 0 24rpx; border-radius: 24rpx; background: $color-primary-dark; color: white; font-size: 23rpx; font-weight: 800; box-shadow: 0 8rpx 14rpx #263d5914; }
+.daily-card__button { display: flex; align-items: center; justify-content: space-between; gap: 28rpx; width: 226rpx; min-height: 44px; margin-top: 24rpx; padding: 0 24rpx; border-radius: 24rpx; background: $color-primary-dark; color: white; font-size: 23rpx; font-weight: 800; box-shadow: 0 8rpx 14rpx #263d5914; }
 .daily-card__art { position: absolute; right: -12rpx; bottom: 24rpx; width: 325rpx; height: 236rpx; }
 .daily-card__spark { position: absolute; top: 26rpx; right: 40rpx; color: #e3b771; font-size: 36rpx; }
 .progress-card { margin-top: 20rpx; padding: 24rpx; background: #fffdf9; border: 1rpx solid #eee7dd; border-radius: 26rpx; }
@@ -142,8 +148,8 @@ function openAdventure() { stopAudio(); navigate({ url: "/pkg-adventure/index/in
 .progress-track { height: 10rpx; margin: 18rpx 0 14rpx; background: #f0ebe2; border-radius: 10rpx; overflow: hidden; }
 .progress-track__fill { height: 100%; border-radius: 10rpx; background: #9ab483; transition: width .25s; }
 .progress-card__note { display: block; font-size: 18rpx; color: $color-muted; line-height: 1.5; }
-.content-tabs { display: flex; gap: 6rpx; padding: 8rpx; margin-top: 28rpx; background: #eee9e0; border-radius: 24rpx; }
-.content-tabs__tab { display: flex; align-items: center; justify-content: center; flex: 1; min-height: 67rpx; border-radius: 18rpx; font-size: 23rpx; font-weight: 800; color: #8a8379; }
+.content-tabs { position: sticky; top: 0; z-index: 10; display: flex; gap: 6rpx; padding: 8rpx; margin-top: 28rpx; background: #eee9e0; border-radius: 24rpx; }
+.content-tabs__tab { display: flex; align-items: center; justify-content: center; flex: 1; min-height: 44px; border-radius: 18rpx; font-size: 23rpx; font-weight: 800; color: #8a8379; }
 .content-tabs__tab--active { color: $color-primary-dark; background: #fffdf9; box-shadow: 0 4rpx 10rpx #63513b0a; }
 .section-caption { font-size: 19rpx; color: #948779; }
 .section-intro { display: block; margin: 10rpx 0 20rpx; font-size: 22rpx; color: $color-muted; line-height: 1.6; }
@@ -164,15 +170,15 @@ function openAdventure() { stopAudio(); navigate({ url: "/pkg-adventure/index/in
 .stamp--done { color: #887153; }
 .stamp__status { position: absolute; right: 10rpx; top: 0; color: #c5a252; font-size: 22rpx; }
 .chant-card { padding: 24rpx; border-radius: 28rpx; margin-bottom: 18rpx; }
-.chant-card__heading { display: grid; grid-template-columns: 94rpx 1fr 66rpx; align-items: center; gap: 12rpx; margin-bottom: 16rpx; }
+.chant-card__heading { display: grid; grid-template-columns: 94rpx minmax(0,1fr) 44px; align-items: center; gap: 12rpx; margin-bottom: 16rpx; }
 .chant-card__art { width: 94rpx; height: 80rpx; }
 .chant-card__title,.chant-card__tag,.chant-card__lyric { display: block; }
 .chant-card__title { font-size: 27rpx; font-weight: 800; }
 .chant-card__tag { font-size: 18rpx; color: $color-muted; margin-top: 9rpx; }
-.round-play { display: flex; align-items: center; justify-content: center; width: 66rpx; height: 66rpx; border-radius: 50%; background: #fffdf9; color: $color-primary; font-size: 24rpx; }
+.round-play { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: #fffdf9; color: $color-primary; font-size: 24rpx; }
 .chant-card__lyric { font-size: 23rpx; line-height: 1.7; color: #615d56; }
-.chant-card__link { margin-top: 20rpx; font-size: 20rpx; color: #877561; text-align: left; }
-.stop-button { padding: 22rpx; width: 100%; border-radius: 22rpx; background: #eee8de; font-size: 23rpx; color: #7d756a; }
+.chant-card__link { display: flex; align-items: center; width: 100%; min-height: 44px; margin-top: 10rpx; font-size: 20rpx; color: #877561; text-align: left; }
+.stop-button { min-height: 44px; padding: 22rpx; width: 100%; border-radius: 22rpx; background: #eee8de; font-size: 23rpx; color: #7d756a; }
 .routine-card { padding: 26rpx; border-radius: 28rpx; background: #eaf0e4; }
 .routine-card__title { font-size: 27rpx; font-weight: 800; }
 .routine-steps { display: flex; align-items: center; justify-content: space-between; margin: 24rpx 0; }
@@ -191,3 +197,5 @@ function openAdventure() { stopAudio(); navigate({ url: "/pkg-adventure/index/in
 .gentle-note text:first-child { font-size: 30rpx; }
 .privacy-note { display: block; text-align: center; font-size: 17rpx; color: #a09a91; line-height: 1.6; }
 </style>
+
+<style scoped>.space-entry { display:flex; justify-content:space-between; align-items:center; width:100%; min-height:120rpx; margin:24rpx 0; padding:24rpx; border-radius:26rpx; background:#16253d; color:#f1e4c9; text-align:left; box-sizing:border-box; }.space-entry text { display:block; font-size:25rpx; line-height:1.6; }.space-entry view text + text { font-size:21rpx; color:#b5c4db; }</style>

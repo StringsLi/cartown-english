@@ -25,35 +25,51 @@
       "pages": [
         {
           "path": "car-logos/index",
-          "style": { "navigationBarTitleText": "50 个车标" }
+          "style": {
+            "navigationBarTitleText": "50 个车标"
+          }
         },
         {
           "path": "car-colors/index",
-          "style": { "navigationBarTitleText": "颜色汽车" }
+          "style": {
+            "navigationBarTitleText": "颜色汽车"
+          }
         },
         {
           "path": "car-count/index",
-          "style": { "navigationBarTitleText": "数字数车" }
+          "style": {
+            "navigationBarTitleText": "数字数车"
+          }
         },
         {
           "path": "car-traffic/index",
-          "style": { "navigationBarTitleText": "红绿灯动作" }
+          "style": {
+            "navigationBarTitleText": "红绿灯动作"
+          }
         },
         {
           "path": "car-stories/index",
-          "style": { "navigationBarTitleText": "小汽车故事" }
+          "style": {
+            "navigationBarTitleText": "小汽车故事"
+          }
         },
         {
           "path": "car-garage/index",
-          "style": { "navigationBarTitleText": "奖励车库" }
+          "style": {
+            "navigationBarTitleText": "奖励车库"
+          }
         },
         {
           "path": "playground/index",
-          "style": { "navigationBarTitleText": "小小英语乐园" }
+          "style": {
+            "navigationBarTitleText": "小小英语乐园"
+          }
         },
         {
           "path": "playground-game/index",
-          "style": { "navigationBarTitleText": "英语主题游戏" }
+          "style": {
+            "navigationBarTitleText": "英语主题游戏"
+          }
         }
       ]
     },
@@ -62,7 +78,9 @@
       "pages": [
         {
           "path": "car-learn/index",
-          "style": { "navigationBarTitleText": "认识车辆" }
+          "style": {
+            "navigationBarTitleText": "认识车辆"
+          }
         }
       ]
     },
@@ -71,7 +89,9 @@
       "pages": [
         {
           "path": "world/index",
-          "style": { "navigationBarTitleText": "车车看世界" }
+          "style": {
+            "navigationBarTitleText": "车车看世界"
+          }
         }
       ]
     },
@@ -80,27 +100,39 @@
       "pages": [
         {
           "path": "recordings/index",
-          "style": { "navigationBarTitleText": "孩子的录音小册" }
+          "style": {
+            "navigationBarTitleText": "孩子的录音小册"
+          }
         },
         {
           "path": "book-detail/index",
-          "style": { "navigationBarTitleText": "绘本详情" }
+          "style": {
+            "navigationBarTitleText": "绘本详情"
+          }
         },
         {
           "path": "reader/index",
-          "style": { "navigationBarTitleText": "绘本阅读" }
+          "style": {
+            "navigationBarTitleText": "绘本阅读"
+          }
         },
         {
           "path": "point-read/index",
-          "style": { "navigationBarTitleText": "点一点图片" }
+          "style": {
+            "navigationBarTitleText": "点一点图片"
+          }
         },
         {
           "path": "repeat/index",
-          "style": { "navigationBarTitleText": "跟我读" }
+          "style": {
+            "navigationBarTitleText": "跟我读"
+          }
         },
         {
           "path": "game/index",
-          "style": { "navigationBarTitleText": "小游戏" }
+          "style": {
+            "navigationBarTitleText": "小游戏"
+          }
         }
       ]
     },
@@ -109,11 +141,15 @@
       "pages": [
         {
           "path": "parent/index",
-          "style": { "navigationBarTitleText": "家长中心" }
+          "style": {
+            "navigationBarTitleText": "家长中心"
+          }
         },
         {
           "path": "profile/index",
-          "style": { "navigationBarTitleText": "我的" }
+          "style": {
+            "navigationBarTitleText": "我的"
+          }
         }
       ]
     },
@@ -139,19 +175,57 @@
           }
         }
       ]
+    },
+    {
+      "root": "pkg-space",
+      "pages": [
+        {
+          "path": "index/index",
+          "style": {
+            "navigationBarTitleText": "太阳系小旅行",
+            "navigationBarBackgroundColor": "#0e182a",
+            "navigationBarTextStyle": "white",
+            "backgroundColor": "#0e182a"
+          }
+        },
+        {
+          "path": "body/index",
+          "style": {
+            "navigationBarTitleText": "行星图鉴",
+            "navigationBarBackgroundColor": "#0e182a",
+            "navigationBarTextStyle": "white",
+            "backgroundColor": "#0e182a"
+          }
+        },
+        {
+          "path": "quiz/index",
+          "style": {
+            "navigationBarTitleText": "听音找行星",
+            "navigationBarBackgroundColor": "#0e182a",
+            "navigationBarTextStyle": "white",
+            "backgroundColor": "#0e182a"
+          }
+        }
+      ]
     }
   ],
   "preloadRule": {
     "pages/index/index": {
-      "packages": ["pkg-learning"],
+      "packages": [
+        "pkg-learning"
+      ],
       "network": "wifi"
     },
     "pages/books/index": {
-      "packages": ["pkg-reading"],
+      "packages": [
+        "pkg-reading"
+      ],
       "network": "wifi"
     },
     "pages/vehicles/index": {
-      "packages": ["pkg-cars"],
+      "packages": [
+        "pkg-cars"
+      ],
       "network": "wifi"
     }
   },

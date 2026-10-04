@@ -9,14 +9,16 @@
       <text v-if="records.length >= 10" class="capacity-note">已保存 {{ records.length }} / 12 条，录新声音前可以先备份。</text>
       <view class="action-row"><BigButton label="备份全部录音" :disabled="busy || !records.length" @tap="prepareBackup" /><BigButton label="导入备份" variant="ghost" :disabled="busy" @tap="importBackup" /></view>
     </view>
+    <view v-if="exportError" class="soft-card export-error" role="alert"><text class="card-title">{{ exportError }}</text><text v-if="exportDetail && exportDetail !== exportError" class="error-detail">微信返回：{{ exportDetail }}</text><text class="card-note">录音仍保留在本机，可以重试或先回听确认。</text></view>
     <text v-if="busy" class="working-note" role="status">正在处理文件，请稍等…</text>
     <view v-if="prepared" class="soft-card ready-card" role="status">
       <text class="card-title">{{ preparedTitle }}</text><text class="card-note">{{ preparedNote }}</text>
-      <text class="export-step">{{ exportResult === 'shared' ? '✓ 已发送到所选聊天' : exportResult === 'download-requested' ? '请检查浏览器下载列表' : '第 2 / 3 步 · 文件准备好，点击下面保存' }}</text>
+      <text class="export-step">{{ exportResult === 'shared' ? '✓ 已发送到所选聊天' : exportResult === 'download-requested' ? '请检查浏览器下载列表' : '第 2 / 2 步 · 文件准备好，点击下面发送' }}</text>
       <text class="file-name">{{ prepared.fileName }}</text>
       <!-- #ifdef MP-WEIXIN -->
       <text class="card-note">点下面的按钮，选择“文件传输助手”或自己的聊天；发送后可在聊天文件中收藏、下载到电脑保存。</text>
-      <BigButton label="保存到微信文件 ›" variant="warm" :disabled="busy" @tap="saveFile" />
+      <!-- uni-app 默认延迟 tap；同步执行才能保留微信文件分享要求的用户点击。 -->
+      <button class="send-file-button" data-eventsync="true" :disabled="busy" @tap="saveFile">发送文件到微信聊天 ›</button>
       <!-- #endif -->
       <!-- #ifdef H5 -->
       <BigButton label="下载文件到设备 ↓" variant="warm" :disabled="busy" @tap="saveFile" />
@@ -48,11 +50,18 @@ import type { RepeatRecord } from "@/types/book";
 import { playRecord, stopRecordPlayback, recordPlaybackState } from "@/services/recordService";
 import { stopAudio } from "@/services/audioService";
 import { prepareRepeatRecordAudio, prepareRepeatRecordArchive, importRepeatRecordArchive } from "@/pkg-reading/services/recordArchiveService";
-import { savePreparedRecord, releasePreparedRecord, recordExportError, type PreparedRecordFile } from "@/pkg-reading/services/recordExportService";
+import { savePreparedRecord, releasePreparedRecord, recordExportError, recordExportDetails, type PreparedRecordFile } from "@/pkg-reading/services/recordExportService";
 const records = ref(getRepeatRecords()), busy = ref(false), prepared = ref<PreparedRecordFile | null>(null);
 const preparedTitle = ref(""), preparedNote = ref("");
 const search = ref(""), selectedBook = ref(""), exportResult = ref("");
+const exportError = ref(""), exportDetail = ref("");
 let pageAlive = true;
+function clearExportError() { exportError.value = ""; exportDetail.value = ""; }
+function showExportError(error: unknown) {
+  if (!pageAlive) return;
+  exportError.value = recordExportError(error); exportDetail.value = recordExportDetails(error);
+  uni.pageScrollTo({ scrollTop: 0, duration: 250 });
+}
 const visibleRecords = computed(() => records.value.filter(r => (!selectedBook.value || r.bookId === selectedBook.value) && r.sentence.toLowerCase().includes(search.value.trim().toLowerCase())));
 const bookChoices = computed(() => [...new Set(records.value.map(r => r.bookId))].map(id => ({ id, title: getBookById(id)?.title || "其他跟读", count: records.value.filter(r => r.bookId === id).length })));
 const playbackNote = computed(() => ({ idle: "", loading: "正在准备声音…", playing: "正在播放这段声音 ♪", ended: "听完啦，可以再听一次。", error: "声音暂时播放不了，可以重试；文件缺失时可从备份恢复。" })[recordPlaybackState.value.phase]);
@@ -64,29 +73,29 @@ function setPrepared(file: PreparedRecordFile, title: string, note: string) {
   releasePreparedRecord(prepared.value); prepared.value = file; preparedTitle.value = title; preparedNote.value = note;
   uni.pageScrollTo({ scrollTop: 0, duration: 250 });
 }
-function clearPrepared() { releasePreparedRecord(prepared.value); prepared.value = null; exportResult.value = ""; }
+function clearPrepared() { releasePreparedRecord(prepared.value); prepared.value = null; exportResult.value = ""; clearExportError(); }
 async function prepareAudio(record: RepeatRecord) {
   if (busy.value) return; busy.value = true; stopRecordPlayback(); clearPrepared();
   try { setPrepared(await prepareRepeatRecordAudio(record), "音频准备好了", "这是可单独播放的音频文件，点击下面的按钮完成保存。"); }
-  catch (e) { uni.showToast({ title: recordExportError(e), icon: "none" }); }
+  catch (e) { showExportError(e); }
   finally { busy.value = false; }
 }
 async function prepareBackup() {
   if (busy.value) return; busy.value = true; stopRecordPlayback(); clearPrepared();
   try { const file = await prepareRepeatRecordArchive(records.value); setPrepared(file, `${file.count} 条录音备份准备好了`, `${file.skipped ? `跳过 ${file.skipped} 条已失效录音。` : ''}JSON 备份用于导入恢复；想直接播放，请导出单条音频。`); }
-  catch (e) { uni.showToast({ title: recordExportError(e), icon: "none" }); }
+  catch (e) { showExportError(e); }
   finally { busy.value = false; }
 }
 async function saveFile() {
-  if (!prepared.value || busy.value) return; busy.value = true;
+  if (!prepared.value || busy.value) return; clearExportError(); busy.value = true;
   try { const result = await savePreparedRecord(prepared.value); exportResult.value = result; if (result === "download-requested") preparedNote.value = "下载已请求，请检查浏览器下载列表。没有下载提示时，可在普通浏览器中打开后再试。"; uni.showToast({ title: result === "shared" ? "已发送到所选聊天" : "已请求下载，请查看浏览器下载", icon: "none" }); }
-  catch (e) { uni.showToast({ title: recordExportError(e), icon: "none" }); }
+  catch (e) { showExportError(e); }
   finally { busy.value = false; }
 }
 async function importBackup() {
-  if (busy.value) return; busy.value = true; stopRecordPlayback();
+  if (busy.value) return; clearExportError(); busy.value = true; stopRecordPlayback();
   try { const archive = await importRepeatRecordArchive(records.value); const result = mergeRepeatRecords(archive.records, true); flushLearningState(); records.value = getRepeatRecords(); if (pageAlive) uni.showModal({ title: "备份恢复完成", content: [`新增 ${result.added} 条录音`, result.repaired ? `修复 ${result.repaired} 条失效录音` : '', archive.duplicates ? `${archive.duplicates} 条已在本机，无需重复保存` : '', archive.skipped ? `跳过 ${archive.skipped} 条无效录音` : '', archive.limited ? `备份超出 12 条，另有 ${archive.limited} 条未处理` : ''].filter(Boolean).join('；') + '。本机保留最近 12 条。', showCancel: false }); }
-  catch (e) { uni.showToast({ title: recordExportError(e), icon: "none" }); }
+  catch (e) { showExportError(e); }
   finally { busy.value = false; }
 }
 function goBooks() { navigate({ url: "/pages/books/index" }, "reLaunch"); }
@@ -98,4 +107,9 @@ function readAgain(record: RepeatRecord) { stopRecordPlayback(); navigate({ url:
 </style>
 <style scoped lang="scss">
 .capacity-note,.working-note,.export-step { display: block; font-size: 22rpx; line-height: 1.6; color: #a66e30; margin: 14rpx 0; }.working-note { text-align: center; }.record-filter { margin-top: 28rpx; }.record-filter input { height: 86rpx; padding: 0 24rpx; border-radius: 22rpx; border: 1rpx solid #e5dfd4; background: #fffdf9; font-size: 25rpx; }.book-filter { white-space: nowrap; margin-top: 16rpx; }.book-filter button { display: inline-flex; align-items: center; min-height: 80rpx; padding: 0 24rpx; margin-right: 12rpx; font-size: 23rpx; color: #8a7e6b; background: #efeade; border-radius: 24rpx; }.book-filter .book-filter__active { background: #36554c; color: white; }.playback-note { display: flex; align-items: center; justify-content: space-between; gap: 14rpx; padding: 20rpx 0 0; color: #74836f; font-size: 23rpx; line-height: 1.5; }.playback-note text { flex: 1; }.playback-note button { flex: none; min-height: 76rpx; padding: 16rpx 20rpx; background: #e8eee1; border-radius: 20rpx; }.read-again { display: block; margin-top: 20rpx; padding: 18rpx 0; font-size: 22rpx; color: #95866f; }
+</style>
+
+<style scoped lang="scss">
+.send-file-button { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 30rpx; border-radius: 999rpx; background: #c48a28; color: white; font-size: 16px; font-weight: 800; }
+.send-file-button[disabled] { opacity: .55; }.export-error { padding: 28rpx; margin-top: 24rpx; background: #fff1e9; }.error-detail { display: block; margin-top: 14rpx; font-size: 22rpx; line-height: 1.6; word-break: break-all; color: #985239; }
 </style>

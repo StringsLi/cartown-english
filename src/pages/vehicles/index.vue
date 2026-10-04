@@ -11,7 +11,7 @@
     </view>
 
     <view class="vehicle-hero soft-card">
-      <CachedImage class="vehicle-hero__image" src="/static/ui/top-selling-car.jpg" mode="aspectFill" aria-label="吉利银河星愿真实车型照片" />
+      <view class="vehicle-hero__image"><CachedImage src="/static/ui/top-selling-car.jpg" mode="aspectFill" aria-label="吉利银河星愿真实车型照片" /></view>
       <view class="vehicle-hero__shade" />
       <view class="vehicle-hero__copy">
         <text class="vehicle-hero__eyebrow">2025 畅销真车 TOP 50</text>

@@ -30,7 +30,7 @@
     <button role="button" v-if="recentBook && recent" class="resume-book soft-card" @tap="navigate({ url: `/pkg-reading/reader/index?bookId=${recentBook.id}&pageIndex=${recent.currentPage}` })"><view><text>接着上次的故事</text><text>{{ recentBook.title }} · 第 {{ recent.currentPage }} 页</text></view><text>继续读 ›</text></button>
 
     <view class="reading-system soft-card">
-      <CachedImage class="reading-system__image" :src="'/static/first-books/bear/cover.webp'" mode="aspectFill" />
+      <view class="reading-system__image"><CachedImage :src="'/static/first-books/bear/cover.jpg'" mode="aspectFill" /></view>
       <view class="reading-system__copy">
         <text class="reading-system__eyebrow">短句 · 听读 · 陪伴</text>
         <text class="reading-system__title">从一本喜欢的故事开始</text>
@@ -240,7 +240,7 @@ function resetFilters() {
   top: 0;
   right: 0;
   width: 42%;
-  height: 100%;
+  bottom: 0;
   opacity: 0.88;
 }
 

@@ -12,7 +12,7 @@
 
     <view class="reader-illustration soft-card">
       <CachedImage
-        v-if="currentPage && !imageFailed"
+        v-if="currentPage && (!imageFailed || !currentPage.vehicleStoryId)"
         class="reader-illustration__image"
         :src="currentPage.image"
         mode="aspectFill"

@@ -44,8 +44,18 @@ export function releasePreparedRecord(file?: PreparedRecordFile | null): void {
   // #endif
 }
 
+export function recordExportDetails(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === "object" && "errMsg" in error) return String(error.errMsg);
+  return typeof error === "string" ? error : "";
+}
 export function recordExportError(error: unknown): string {
-  const message = error && typeof error === "object" && "errMsg" in error ? String(error.errMsg) : "";
+  const message = recordExportDetails(error);
   if (/cancel/i.test(message)) return "已取消，可以随时再导出";
-  return error instanceof Error ? error.message : "文件导出失败，请重试";
+  if (/gesture|user.*tap|user.*click|user.*touch/i.test(message)) return "请再次点击发送按钮，打开微信聊天选择界面";
+  if (/no space|disk full|quota|limit exceeded/i.test(message)) return "设备文件空间不足，请腾出空间后重新导出";
+  if (/no such file|not exist|file.*not found/i.test(message)) return "文件已失效，请重新点“导出音频”准备文件";
+  if (/开发者工具.*不支持/.test(message)) return "开发者工具无法发送文件，请用手机微信扫码验证导出";
+  if (/not support|not implemented|不支持/i.test(message)) return "当前微信环境不支持发送文件，请在手机上更新微信后重试";
+  return error instanceof Error ? error.message : "文件导出失败，请查看下方原因后重试";
 }

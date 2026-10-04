@@ -144,6 +144,7 @@ export function completeCartownVehicle(vehicleId: string): { earned: boolean; pr
 
 export function clearCartownProgress(): void {
   clearPlaygroundLearning();
+  removeStorage("cartown_space_learning_v1");
   cachedProgress = null;
   if (saveTimer) {
     clearTimeout(saveTimer);

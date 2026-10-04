@@ -1,30 +1,30 @@
 <template>
-  <view class="vehicle-story-art" :class="[`vehicle-story-art--${props.storyId}`, `vehicle-story-art--page-${safePage}`]">
+  <view class="vehicle-story-art native-vehiclestoryart-view" :class="[`vehicle-story-art--${props.storyId}`, `vehicle-story-art--page-${safePage}`]">
 
     <template>
-      <view class="vehicle-story-art__sun" />
-      <view class="vehicle-story-art__cloud vehicle-story-art__cloud--one" />
-      <view class="vehicle-story-art__cloud vehicle-story-art__cloud--two" />
-      <view class="vehicle-story-art__hill" />
-      <view class="vehicle-story-art__road" />
-      <view v-if="props.storyId === 'digger'" class="story-context story-context--digger">
-        <view v-if="safePage === 2" class="story-context__hole" />
-        <view v-if="safePage === 3" class="story-context__rocks"><view /><view /><view /></view>
-        <view v-if="safePage === 4" class="story-context__flat-ground" />
-        <view v-if="safePage === 5" class="story-context__park"><view /><view /><view /></view>
+      <view class="vehicle-story-art__sun native-vehiclestoryart-view" />
+      <view class="vehicle-story-art__cloud vehicle-story-art__cloud--one native-vehiclestoryart-view" />
+      <view class="vehicle-story-art__cloud vehicle-story-art__cloud--two native-vehiclestoryart-view" />
+      <view class="vehicle-story-art__hill native-vehiclestoryart-view" />
+      <view class="vehicle-story-art__road native-vehiclestoryart-view" />
+      <view v-if="props.storyId === 'digger'" class="story-context story-context--digger native-vehiclestoryart-view">
+        <view v-if="safePage === 2" class="story-context__hole native-vehiclestoryart-view" />
+        <view v-if="safePage === 3" class="story-context__rocks native-vehiclestoryart-view"><view class="native-vehiclestoryart-view" /><view class="native-vehiclestoryart-view" /><view class="native-vehiclestoryart-view" /></view>
+        <view v-if="safePage === 4" class="story-context__flat-ground native-vehiclestoryart-view" />
+        <view v-if="safePage === 5" class="story-context__park native-vehiclestoryart-view"><view class="native-vehiclestoryart-view" /><view class="native-vehiclestoryart-view" /><view class="native-vehiclestoryart-view" /></view>
       </view>
-      <view v-if="props.storyId === 'fire-truck'" class="story-context story-context--fire-truck">
-        <view v-if="safePage === 2" class="story-context__alarm"><view /><view /></view>
-        <view v-if="safePage === 4" class="story-context__ladder"><view v-for="step in 6" :key="step" /></view>
-        <view v-if="safePage === 5" class="story-context__cat"><view /><view /></view>
+      <view v-if="props.storyId === 'fire-truck'" class="story-context story-context--fire-truck native-vehiclestoryart-view">
+        <view v-if="safePage === 2" class="story-context__alarm native-vehiclestoryart-view"><view class="native-vehiclestoryart-view" /><view class="native-vehiclestoryart-view" /></view>
+        <view v-if="safePage === 4" class="story-context__ladder native-vehiclestoryart-view"><view class="native-vehiclestoryart-view" v-for="step in 6" :key="step" /></view>
+        <view v-if="safePage === 5" class="story-context__cat native-vehiclestoryart-view"><view class="native-vehiclestoryart-view" /><view class="native-vehiclestoryart-view" /></view>
       </view>
-      <view v-if="props.storyId === 'city-bus'" class="story-context story-context--city-bus">
-        <view v-if="safePage === 2" class="story-context__school"><view /><view /><view /></view>
-        <view v-if="safePage === 3" class="story-context__bridge"><view /><view /><view /></view>
-        <view v-if="safePage === 4" class="story-context__home"><view /><view /></view>
-        <view v-if="safePage === 5" class="story-context__moon"><view /><view /><view /></view>
+      <view v-if="props.storyId === 'city-bus'" class="story-context story-context--city-bus native-vehiclestoryart-view">
+        <view v-if="safePage === 2" class="story-context__school native-vehiclestoryart-view"><view class="native-vehiclestoryart-view" /><view class="native-vehiclestoryart-view" /><view class="native-vehiclestoryart-view" /></view>
+        <view v-if="safePage === 3" class="story-context__bridge native-vehiclestoryart-view"><view class="native-vehiclestoryart-view" /><view class="native-vehiclestoryart-view" /><view class="native-vehiclestoryart-view" /></view>
+        <view v-if="safePage === 4" class="story-context__home native-vehiclestoryart-view"><view class="native-vehiclestoryart-view" /><view class="native-vehiclestoryart-view" /></view>
+        <view v-if="safePage === 5" class="story-context__moon native-vehiclestoryart-view"><view class="native-vehiclestoryart-view" /><view class="native-vehiclestoryart-view" /><view class="native-vehiclestoryart-view" /></view>
       </view>
-      <CachedImage class="vehicle-story-art__machine" :src="storyVehicleImage" mode="aspectFit" />
+      <view class="vehicle-story-art__machine"><CachedImage :src="storyVehicleImage" mode="aspectFit" /></view>
     </template>
   </view>
 </template>
@@ -33,7 +33,6 @@
 import CachedImage from "@/components/CachedImage.vue";
 import { computed } from "vue";
 import type { VehicleStoryId } from "@/types/book";
-import { highResolutionAsset } from "@/services/assetService";
 
 const props = withDefaults(
   defineProps<{
@@ -49,11 +48,11 @@ const safePage = computed(() => Math.min(Math.max(Math.round(props.pageIndex), 0
 const storyVehicleImage = computed(() => {
   const images: Record<VehicleStoryId, string> = {
     "red-car": "/static/generated-books/red-car/cover.jpg",
-    digger: highResolutionAsset("/static/topic-icons/vehicles/excavator.webp"),
-    "fire-truck": highResolutionAsset("/static/topic-icons/vehicles/fire-truck.webp"),
-    "city-bus": highResolutionAsset("/static/topic-icons/vehicles/bus.webp"),
-    "police-car": highResolutionAsset("/static/topic-icons/vehicles/police-car.webp"),
-    van: highResolutionAsset("/static/topic-icons/vehicles/van.webp")
+    digger: "/pkg-reading/static/word-pictures/excavator.jpg",
+    "fire-truck": "/pkg-reading/static/word-pictures/fire-truck.jpg",
+    "city-bus": "/pkg-reading/static/word-pictures/bus.jpg",
+    "police-car": "/pkg-reading/static/word-pictures/police-car.jpg",
+    van: "/pkg-reading/static/word-pictures/van.jpg"
   };
 
   return images[props.storyId];
@@ -156,7 +155,7 @@ const storyVehicleImage = computed(() => {
 .vehicle-story-art--page-5 .vehicle-story-art__sun { top: 18%; background: #c75f3b; }
 
 .story-context,
-.story-context > view {
+.story-context > .native-vehiclestoryart-view {
   position: absolute;
 }
 
@@ -184,7 +183,7 @@ const storyVehicleImage = computed(() => {
   height: 25%;
 }
 
-.story-context__rocks > view {
+.story-context__rocks > .native-vehiclestoryart-view {
   position: absolute;
   bottom: 0;
   width: 38%;
@@ -194,9 +193,9 @@ const storyVehicleImage = computed(() => {
   box-shadow: inset 8rpx 8rpx 0 rgba(255, 255, 255, 0.2);
 }
 
-.story-context__rocks > view:nth-child(1) { left: 0; }
-.story-context__rocks > view:nth-child(2) { left: 30%; bottom: 17%; transform: scale(0.8); }
-.story-context__rocks > view:nth-child(3) { right: 0; transform: scale(0.72); }
+.story-context__rocks > .native-vehiclestoryart-view:nth-child(1) { left: 0; }
+.story-context__rocks > .native-vehiclestoryart-view:nth-child(2) { left: 30%; bottom: 17%; transform: scale(0.8); }
+.story-context__rocks > .native-vehiclestoryart-view:nth-child(3) { right: 0; transform: scale(0.72); }
 
 .story-context__flat-ground {
   right: 0;
@@ -214,8 +213,8 @@ const storyVehicleImage = computed(() => {
   height: 43%;
 }
 
-.story-context__park > view:nth-child(1),
-.story-context__park > view:nth-child(2) {
+.story-context__park > .native-vehiclestoryart-view:nth-child(1),
+.story-context__park > .native-vehiclestoryart-view:nth-child(2) {
   position: absolute;
   bottom: 0;
   width: 18rpx;
@@ -224,10 +223,10 @@ const storyVehicleImage = computed(() => {
   background: #8c6746;
 }
 
-.story-context__park > view:nth-child(1) { left: 12%; }
-.story-context__park > view:nth-child(2) { right: 14%; height: 58%; }
-.story-context__park > view:nth-child(1)::before,
-.story-context__park > view:nth-child(2)::before {
+.story-context__park > .native-vehiclestoryart-view:nth-child(1) { left: 12%; }
+.story-context__park > .native-vehiclestoryart-view:nth-child(2) { right: 14%; height: 58%; }
+.story-context__park > .native-vehiclestoryart-view:nth-child(1)::before,
+.story-context__park > .native-vehiclestoryart-view:nth-child(2)::before {
   position: absolute;
   top: -28rpx;
   left: 50%;
@@ -239,7 +238,7 @@ const storyVehicleImage = computed(() => {
   transform: translateX(-50%);
 }
 
-.story-context__park > view:nth-child(3) {
+.story-context__park > .native-vehiclestoryart-view:nth-child(3) {
   position: absolute;
   right: 25%;
   bottom: 0;
@@ -260,14 +259,14 @@ const storyVehicleImage = computed(() => {
   transform: translateX(-50%);
 }
 
-.story-context__alarm > view {
+.story-context__alarm > .native-vehiclestoryart-view {
   position: absolute;
   inset: 16rpx;
   border: 6rpx solid #bb3f39;
   border-radius: 50%;
 }
 
-.story-context__alarm > view:nth-child(2) { inset: -18rpx; opacity: 0.45; }
+.story-context__alarm > .native-vehiclestoryart-view:nth-child(2) { inset: -18rpx; opacity: 0.45; }
 
 .story-context__ladder {
   top: 7%;
@@ -280,7 +279,7 @@ const storyVehicleImage = computed(() => {
   transform-origin: right center;
 }
 
-.story-context__ladder > view {
+.story-context__ladder > .native-vehiclestoryart-view {
   display: inline-block;
   width: 5rpx;
   height: 32rpx;
@@ -312,7 +311,7 @@ const storyVehicleImage = computed(() => {
 .story-context__cat::before { left: 3rpx; }
 .story-context__cat::after { right: 3rpx; }
 
-.story-context__cat > view {
+.story-context__cat > .native-vehiclestoryart-view {
   position: absolute;
   top: 28rpx;
   width: 8rpx;
@@ -321,8 +320,8 @@ const storyVehicleImage = computed(() => {
   background: #e1b948;
 }
 
-.story-context__cat > view:first-child { left: 20rpx; }
-.story-context__cat > view:last-child { right: 20rpx; }
+.story-context__cat > .native-vehiclestoryart-view:first-child { left: 20rpx; }
+.story-context__cat > .native-vehiclestoryart-view:last-child { right: 20rpx; }
 
 .story-context__school,
 .story-context__home {
@@ -347,8 +346,8 @@ const storyVehicleImage = computed(() => {
   content: "";
 }
 
-.story-context__school > view,
-.story-context__home > view {
+.story-context__school > .native-vehiclestoryart-view,
+.story-context__home > .native-vehiclestoryart-view {
   position: absolute;
   bottom: 14%;
   width: 24%;
@@ -357,9 +356,9 @@ const storyVehicleImage = computed(() => {
   background: #7ca0aa;
 }
 
-.story-context__school > view:nth-child(1), .story-context__home > view:nth-child(1) { left: 9%; }
-.story-context__school > view:nth-child(2), .story-context__home > view:nth-child(2) { right: 9%; }
-.story-context__school > view:nth-child(3) { left: 38%; height: 58%; background: #81664d; }
+.story-context__school > .native-vehiclestoryart-view:nth-child(1), .story-context__home > .native-vehiclestoryart-view:nth-child(1) { left: 9%; }
+.story-context__school > .native-vehiclestoryart-view:nth-child(2), .story-context__home > .native-vehiclestoryart-view:nth-child(2) { right: 9%; }
+.story-context__school > .native-vehiclestoryart-view:nth-child(3) { left: 38%; height: 58%; background: #81664d; }
 
 .story-context__bridge {
   right: -5%;
@@ -370,7 +369,7 @@ const storyVehicleImage = computed(() => {
   border-radius: 50% 50% 0 0;
 }
 
-.story-context__bridge > view {
+.story-context__bridge > .native-vehiclestoryart-view {
   position: absolute;
   bottom: 0;
   width: 12rpx;
@@ -378,9 +377,9 @@ const storyVehicleImage = computed(() => {
   background: #87715b;
 }
 
-.story-context__bridge > view:nth-child(1) { left: 22%; }
-.story-context__bridge > view:nth-child(2) { left: 50%; }
-.story-context__bridge > view:nth-child(3) { right: 22%; }
+.story-context__bridge > .native-vehiclestoryart-view:nth-child(1) { left: 22%; }
+.story-context__bridge > .native-vehiclestoryart-view:nth-child(2) { left: 50%; }
+.story-context__bridge > .native-vehiclestoryart-view:nth-child(3) { right: 22%; }
 
 .story-context__moon {
   top: 9%;
@@ -403,7 +402,7 @@ const storyVehicleImage = computed(() => {
   content: "";
 }
 
-.story-context__moon > view {
+.story-context__moon > .native-vehiclestoryart-view {
   position: absolute;
   width: 8rpx;
   height: 8rpx;
@@ -411,9 +410,9 @@ const storyVehicleImage = computed(() => {
   background: #fff9d8;
 }
 
-.story-context__moon > view:nth-child(1) { left: -80rpx; top: 10rpx; }
-.story-context__moon > view:nth-child(2) { left: -34rpx; top: 78rpx; }
-.story-context__moon > view:nth-child(3) { right: -24rpx; top: 94rpx; }
+.story-context__moon > .native-vehiclestoryart-view:nth-child(1) { left: -80rpx; top: 10rpx; }
+.story-context__moon > .native-vehiclestoryart-view:nth-child(2) { left: -34rpx; top: 78rpx; }
+.story-context__moon > .native-vehiclestoryart-view:nth-child(3) { right: -24rpx; top: 94rpx; }
 
 .vehicle-story-art--city-bus.vehicle-story-art--page-5 { background: #465b68; }
 .vehicle-story-art--city-bus.vehicle-story-art--page-5 .vehicle-story-art__sun,

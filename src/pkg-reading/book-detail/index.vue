@@ -5,11 +5,7 @@
     <view class="detail-hero">
       <view class="detail-cover soft-card">
         <RedCarMascot v-if="book.vehicleStoryId === 'red-car'" class="detail-cover__image" />
-        <CachedImage v-else-if="!coverFailed" class="detail-cover__image" :src="book.cover" mode="aspectFill" @error="coverFailed = true" />
-        <view v-else class="detail-cover__fallback">
-          <text class="detail-cover__fallback-label">Picture Book</text>
-          <text class="detail-cover__fallback-title">{{ book.title }}</text>
-        </view>
+        <CachedImage v-else class="detail-cover__image" :src="book.cover" :alt="book.title" mode="aspectFill" />
       </view>
 
       <view class="detail-intro">
@@ -51,7 +47,7 @@ import PageTopbar from "@/components/PageTopbar.vue";
 import { navigate } from "@/services/navigationService";
 import CachedImage from "@/components/CachedImage.vue";
 import RedCarMascot from "@/components/RedCarMascot.vue";
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { onLoad, onShow } from "@dcloudio/uni-app";
 import BigButton from "@/components/BigButton.vue";
 import ParentTipCard from "@/components/ParentTipCard.vue";
@@ -63,7 +59,6 @@ import { usePageShare } from "@/composables/usePageShare";
 
 usePageShare();
 const bookId = ref(getTodayBook().id);
-const coverFailed = ref(false);
 const book = computed(() => getBookById(bookId.value) ?? getTodayBook());
 const words = computed(() => getBookWords(book.value.id));
 const parentTip = computed(() => getParentTip(book.value.id));
@@ -77,13 +72,6 @@ onLoad((query) => {
   const params = query as Record<string, string | undefined>;
   bookId.value = resolveBookId(params.bookId);
 });
-
-watch(
-  () => book.value.cover,
-  () => {
-    coverFailed.value = false;
-  }
-);
 
 function startReading() {
   navigate({

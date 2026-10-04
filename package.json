@@ -12,18 +12,23 @@
     "validate:content": "node scripts/validate-content.mjs",
     "check:release": "node scripts/validate-content.mjs --release",
     "test:adventures": "node scripts/test-adventures.cjs",
-    "test": "npm run type-check && npm run validate:content && npm run test:adventures && npm run test:learning && npm run test:record-export && npm run test:record-capture && npm run test:pages && npm run test:media-cache",
+    "test": "npm run type-check && npm run validate:content && npm run test:adventures && npm run test:learning && npm run test:record-export && npm run test:record-capture && npm run test:pages && npm run test:media-cache && npm run test:h5-images && npm run test:space",
     "test:learning": "node scripts/test-learning.cjs",
     "test:record-export": "node scripts/test-record-export.cjs",
     "test:record-capture": "node scripts/test-record-capture.cjs",
     "test:pages": "node scripts/test-pages.cjs",
-    "test:media-cache": "node scripts/test-media-cache.cjs"
+    "test:media-cache": "node scripts/test-media-cache.cjs",
+    "dev:h5": "uni -p h5",
+    "build:h5": "uni build -p h5 && node scripts/check-h5-images.cjs",
+    "test:h5-images": "node scripts/test-h5-images.cjs",
+    "test:space": "node scripts/test-space.cjs"
   },
   "dependencies": {
     "@dcloudio/uni-app": "3.0.0-alpha-1000920260626810",
     "@dcloudio/uni-mp-weixin": "3.0.0-alpha-1000920260626810",
     "pinia": "^2.3.1",
-    "vue": "^3.5.13"
+    "vue": "^3.5.13",
+    "@dcloudio/uni-h5": "3.0.0-alpha-1000920260626810"
   },
   "devDependencies": {
     "@dcloudio/types": "^3.4.31",

@@ -5,10 +5,11 @@
     :style="badgeStyle"
   >
     <view class="logo-badge__image-wrap">
-      <image
+      <CachedImage
         v-if="!imageFailed"
         class="logo-badge__image"
         :src="logoImage"
+        :alt="props.name"
         mode="aspectFit"
         :lazy-load="false"
         @error="imageFailed = true"
@@ -23,6 +24,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import CachedImage from "@/components/CachedImage.vue";
 import { highResolutionAsset } from "@/services/assetService";
 
 defineOptions({
@@ -95,9 +97,8 @@ watch(
 
 .logo-badge__image {
   width: 100%;
-  height: auto;
-  max-height: 100%;
-  aspect-ratio: 4 / 3;
+  height: 100%;
+  background: transparent;
 }
 
 .logo-badge__shape {

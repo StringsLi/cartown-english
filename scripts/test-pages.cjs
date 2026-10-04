@@ -88,9 +88,61 @@ assert.equal(game.showResult.value, true); assert.equal(game.score.value, game.w
 const progress = load(path.join(root, 'services/progressService.ts')); const records = progress.getLearningState().gameRecords.length;
 game.nextQuestion(); assert.equal(progress.getLearningState().gameRecords.length, records);
 for (const book of books.getBooks()) for (const word of books.getBookWords(book.id)) assert.ok(fs.existsSync(path.join(root, word.image.replace(/^\//, ''))), 'Offline word picture: ' + word.word);
-assert.equal(fs.readdirSync(path.join(root, 'pkg-learning/static/vehicle-icons')).filter(f => f.endsWith('.webp')).length, 30);
+assert.equal(fs.readdirSync(path.join(root, 'pkg-learning/static/vehicle-icons')).filter(f => f.endsWith('.jpg')).length, 30);
 for (const folder of ['cat', 'apple', 'bear', 'mom', 'jump']) {
-  assert.ok(fs.existsSync(path.join(root, 'static/first-books', folder, 'cover.webp')));
-  for (let n = 1; n <= 5; n++) assert.ok(fs.existsSync(path.join(root, 'pkg-reading/static/first-books', folder, `page0${n}.webp`)));
+  assert.ok(fs.existsSync(path.join(root, 'static/first-books', folder, 'cover.jpg')));
+  for (let n = 1; n <= 5; n++) assert.ok(fs.existsSync(path.join(root, 'pkg-reading/static/first-books', folder, `page0${n}.jpg`)));
+}
+// Verify the actual encoded format, not just the extension: iPhone packages must not contain renamed WebP files.
+const bundledImageDirs = ['static/first-books', 'pkg-reading/static/first-books', 'pkg-reading/static/word-pictures', 'pkg-learning/static/vehicle-icons'];
+let jpegCount = 0;
+function verifyBundledImages(folder) {
+  for (const entry of fs.readdirSync(folder, { withFileTypes: true })) {
+    const file = path.join(folder, entry.name);
+    if (entry.isDirectory()) verifyBundledImages(file);
+    else {
+      assert.ok(!entry.name.endsWith('.webp'), 'Unsupported bundled WebP: ' + file);
+      if (entry.name.endsWith('.jpg')) {
+        const data = fs.readFileSync(file);
+        assert.equal(data.readUInt16BE(0), 0xffd8, 'Actual JPEG header: ' + file);
+        assert.equal(data.readUInt16BE(data.length - 2), 0xffd9, 'Complete JPEG: ' + file);
+        jpegCount++;
+      }
+    }
+  }
+}
+bundledImageDirs.forEach(folder => verifyBundledImages(path.join(root, folder)));
+assert.equal(jpegCount, 79);
+// Homepage routes and resume precedence must work with the real catalog and saved session.
+const catalog = load(path.join(root, 'mock/homeDiscovery.ts'));
+const registered = JSON.parse(fs.readFileSync(path.join(root, 'pages.json'), 'utf8'));
+const routes = new Set([...registered.pages.map(p => '/' + p.path), ...registered.subPackages.flatMap(pkg => pkg.pages.map(p => '/' + pkg.root + '/' + p.path))]);
+for (const item of [...catalog.homeWorlds, ...catalog.homePractices]) assert.ok(routes.has(item.url), 'Registered home destination: ' + item.url);
+const home = page('pages/index', ['session', 'primaryAction', 'primaryLabel', 'primaryTitle', 'daily', 'finishedSteps', 'openChants', 'openFamilyPlay', 'openRecordings']);
+home.session.value = null;
+home.daily.value = { heardIds: [], solvedIds: [], adventureIds: [] };
+home.primaryAction(); assert.match(calls.at(-1).url, /playground-game\/index\?topic=/);
+calls.at(-1).success(); flush(350);
+home.session.value = { topicId: 'colors', mode: 'learn', wordIndex: 2, questionIds: ['red'], questionIndex: 0, reviewOnly: false };
+home.primaryAction(); assert.equal(calls.at(-1).url, '/pkg-learning/playground-game/index?topic=colors&resume=1');
+assert.equal(home.primaryLabel.value, '继续上次的小旅程');
+calls.at(-1).success(); flush(350);
+home.session.value = { ...home.session.value, topicId: 'unknown-topic' };
+home.primaryAction(); assert.ok(!calls.at(-1).url.includes('unknown-topic'), 'Invalid resume falls back to today');
+calls.at(-1).success(); flush(350);
+home.session.value = null;
+home.daily.value = { heardIds: ['a','b','c'], solvedIds: ['a','b'], adventureIds: ['delivery'] };
+assert.equal(home.finishedSteps.value, 3); assert.equal(home.primaryLabel.value, '再玩一个车车故事');
+home.primaryAction(); assert.equal(calls.at(-1).url, '/pkg-adventure/index/index');
+calls.at(-1).success(); flush(350);
+for (const [fn, destination] of [['openChants','/pkg-learning/playground/index?tab=chants'],['openFamilyPlay','/pkg-learning/playground/index?tab=parent'],['openRecordings','/pkg-reading/recordings/index']]) {
+  home[fn](); assert.equal(calls.at(-1).url, destination); calls.at(-1).success(); flush(350);
+}
+const playground = page('pkg-learning/playground', ['activeTab']);
+const applyEntryTab = hooks.onLoad.at(-1);
+for (const requested of ['chants', 'parent', 'topics', 'invalid', undefined, ['chants']]) {
+  applyEntryTab({ tab: requested });
+  assert.equal(playground.activeTab.value, ['chants','parent','topics'].includes(requested) ? requested : 'topics');
 }
 console.log('Page checks passed: navigation deduplication/recovery, malformed links, page bounds, answer positions, all fifty logo targets, one reward per round, exact car counts, daily country listening/rollover, book game deduplication and all 79 offline images.');
+console.log('Homepage checks passed: every destination registered, saved-session priority and fallback, completed-day action, direct chants/family/recording entry and invalid-tab fallback.');

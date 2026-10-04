@@ -23,7 +23,7 @@
         </view>
         <text class="week-card__delta">{{ weeklyDeltaText }}</text>
       </view>
-      <CachedImage class="week-card__image" :src="'/static/first-books/mom/cover.webp'" mode="aspectFill" />
+      <view class="week-card__image"><CachedImage :src="'/static/first-books/mom/cover.jpg'" mode="aspectFill" /></view>
     </view>
 
     <view class="streak-card soft-card">

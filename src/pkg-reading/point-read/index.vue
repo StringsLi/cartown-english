@@ -18,7 +18,7 @@
         :page-index="currentPage.pageIndex"
       />
       <CachedImage
-        v-else-if="!imageFailed"
+        v-else-if="!imageFailed || !currentPage.vehicleStoryId"
         class="point-scene__image"
         :src="currentPage.image"
         mode="aspectFill"

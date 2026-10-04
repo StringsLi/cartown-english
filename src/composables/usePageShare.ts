@@ -17,6 +17,9 @@ interface PageShareOptions {
 const HOME_ROUTE = "pages/index/index";
 
 const pageShareTitles: Record<string, string> = {
+  "pkg-space/index/index": "太阳系小旅行，一起认识太阳和八大行星",
+  "pkg-space/body/index": "听一听，认识我们的太空邻居",
+  "pkg-space/quiz/index": "听英语找行星，一起收集太空印章",
   [HOME_ROUTE]: "车车英语乐园，开启今天的亲子探索",
   "pages/books/index": "精选趣味绘本，陪孩子边听边探索",
   "pages/vehicles/index": "一起认识有趣的交通工具",

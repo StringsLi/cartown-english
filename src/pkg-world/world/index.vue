@@ -15,7 +15,7 @@
     </view>
 
     <view class="world-hero">
-      <CachedImage class="world-hero__image" :src="heroWorldImage" mode="aspectFill" />
+      <view class="world-hero__image"><CachedImage :src="heroWorldImage" mode="aspectFill" /></view>
       <view class="world-hero__copy">
         <view>
           <text class="world-hero__eyebrow">50-COUNTRY MAP</text>

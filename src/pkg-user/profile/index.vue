@@ -54,7 +54,7 @@ function clearCache() {
 function clearData() {
   uni.showModal({
     title: "清除学习记录？",
-    content: "将清除昵称、绘本进度、录音索引、游戏记录、主题星星和国家探索记录。请先导出录音与备份；音量设置保留。此操作无法撤销。",
+    content: "将清除昵称、绘本进度、录音索引、游戏记录、主题星星、国家探索记录和太空护照。请先导出录音与备份；音量设置保留。此操作无法撤销。",
     confirmText: "确认清除",
     confirmColor: "#b95f3d",
     success(result) {

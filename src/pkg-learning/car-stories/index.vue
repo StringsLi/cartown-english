@@ -12,7 +12,7 @@
     </view>
 
     <view class="vehicle-books-hero soft-card">
-      <CachedImage class="vehicle-books-hero__art" :src="featuredBook.cover" mode="aspectFill" />
+      <view class="vehicle-books-hero__art"><CachedImage :src="featuredBook.cover" mode="aspectFill" /></view>
       <view class="vehicle-books-hero__copy">
         <text class="vehicle-books-hero__eyebrow">本周推荐</text>
         <text class="vehicle-books-hero__title">Red Car Comes Home</text>
@@ -102,7 +102,7 @@ function goLibrary() {
   top: 0;
   right: 0;
   width: 48%;
-  height: 100%;
+  bottom: 0;
 }
 
 .vehicle-books-hero__copy {
