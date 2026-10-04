@@ -18,7 +18,7 @@ function loader(withWx = true) {
     if (modules.has(file)) return modules.get(file).exports;
     const module = {exports:{}}; modules.set(file,module);
     const code = ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText;
-    const context = {module,exports:module.exports,require:id=>id.startsWith('@/')?load(path.join(root,id.slice(2)+'.ts')):require(id),uni,console:{warn(){}},Date};
+    const context = {module,exports:module.exports,require:id=>id.startsWith('@/')?load(path.join(root,id.slice(2)+'.ts')):require(id),uni,console:{warn(){}},Date,setTimeout,clearTimeout};
     if(withWx) context.wx = wx;
     vm.runInNewContext(code,context,{filename:file}); return module.exports;
   }

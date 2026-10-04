@@ -159,7 +159,7 @@ cartown-english/
 ## 内容与隐私
 
 - 课程数据与媒体引用集中维护，新增内容时请同步执行 `npm run validate:content`。
-- 英语乐园的 40 段单词发音、40 段提示、8 段故事和 8 首原创短儿歌随 `pkg-learning` 分包离线提供。歌词与伴奏为本项目原创，人声用 [Piper](https://github.com/OHF-Voice/piper1-gpl) 和 [en_US-ljspeech-high 声线](https://huggingface.co/rhasspy/piper-voices/blob/main/en/en_US/ljspeech/high/MODEL_CARD) 在开发阶段合成。该声线从公开领域的 LJ Speech 数据集独立训练，模型库标注 MIT 许可；模型和生成工具未打包进小程序。要重新生成，安装 `piper-tts numpy imageio-ffmpeg`，下载声线 `.onnx` 和 `.onnx.json`，运行 `PIPER_MODEL=/path/to/en_US-ljspeech-high.onnx python3 scripts/generate-playground-audio.py`。音频不包含原先链接的商业儿歌录音。
+- 英语乐园的 40 段单词发音、40 段提示、8 段故事和 8 首原创短儿歌分别随 `pkg-learning`（单词、提示、故事）和 `pkg-music`（儿歌）分包离线提供。歌词与伴奏为本项目原创，人声用 [Piper](https://github.com/OHF-Voice/piper1-gpl) 和 [en_US-ljspeech-high 声线](https://huggingface.co/rhasspy/piper-voices/blob/main/en/en_US/ljspeech/high/MODEL_CARD) 在开发阶段合成。该声线从公开领域的 LJ Speech 数据集独立训练，模型库标注 MIT 许可；模型和生成工具未打包进小程序。要重新生成，安装 `piper-tts numpy imageio-ffmpeg`，下载声线 `.onnx` 和 `.onnx.json`，运行 `PIPER_MODEL=/path/to/en_US-ljspeech-high.onnx python3 scripts/generate-playground-audio.py`。音频不包含原先链接的商业儿歌录音。
 - 车标素材来源说明见 `docs/source-assets/CAR_LOGO_SOURCES.md`。
 - 应用仅在用户主动开始跟读录音时申请麦克风权限，不包含儿童社交和排行榜。
 - 跟读录音默认只保存在当前设备，不会自动上传到云端，可由家长手动导入或导出备份。

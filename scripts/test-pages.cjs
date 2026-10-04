@@ -64,18 +64,18 @@ function page(name, expose) { return load(path.join(root, name, 'index.vue'), ex
 for (const [name, target, choose, argument, counter] of [
   ['car-colors', 'target', 'choose', 'id', 'colorQuestionsDone'], ['car-traffic', 'prompt', 'choose', 'action', 'trafficTurnsDone'], ['car-logos', 'targetLogo', 'chooseLogo', 'id', 'logoQuizDone']
 ]) {
-  const p = page('pkg-learning/' + name, [target, choose, 'answered', 'nextRound']);
+  const p = page('pkg-cars/' + name, [target, choose, 'answered', 'nextRound']);
   const stars = cartown.getCartownProgress().stars, count = cartown.getCartownProgress()[counter];
   p[choose]('wrong'); assert.equal(p.answered.value, false); p.nextRound(); assert.equal(cartown.getCartownProgress().stars, stars);
   const answer = p[target].value[argument]; p[choose](answer); p[choose](answer);
   assert.equal(cartown.getCartownProgress().stars, stars + 1); assert.equal(cartown.getCartownProgress()[counter], count + 1);
   assert.equal(p.answered.value, true); p.nextRound(); assert.equal(p.answered.value, false);
 }
-const logos = page('pkg-learning/car-logos', ['targetLogo', 'chooseLogo', 'answered', 'nextRound']);
+const logos = page('pkg-cars/car-logos', ['targetLogo', 'chooseLogo', 'answered', 'nextRound']);
 const seenLogos = new Set();
 for (let n = 0; n < 50; n++) { seenLogos.add(logos.targetLogo.value.id); logos.chooseLogo(logos.targetLogo.value.id); logos.nextRound(); }
 assert.equal(seenLogos.size, 50, 'all fifty logos must be eligible quiz targets');
-const count = page('pkg-learning/car-count', ['challenge', 'slots', 'tapped', 'tapCar', 'nextChallenge']);
+const count = page('pkg-cars/car-count', ['challenge', 'slots', 'tapped', 'tapCar', 'nextChallenge']);
 assert.equal(count.slots.value.length, count.challenge.value.count);
 const stars = cartown.getCartownProgress().stars, before = count.challenge.value.id;
 count.nextChallenge(); assert.equal(count.challenge.value.id, before);
@@ -88,13 +88,13 @@ assert.equal(game.showResult.value, true); assert.equal(game.score.value, game.w
 const progress = load(path.join(root, 'services/progressService.ts')); const records = progress.getLearningState().gameRecords.length;
 game.nextQuestion(); assert.equal(progress.getLearningState().gameRecords.length, records);
 for (const book of books.getBooks()) for (const word of books.getBookWords(book.id)) assert.ok(fs.existsSync(path.join(root, word.image.replace(/^\//, ''))), 'Offline word picture: ' + word.word);
-assert.equal(fs.readdirSync(path.join(root, 'pkg-learning/static/vehicle-icons')).filter(f => f.endsWith('.jpg')).length, 30);
+assert.equal(fs.readdirSync(path.join(root, 'pkg-cars/static/vehicle-icons')).filter(f => f.endsWith('.jpg')).length, 30);
 for (const folder of ['cat', 'apple', 'bear', 'mom', 'jump']) {
   assert.ok(fs.existsSync(path.join(root, 'static/first-books', folder, 'cover.jpg')));
   for (let n = 1; n <= 5; n++) assert.ok(fs.existsSync(path.join(root, 'pkg-reading/static/first-books', folder, `page0${n}.jpg`)));
 }
 // Verify the actual encoded format, not just the extension: iPhone packages must not contain renamed WebP files.
-const bundledImageDirs = ['static/first-books', 'pkg-reading/static/first-books', 'pkg-reading/static/word-pictures', 'pkg-learning/static/vehicle-icons'];
+const bundledImageDirs = ['static/first-books', 'pkg-reading/static/first-books', 'pkg-reading/static/word-pictures', 'pkg-cars/static/vehicle-icons'];
 let jpegCount = 0;
 function verifyBundledImages(folder) {
   for (const entry of fs.readdirSync(folder, { withFileTypes: true })) {
@@ -135,14 +135,29 @@ home.daily.value = { heardIds: ['a','b','c'], solvedIds: ['a','b'], adventureIds
 assert.equal(home.finishedSteps.value, 3); assert.equal(home.primaryLabel.value, '再玩一个车车故事');
 home.primaryAction(); assert.equal(calls.at(-1).url, '/pkg-adventure/index/index');
 calls.at(-1).success(); flush(350);
-for (const [fn, destination] of [['openChants','/pkg-learning/playground/index?tab=chants'],['openFamilyPlay','/pkg-learning/playground/index?tab=parent'],['openRecordings','/pkg-reading/recordings/index']]) {
+for (const [fn, destination] of [['openChants','/pkg-music/index/index'],['openFamilyPlay','/pkg-learning/playground/index?tab=parent'],['openRecordings','/pkg-reading/recordings/index']]) {
   home[fn](); assert.equal(calls.at(-1).url, destination); calls.at(-1).success(); flush(350);
 }
-const playground = page('pkg-learning/playground', ['activeTab']);
+const playground = page('pkg-learning/playground', ['activeTab', 'switchTab']);
 const applyEntryTab = hooks.onLoad.at(-1);
 for (const requested of ['chants', 'parent', 'topics', 'invalid', undefined, ['chants']]) {
   applyEntryTab({ tab: requested });
   assert.equal(playground.activeTab.value, ['chants','parent','topics'].includes(requested) ? requested : 'topics');
+  if (requested === 'chants') { assert.equal(calls.at(-1).url, '/pkg-music/index/index'); assert.equal(calls.at(-1).mode, 'redirectTo'); calls.at(-1).success(); flush(350); }
 }
 console.log('Page checks passed: navigation deduplication/recovery, malformed links, page bounds, answer positions, all fifty logo targets, one reward per round, exact car counts, daily country listening/rollover, book game deduplication and all 79 offline images.');
 console.log('Homepage checks passed: every destination registered, saved-session priority and fallback, completed-day action, direct chants/family/recording entry and invalid-tab fallback.');
+
+// Every old shared car link remains registered, preserves query encoding, and replaces itself.
+for (const name of ['car-logos','car-colors','car-count','car-traffic','car-stories','car-garage']) {
+  assert.ok(routes.has('/pkg-learning/' + name + '/index'));
+  assert.ok(routes.has('/pkg-cars/' + name + '/index'));
+  const legacy = page('pkg-learning/' + name, ['open']);
+  hooks.onLoad.at(-1)({ from: '家庭 & friends', __internal: 'ignore' });
+  assert.equal(calls.at(-1).url, '/pkg-cars/' + name + '/index?from=' + encodeURIComponent('家庭 & friends'));
+  assert.equal(calls.at(-1).mode, 'redirectTo');
+  calls.at(-1).fail({}); flush(350); legacy.open();
+  assert.equal(calls.at(-1).mode, 'redirectTo', 'Failed legacy redirects are retryable');
+  calls.at(-1).success(); flush(350);
+}
+console.log('Split-package checks passed: all six legacy links, query preservation, replace navigation, failed redirect retry and the legacy chant tab.');

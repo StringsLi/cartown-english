@@ -4,7 +4,7 @@ type TopicIconFolder = "vehicles" | "maps" | "flags";
 
 function topicIcon(folder: TopicIconFolder, name: string) {
   return folder === "vehicles"
-    ? `/pkg-learning/static/vehicle-icons/${name}.jpg`
+    ? `/pkg-cars/static/vehicle-icons/${name}.jpg`
     : highResolutionAsset(`/static/topic-icons/${folder}/${name}.webp`);
 }
 

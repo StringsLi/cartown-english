@@ -21,6 +21,12 @@ for (const packageRoot of packageRoots) {
 }
 
 let hasQualityFailure = false;
+const totalBytes = [...packageSizes.values()].reduce((sum, bytes) => sum + bytes, 0);
+console.log(`total: ${(totalBytes / 1024 / 1024).toFixed(3)} MiB`);
+if (totalBytes >= 20 * 1024 * 1024) {
+  console.error("Combined mini program packages must be smaller than 20 MiB.");
+  hasQualityFailure = true;
+}
 for (const [name, bytes] of packageSizes) {
   const size = (bytes / 1024 / 1024).toFixed(3);
   console.log(`${name}: ${size} MiB`);
@@ -63,7 +69,7 @@ for (const filePath of outputFiles) {
   }
 }
 
-for (const filePath of outputFiles.filter((item) => path.extname(item) === ".js" && isMainPackageFile(item))) {
+for (const filePath of outputFiles.filter((item) => path.extname(item) === ".js")) {
   const content = await readFile(filePath, "utf8");
   const requirePattern = /require\(["']([^"']+)["']\)/g;
   let match;
@@ -75,8 +81,9 @@ for (const filePath of outputFiles.filter((item) => path.extname(item) === ".js"
     const resolved = path.resolve(path.dirname(filePath), request);
     const relative = path.relative(outputRoot, resolved).split(path.sep).join("/");
     const targetPackage = packageRoots.find((root) => relative === root || relative.startsWith(`${root}/`));
-    if (targetPackage) {
-      console.error(`Main-package JS synchronously requires ${targetPackage}: ${path.relative(outputRoot, filePath)} -> ${request}`);
+    const ownerPackage = packageOf(filePath);
+    if (targetPackage && targetPackage !== ownerPackage) {
+      console.error(`${ownerPackage || "Main-package"} JS synchronously requires ${targetPackage}: ${path.relative(outputRoot, filePath)} -> ${request}`);
       hasQualityFailure = true;
     }
   }
@@ -84,9 +91,9 @@ for (const filePath of outputFiles.filter((item) => path.extname(item) === ".js"
 
 if (hasQualityFailure) process.exit(1);
 
-function isMainPackageFile(filePath) {
+function packageOf(filePath) {
   const relative = path.relative(outputRoot, filePath).split(path.sep).join("/");
-  return !packageRoots.some((root) => relative === root || relative.startsWith(`${root}/`));
+  return packageRoots.find(root => relative === root || relative.startsWith(`${root}/`));
 }
 
 async function directorySize(directory, excludedTopLevelDirectories = new Set()) {

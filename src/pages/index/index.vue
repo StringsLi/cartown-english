@@ -71,7 +71,7 @@ onShow(() => { recordingCount.value = getLearningState().repeatRecords.length; c
 onHide(stopAudio); onUnload(stopAudio);
 function openDestination(url: string) { navigate({ url }); }
 function primaryAction() { if (session.value && resumeTopic.value) resume(); else startToday(); }
-function openChants() { openDestination("/pkg-learning/playground/index?tab=chants"); }
+function openChants() { openDestination("/pkg-music/index/index"); }
 function openFamilyPlay() { openDestination("/pkg-learning/playground/index?tab=parent"); }
 function openRecordings() { openDestination("/pkg-reading/recordings/index"); }
 const finishedSteps = computed(() => dailySteps.value.filter(step => step.done).length);
@@ -83,7 +83,7 @@ function openStep(index: number) { if (index === 2) return goAdventure(); stopAu
 function resume() { if (session.value) navigate({ url: `/pkg-learning/playground-game/index?topic=${session.value.topicId}&resume=1` }); }
 function openReview() { if (reviewTopic.value) navigate({ url: `/pkg-learning/playground-game/index?topic=${reviewTopic.value.id}&mode=quiz&review=1` }); }
 function goAdventure() { navigate({ url: "/pkg-adventure/index/index" }); }
-function goGarage() { navigate({ url: "/pkg-learning/car-garage/index" }); }
+function goGarage() { navigate({ url: "/pkg-cars/car-garage/index" }); }
 function goParent() { navigate({ url: "/pkg-user/parent/index" }, "reLaunch"); }
 </script>
 <style scoped lang="scss">

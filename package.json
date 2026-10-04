@@ -12,7 +12,7 @@
     "validate:content": "node scripts/validate-content.mjs",
     "check:release": "node scripts/validate-content.mjs --release",
     "test:adventures": "node scripts/test-adventures.cjs",
-    "test": "npm run type-check && npm run validate:content && npm run test:adventures && npm run test:learning && npm run test:record-export && npm run test:record-capture && npm run test:pages && npm run test:media-cache && npm run test:h5-images && npm run test:space",
+    "test": "npm run type-check && npm run validate:content && npm run test:adventures && npm run test:learning && npm run test:record-export && npm run test:record-capture && npm run test:pages && npm run test:media-cache && npm run test:h5-images && npm run test:space && npm run test:packages",
     "test:learning": "node scripts/test-learning.cjs",
     "test:record-export": "node scripts/test-record-export.cjs",
     "test:record-capture": "node scripts/test-record-capture.cjs",
@@ -21,7 +21,8 @@
     "dev:h5": "uni -p h5",
     "build:h5": "uni build -p h5 && node scripts/check-h5-images.cjs",
     "test:h5-images": "node scripts/test-h5-images.cjs",
-    "test:space": "node scripts/test-space.cjs"
+    "test:space": "node scripts/test-space.cjs",
+    "test:packages": "node scripts/test-packages.cjs"
   },
   "dependencies": {
     "@dcloudio/uni-app": "3.0.0-alpha-1000920260626810",

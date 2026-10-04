@@ -1,3 +1,4 @@
+import { ensureMediaPackage } from "@/services/packageService";
 import { highResolutionAsset, isCloudAsset } from "@/services/assetService";
 
 type MediaKind = "audio" | "image";
@@ -63,6 +64,7 @@ let cacheGeneration = 0;
 export async function resolveCachedMedia(source: string, kind: MediaKind): Promise<string> {
   const asset = highResolutionAsset(source);
   if (!asset || (!isCloudAsset(asset) && !/^https?:\/\//i.test(asset))) {
+    await ensureMediaPackage(asset);
     return asset;
   }
 

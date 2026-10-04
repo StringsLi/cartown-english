@@ -51,16 +51,7 @@
       </view>
     </view>
 
-    <view v-else-if="activeTab === 'chants'" id="chants-panel" role="tabpanel">
-      <view class="section-head"><text class="section-title">小小儿歌电台</text><text class="section-caption">{{ playgroundTopics.length }} 首原创跟读儿歌</text></view>
-      <text class="section-intro">听着轻柔的旋律，和孩子一起念、一起动。</text>
-      <view v-for="topic in playgroundTopics" :key="`chant-${topic.id}`" class="chant-card" :style="{ backgroundColor: topic.tint }">
-        <view class="chant-card__heading"><image class="chant-card__art" :src="topic.items[0].art" mode="aspectFit" /><view><text class="chant-card__title">{{ topic.chantTitle }}</text><text class="chant-card__tag">{{ topic.english }} · 节奏跟读</text></view><button role="button" class="round-play" :aria-label="`播放${topic.chantTitle}`" @tap="playChant(topic.chantAudio, topic.chantTitle)">▶</button></view>
-        <text v-for="line in topic.chantLyrics" :key="line" class="chant-card__lyric">{{ line }}</text>
-        <button role="button" class="chant-card__link" @tap="openTopic(topic.id)">去认识这首歌的小伙伴 ›</button>
-      </view>
-      <button role="button" class="stop-button" @tap="stopAudio">■ 停止播放</button>
-    </view>
+    <view v-else-if="activeTab === 'chants'" class="routine-card" id="chants-panel" role="tabpanel"><text class="routine-card__title">小小儿歌电台</text><text class="section-intro">8 首小儿歌，和孩子一起念、一起动。</text><button class="stop-button" @tap="openChants()">打开儿歌电台 ›</button></view>
 
     <view v-else id="parent-panel" role="tabpanel">
       <view class="section-head"><text class="section-title">英语，玩进生活里</text></view>
@@ -86,7 +77,7 @@ import BottomNav from "@/components/BottomNav.vue";
 import { playgroundTopics, playgroundWordCount, getSuggestedPlaygroundTopic, type PlaygroundTopicId } from "@/mock/playground";
 import { getCartownProgress } from "@/services/cartownProgressService";
 import { usePageShare } from "@/composables/usePageShare";
-import { playAudio, stopAudio } from "@/services/audioService";
+import { stopAudio } from "@/services/audioService";
 
 usePageShare();
 type TabId = "topics" | "chants" | "parent";
@@ -95,6 +86,7 @@ const activeTab = ref<TabId>("topics");
 onLoad(options => {
   const requested = options?.tab;
   activeTab.value = typeof requested === "string" && tabs.some(tab => tab.id === requested) ? requested as TabId : "topics";
+  if (activeTab.value === "chants") openChants("redirectTo");
 });
 const reviewTopic = ref(getReviewTopic());
 const reviewCount = ref(reviewTopic.value ? getReviewItems(reviewTopic.value.id).length : 0);
@@ -118,8 +110,8 @@ onUnload(stopAudio);
 function openSpace() { navigate({ url: "/pkg-space/index/index" }); }
 function openReview() { if (reviewTopic.value) navigate({ url: `/pkg-learning/playground-game/index?topic=${reviewTopic.value.id}&mode=quiz&review=1` }); }
 function openTopic(topicId: PlaygroundTopicId) { stopAudio(); navigate({ url: `/pkg-learning/playground-game/index?topic=${topicId}` }); }
-function switchTab(id: TabId) { stopAudio(); activeTab.value = id; }
-function playChant(audio: string, title: string) { playAudio(audio, title); }
+function switchTab(id: TabId) { stopAudio(); activeTab.value = id; if (id === "chants") openChants("redirectTo"); }
+function openChants(mode: "navigateTo" | "redirectTo" = "navigateTo") { navigate({ url: "/pkg-music/index/index" }, mode); }
 function openAdventure() { stopAudio(); navigate({ url: "/pkg-adventure/index/index" }); }
 </script>
 
@@ -169,15 +161,6 @@ function openAdventure() { stopAudio(); navigate({ url: "/pkg-adventure/index/in
 .stamp--done .stamp__art { opacity: 1; filter: none; }
 .stamp--done { color: #887153; }
 .stamp__status { position: absolute; right: 10rpx; top: 0; color: #c5a252; font-size: 22rpx; }
-.chant-card { padding: 24rpx; border-radius: 28rpx; margin-bottom: 18rpx; }
-.chant-card__heading { display: grid; grid-template-columns: 94rpx minmax(0,1fr) 44px; align-items: center; gap: 12rpx; margin-bottom: 16rpx; }
-.chant-card__art { width: 94rpx; height: 80rpx; }
-.chant-card__title,.chant-card__tag,.chant-card__lyric { display: block; }
-.chant-card__title { font-size: 27rpx; font-weight: 800; }
-.chant-card__tag { font-size: 18rpx; color: $color-muted; margin-top: 9rpx; }
-.round-play { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: #fffdf9; color: $color-primary; font-size: 24rpx; }
-.chant-card__lyric { font-size: 23rpx; line-height: 1.7; color: #615d56; }
-.chant-card__link { display: flex; align-items: center; width: 100%; min-height: 44px; margin-top: 10rpx; font-size: 20rpx; color: #877561; text-align: left; }
 .stop-button { min-height: 44px; padding: 22rpx; width: 100%; border-radius: 22rpx; background: #eee8de; font-size: 23rpx; color: #7d756a; }
 .routine-card { padding: 26rpx; border-radius: 28rpx; background: #eaf0e4; }
 .routine-card__title { font-size: 27rpx; font-weight: 800; }

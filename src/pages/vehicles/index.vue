@@ -45,7 +45,7 @@
       </button>
     </view>
 
-    <button role="button" class="brand-section soft-card" @tap="goStation('/pkg-learning/car-logos/index')">
+    <button role="button" class="brand-section soft-card" @tap="goStation('/pkg-cars/car-logos/index')">
       <view class="brand-section__head">
         <view>
           <text class="brand-section__eyebrow">品牌认知</text>
@@ -78,12 +78,12 @@ import { usePageShare } from "@/composables/usePageShare";
 usePageShare();
 const stationItems = [
   ["畅销榜", "50 辆真车", "/pkg-cars/car-learn/index"],
-  ["车标", "品牌认知", "/pkg-learning/car-logos/index"],
-  ["颜色", "听音选车", "/pkg-learning/car-colors/index"],
-  ["数字", "1 到 5", "/pkg-learning/car-count/index"],
-  ["动作", "红绿灯", "/pkg-learning/car-traffic/index"],
-  ["故事", "汽车绘本", "/pkg-learning/car-stories/index"],
-  ["奖励", "我的车库", "/pkg-learning/car-garage/index"]
+  ["车标", "品牌认知", "/pkg-cars/car-logos/index"],
+  ["颜色", "听音选车", "/pkg-cars/car-colors/index"],
+  ["数字", "1 到 5", "/pkg-cars/car-count/index"],
+  ["动作", "红绿灯", "/pkg-cars/car-traffic/index"],
+  ["故事", "汽车绘本", "/pkg-cars/car-stories/index"],
+  ["奖励", "我的车库", "/pkg-cars/car-garage/index"]
 ] as const;
 
 const stations = stationItems.map(([tag, title, path]) => ({ tag, title, path }));

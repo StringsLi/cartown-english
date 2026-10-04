@@ -21,6 +21,7 @@ from piper.voice import PiperVoice, SynthesisConfig
 ROOT = Path(__file__).resolve().parent.parent
 MODEL = Path(os.environ["PIPER_MODEL"])
 OUTPUT = ROOT / "src/pkg-learning/static/playground-audio"
+CHANT_OUTPUT = ROOT / "src/pkg-music/static/audio"
 SOURCE = (ROOT / "src/mock/playground.ts").read_text(encoding="utf-8")
 VOICE = PiperVoice.load(MODEL)
 RATE = VOICE.config.sample_rate
@@ -39,7 +40,7 @@ def synthesize(text: str, length_scale: float = 1.1) -> np.ndarray:
     return np.concatenate([part for item in parts for part in (item, pause)])
 
 
-def write_mp3(name: str, samples: np.ndarray) -> None:
+def write_mp3(name: str, samples: np.ndarray, directory: Path = OUTPUT) -> None:
     peak = float(np.max(np.abs(samples)))
     if peak < 0.01:
         raise ValueError(f"Audio is silent: {name}")
@@ -51,7 +52,7 @@ def write_mp3(name: str, samples: np.ndarray) -> None:
             wav_file.setsampwidth(2)
             wav_file.setframerate(RATE)
             wav_file.writeframes((samples * 32767).astype("<i2").tobytes())
-        target = OUTPUT / f"{name}.mp3"
+        target = directory / f"{name}.mp3"
         subprocess.run(
             [FFMPEG, "-hide_banner", "-loglevel", "error", "-y", "-i", str(wav_path),
              "-ac", "1", "-ar", str(RATE), "-b:a", "56k", str(target)],
@@ -93,21 +94,22 @@ prompts = re.findall(r'prompt: "([^"]+)", audio: `\$\{audioRoot\}/([a-z-]+)\.mp3
 words = re.findall(r'word: "([^"]+)"[^\n]+?wordAudio: `\$\{audioRoot\}/([a-z-]+)\.mp3', SOURCE)
 stories = re.findall(r'story: "([^"]+)",\s+storyAudio: `\$\{audioRoot\}/([a-z-]+)\.mp3', SOURCE)
 chants = re.findall(
-    r'chantLyrics: \["([^"]+)", "([^"]+)"\],\s+chantAudio: `\$\{audioRoot\}/([a-z-]+)\.mp3',
+    r'chantLyrics: \["([^"]+)", "([^"]+)"\],\s+chantAudio: `\$\{chantRoot\}/([a-z-]+)\.mp3',
     SOURCE,
 )
 if len(prompts) != len(words) or len(stories) != len(chants) or len(words) != len(stories) * 5:
     raise ValueError("Each theme needs five words, five prompts, one story, and one chant")
 
 
-def needs_audio(name: str) -> bool:
-    target = OUTPUT / f"{name}.mp3"
+def needs_audio(name: str, directory: Path = OUTPUT) -> bool:
+    target = directory / f"{name}.mp3"
     return ARGS.force or not target.exists() or target.stat().st_size < 1024
 
 OUTPUT.mkdir(parents=True, exist_ok=True)
+CHANT_OUTPUT.mkdir(parents=True, exist_ok=True)
 for text, name in words + prompts + stories:
     if needs_audio(name):
         write_mp3(name, synthesize(text))
 for first, second, name in chants:
-    if needs_audio(name):
-        write_mp3(name, make_chant(first, second))
+    if needs_audio(name, CHANT_OUTPUT):
+        write_mp3(name, make_chant(first, second), CHANT_OUTPUT)

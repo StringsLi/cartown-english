@@ -32,6 +32,7 @@ export interface PlaygroundTopic {
   chantAudio: string;
 }
 
+const chantRoot = "/pkg-music/static/audio";
 const audioRoot = "/pkg-learning/static/playground-audio";
 const artRoot = "/pkg-learning/static/playground/art";
 
@@ -60,7 +61,7 @@ export const playgroundTopics: PlaygroundTopic[] = [
     storyTranslation: "蓝色小车遇见红色苹果。原来，颜色藏在生活的每个角落。",
     chantTitle: "彩色车车歌",
     chantLyrics: ["Red car, blue car, drive around!", "Yellow car, green car, slow down!"],
-    chantAudio: `${audioRoot}/colors-chant.mp3`
+    chantAudio: `${chantRoot}/colors-chant.mp3`
   },
   {
     id: "animals",
@@ -86,7 +87,7 @@ export const playgroundTopics: PlaygroundTopic[] = [
     storyTranslation: "小狮子会跑。挥挥手，和这位新朋友说你好吧。",
     chantTitle: "动物朋友歌",
     chantLyrics: ["Lion, lion, wave hello!", "Monkey, penguin, here we go!"],
-    chantAudio: `${audioRoot}/animals-chant.mp3`
+    chantAudio: `${chantRoot}/animals-chant.mp3`
   },
   {
     id: "food",
@@ -112,7 +113,7 @@ export const playgroundTopics: PlaygroundTopic[] = [
     storyTranslation: "咬一口苹果，真好吃！你最喜欢哪一种水果？",
     chantTitle: "水果点心歌",
     chantLyrics: ["Apple, banana, yum, yum, yum!", "Grapes and watermelon, here they come!"],
-    chantAudio: `${audioRoot}/food-chant.mp3`
+    chantAudio: `${chantRoot}/food-chant.mp3`
   },
   {
     id: "actions",
@@ -138,7 +139,7 @@ export const playgroundTopics: PlaygroundTopic[] = [
     storyTranslation: "拍手、挥手、跳一跳。你已经听懂好多小指令了！",
     chantTitle: "动起来歌",
     chantLyrics: ["Clap and wave, then jump up high!", "Stomp your feet and touch the sky!"],
-    chantAudio: `${audioRoot}/actions-chant.mp3`
+    chantAudio: `${chantRoot}/actions-chant.mp3`
   },
   {
     id: "numbers",
@@ -164,7 +165,7 @@ export const playgroundTopics: PlaygroundTopic[] = [
     storyTranslation: "一颗、两颗，一直数到五颗。用手指帮忙数一数吧。",
     chantTitle: "星星数数歌",
     chantLyrics: ["One, two, three, stars for me!", "Four and five, shine up high!"],
-    chantAudio: `${audioRoot}/numbers-chant.mp3`
+    chantAudio: `${chantRoot}/numbers-chant.mp3`
   },
   {
     id: "shapes",
@@ -190,7 +191,7 @@ export const playgroundTopics: PlaygroundTopic[] = [
     storyTranslation: "圆形会滚，正方形稳稳站住。三角形变成屋顶，一起搭座小房子。",
     chantTitle: "形状搭搭歌",
     chantLyrics: ["Circle, square, shapes everywhere!", "Triangle, star, a heart to share!"],
-    chantAudio: `${audioRoot}/shapes-chant.mp3`
+    chantAudio: `${chantRoot}/shapes-chant.mp3`
   },
   {
     id: "weather",
@@ -216,7 +217,7 @@ export const playgroundTopics: PlaygroundTopic[] = [
     storyTranslation: "太阳躲进云里，下雨天啦。出门前别忘了小雨伞。",
     chantTitle: "天气变变歌",
     chantLyrics: ["Sunny, cloudy, look up high!", "Rainy, snowy, windy sky!"],
-    chantAudio: `${audioRoot}/weather-chant.mp3`
+    chantAudio: `${chantRoot}/weather-chant.mp3`
   },
   {
     id: "feelings",
@@ -242,7 +243,7 @@ export const playgroundTopics: PlaygroundTopic[] = [
     storyTranslation: "有点难过时，妈妈给了我一个拥抱。慢慢平静下来，又开心起来了。",
     chantTitle: "心情抱抱歌",
     chantLyrics: ["Happy, sad, how do you feel?", "Take a breath, your feelings are real!"],
-    chantAudio: `${audioRoot}/feelings-chant.mp3`
+    chantAudio: `${chantRoot}/feelings-chant.mp3`
   }
 ];
 

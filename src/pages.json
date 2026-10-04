@@ -81,6 +81,42 @@
           "style": {
             "navigationBarTitleText": "认识车辆"
           }
+        },
+        {
+          "path": "car-logos/index",
+          "style": {
+            "navigationBarTitleText": "50 个车标"
+          }
+        },
+        {
+          "path": "car-colors/index",
+          "style": {
+            "navigationBarTitleText": "颜色汽车"
+          }
+        },
+        {
+          "path": "car-count/index",
+          "style": {
+            "navigationBarTitleText": "数字数车"
+          }
+        },
+        {
+          "path": "car-traffic/index",
+          "style": {
+            "navigationBarTitleText": "红绿灯动作"
+          }
+        },
+        {
+          "path": "car-stories/index",
+          "style": {
+            "navigationBarTitleText": "小汽车故事"
+          }
+        },
+        {
+          "path": "car-garage/index",
+          "style": {
+            "navigationBarTitleText": "奖励车库"
+          }
         }
       ]
     },
@@ -207,6 +243,17 @@
           }
         }
       ]
+    },
+    {
+      "root": "pkg-music",
+      "pages": [
+        {
+          "path": "index/index",
+          "style": {
+            "navigationBarTitleText": "小小儿歌电台"
+          }
+        }
+      ]
     }
   ],
   "preloadRule": {
@@ -225,6 +272,12 @@
     "pages/vehicles/index": {
       "packages": [
         "pkg-cars"
+      ],
+      "network": "wifi"
+    },
+    "pkg-learning/playground-game/index": {
+      "packages": [
+        "pkg-music"
       ],
       "network": "wifi"
     }

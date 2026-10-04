@@ -1,0 +1,119 @@
+[
+  {
+    "images": [
+      {
+        "loaded": true,
+        "width": 40.1015625
+      },
+      {
+        "loaded": true,
+        "width": 40.1015625
+      },
+      {
+        "loaded": true,
+        "width": 40.1015625
+      },
+      {
+        "loaded": true,
+        "width": 40.1015625
+      },
+      {
+        "loaded": true,
+        "width": 40.1015625
+      },
+      {
+        "loaded": true,
+        "width": 40.1015625
+      },
+      {
+        "loaded": true,
+        "width": 40.1015625
+      },
+      {
+        "loaded": true,
+        "width": 40.1015625
+      }
+    ],
+    "minTap": 44,
+    "scrollWidth": 320,
+    "width": 320
+  },
+  {
+    "images": [
+      {
+        "loaded": true,
+        "width": 48.875
+      },
+      {
+        "loaded": true,
+        "width": 48.875
+      },
+      {
+        "loaded": true,
+        "width": 48.875
+      },
+      {
+        "loaded": true,
+        "width": 48.875
+      },
+      {
+        "loaded": true,
+        "width": 48.875
+      },
+      {
+        "loaded": true,
+        "width": 48.875
+      },
+      {
+        "loaded": true,
+        "width": 48.875
+      },
+      {
+        "loaded": true,
+        "width": 48.875
+      }
+    ],
+    "minTap": 44,
+    "scrollWidth": 390,
+    "width": 390
+  },
+  {
+    "images": [
+      {
+        "loaded": true,
+        "width": 48.875
+      },
+      {
+        "loaded": true,
+        "width": 48.875
+      },
+      {
+        "loaded": true,
+        "width": 48.875
+      },
+      {
+        "loaded": true,
+        "width": 48.875
+      },
+      {
+        "loaded": true,
+        "width": 48.875
+      },
+      {
+        "loaded": true,
+        "width": 48.875
+      },
+      {
+        "loaded": true,
+        "width": 48.875
+      },
+      {
+        "loaded": true,
+        "width": 48.875
+      }
+    ],
+    "minTap": 44,
+    "scrollWidth": 430,
+    "width": 430
+  }
+]

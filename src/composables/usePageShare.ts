@@ -17,6 +17,7 @@ interface PageShareOptions {
 const HOME_ROUTE = "pages/index/index";
 
 const pageShareTitles: Record<string, string> = {
+  "pkg-music/index/index": "小小儿歌电台，和孩子一起念、一起动",
   "pkg-space/index/index": "太阳系小旅行，一起认识太阳和八大行星",
   "pkg-space/body/index": "听一听，认识我们的太空邻居",
   "pkg-space/quiz/index": "听英语找行星，一起收集太空印章",
@@ -24,12 +25,12 @@ const pageShareTitles: Record<string, string> = {
   "pages/books/index": "精选趣味绘本，陪孩子边听边探索",
   "pages/vehicles/index": "一起认识有趣的交通工具",
   "pkg-cars/car-learn/index": "听一听，认识生活中的车辆",
-  "pkg-learning/car-logos/index": "挑战认识 50 个常见汽车品牌",
-  "pkg-learning/car-colors/index": "听颜色，找到正确的小汽车",
-  "pkg-learning/car-count/index": "数一数，看看有几辆小汽车",
-  "pkg-learning/car-traffic/index": "红灯停绿灯行，一起认识交通规则",
-  "pkg-learning/car-stories/index": "有趣的小汽车故事等你来听",
-  "pkg-learning/car-garage/index": "来看看我的小汽车收藏",
+  "pkg-cars/car-logos/index": "挑战认识 50 个常见汽车品牌",
+  "pkg-cars/car-colors/index": "听颜色，找到正确的小汽车",
+  "pkg-cars/car-count/index": "数一数，看看有几辆小汽车",
+  "pkg-cars/car-traffic/index": "红灯停绿灯行，一起认识交通规则",
+  "pkg-cars/car-stories/index": "有趣的小汽车故事等你来听",
+  "pkg-cars/car-garage/index": "来看看我的小汽车收藏",
   "pkg-learning/playground/index": "八个英语主题，和孩子听一听、找一找",
   "pkg-learning/playground-game/index": "一起玩小小英语主题游戏",
   "pkg-adventure/index/index": "车车英语小冒险，开车送水果、一起演英语",
