@@ -71,6 +71,17 @@ for (const filePath of outputFiles) {
 
 for (const filePath of outputFiles.filter((item) => path.extname(item) === ".js")) {
   const content = await readFile(filePath, "utf8");
+  if (/\bwx(?:\$\d+)?\.loadSubpackage\b/.test(content)) {
+    console.error(`Mini-game-only API in mini-program output: ${path.relative(outputRoot, filePath)}`);
+    hasQualityFailure = true;
+  }
+  for (const call of content.matchAll(/require\.async\(["']([^"']+)["']\)/g)) {
+    const resolved = path.resolve(path.dirname(filePath), call[1]);
+    if (!outputFiles.includes(resolved)) {
+      console.error(`Async module missing after bundling: ${path.relative(outputRoot, filePath)} -> ${call[1]}`);
+      hasQualityFailure = true;
+    }
+  }
   const requirePattern = /require\(["']([^"']+)["']\)/g;
   let match;
   while ((match = requirePattern.exec(content))) {

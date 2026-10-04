@@ -2,7 +2,7 @@ import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import type { Plugin } from "vite";
 
-const imageGroups = ["books", "topic-icons", "cartown-logos"] as const;
+const imageGroups = ["books", "topic-icons", "cartown-logos", "audio"] as const;
 
 /** Web-only originals: emit them for production and serve the same URLs in dev. */
 export function h5ImageAssets(projectRoot: string): Plugin {
@@ -14,7 +14,7 @@ export function h5ImageAssets(projectRoot: string): Plugin {
         for (const entry of await readdir(current, { withFileTypes: true })) {
           const file = path.join(current, entry.name);
           if (entry.isDirectory()) await walk(file);
-          else if (/\.(png|jpe?g)$/i.test(entry.name)) {
+          else if ((group === "audio" ? /\.(mp3|wav)$/i : /\.(png|jpe?g)$/i).test(entry.name)) {
             const relative = path.relative(directory, file).split(path.sep).join("/");
             files.set(`static/${group}/${relative}`, file);
           }
@@ -36,7 +36,7 @@ export function h5ImageAssets(projectRoot: string): Plugin {
         const file = files.get(url);
         if (!file) { next(); return; }
         try {
-          response.setHeader("Content-Type", file.endsWith(".png") ? "image/png" : "image/jpeg");
+          response.setHeader("Content-Type", file.endsWith(".mp3") ? "audio/mpeg" : file.endsWith(".wav") ? "audio/wav" : file.endsWith(".png") ? "image/png" : "image/jpeg");
           response.end(await readFile(file));
         } catch (error) { next(error as Error); }
       });

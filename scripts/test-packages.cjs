@@ -3,6 +3,7 @@ const fs = require('node:fs'), path = require('node:path'), vm = require('node:v
 const root = path.resolve(__dirname, '../src');
 function runtime(native = true) {
   const modules = new Map(), requests = [], contexts = [], timers = new Map(), storage = new Map();
+  const page = { route: "pages/index/index" };
   let id = 0;
   const uni = {
     getStorageSync: key => storage.get(key), setStorageSync: (key, value) => storage.set(key, value), showToast() {},
@@ -12,16 +13,18 @@ function runtime(native = true) {
       contexts.push(audio); return audio;
     }
   };
-  const wx = { loadSubpackage: options => requests.push(options) };
+  const wx = {}; // Real mini-program wx has no mini-game loadSubpackage API.
   function load(file) {
     if (modules.has(file)) return modules.get(file).exports;
     const module = { exports: {} }; modules.set(file, module);
     const code = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText;
-    const context = { module, exports: module.exports, require: id => id.startsWith('@/') ? load(path.join(root, id.slice(2) + '.ts')) : require(id), uni, console: { warn() {} }, setTimeout: fn => { timers.set(++id, fn); return id; }, clearTimeout: id => timers.delete(id) };
-    if (native) context.wx = wx;
+    const nativeRequire = id => id.startsWith('@/') ? load(path.join(root, id.slice(2) + '.ts')) : require(id);
+    nativeRequire.async = file => new Promise((resolve, reject) => requests.push({name: /\/([^/]+)\/static\//.exec(file)[1], file, success: resolve, fail: reject}));
+    const context = { module, exports: module.exports, require: nativeRequire, uni, console: { warn() {} }, setTimeout: fn => { timers.set(++id, fn); return id; }, clearTimeout: id => timers.delete(id) };
+    if (native) { context.wx = wx; context.getCurrentPages = () => [page]; }
     vm.runInNewContext(code, context, { filename: file }); return module.exports;
   }
-  return { service: name => load(path.join(root, 'services', name + '.ts')), requests, contexts, timers };
+  return { service: name => load(path.join(root, 'services', name + '.ts')), requests, contexts, timers, page };
 }
 const tick = () => new Promise(resolve => setImmediate(resolve));
 (async () => {
@@ -43,12 +46,18 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
   const retry = cache.resolveCachedMedia('/pkg-cars/static/vehicle-icons/car.jpg', 'image');
   assert.equal(r.requests.length, 3); r.requests.at(-1).success(); await retry;
 
-  const timeout = cache.resolveCachedMedia('/pkg-space/static/audio/sun.mp3', 'audio');
+  const timeout = cache.resolveCachedMedia('/pkg-reading/static/audio/phrases/test.mp3', 'audio');
   const timeoutCheck = assert.rejects(timeout, /timed out/); const late = r.requests.at(-1);
   [...r.timers.values()].forEach(fn => fn()); await timeoutCheck; late.success();
-  const afterTimeout = cache.resolveCachedMedia('/pkg-space/static/audio/sun.mp3', 'audio');
+  const afterTimeout = cache.resolveCachedMedia('/pkg-reading/static/audio/phrases/test.mp3', 'audio');
   assert.equal(r.requests.length, 5, 'late success after timeout cannot mark a package loaded');
   r.requests.at(-1).success(); await afterTimeout;
+
+  const own = runtime(); own.page.route = 'pkg-space/index/index';
+  assert.equal(await own.service('mediaCacheService').resolveCachedMedia('/pkg-space/static/textures/earth.jpg', 'image'), '/pkg-space/static/textures/earth.jpg');
+  assert.equal(own.requests.length, 0, 'own-package media must not call any loader');
+  assert.equal(own.timers.size, 0);
+  await assert.rejects(runtime().service('mediaCacheService').resolveCachedMedia('/pkg-space/static/textures/earth.jpg', 'image'), /Open this world/);
 
   const stopped = runtime(), audio = stopped.service('audioService');
   audio.playAudio(chant, 'colors'); audio.stopAudio(); stopped.requests[0].success(); await tick();
@@ -67,5 +76,5 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
 
   const h5 = runtime(false); assert.equal(await h5.service('mediaCacheService').resolveCachedMedia(chant, 'audio'), chant);
   assert.equal(h5.requests.length, 0);
-  console.log('Package checks passed: load deduplication, readiness, cached success, failed image retry, timeout/late callbacks, canceled playback, latest-request playback, replay recovery and H5 paths.');
+  console.log('Package checks passed: load deduplication, readiness, cached success, failed image retry, timeout/late callbacks, canceled playback, latest-request playback, replay recovery and H5 paths and actual mini-program API availability.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

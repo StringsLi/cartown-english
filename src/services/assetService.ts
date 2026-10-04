@@ -18,6 +18,9 @@ export function highResolutionAsset(path: string): string {
   if (typeof window !== "undefined" && cloudPath && /\.(?:png|jpe?g|webp|svg)$/i.test(path)) {
     return `/static/${cloudPath.replace(/^(books|topic-icons|cartown-logos)-original\//, "$1/")}`;
   }
+  if (typeof window !== "undefined" && cloudPath?.startsWith("audio-original/")) {
+    return `/static/audio/${cloudPath.slice("audio-original/".length)}`;
+  }
   // #endif
   return cloudPath ? `${CLOUD_FILE_PREFIX}${CLOUD_ASSET_ROOT}/${cloudPath}` : path;
 }

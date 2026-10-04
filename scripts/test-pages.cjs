@@ -161,3 +161,33 @@ for (const name of ['car-logos','car-colors','car-count','car-traffic','car-stor
   calls.at(-1).success(); flush(350);
 }
 console.log('Split-package checks passed: all six legacy links, query preservation, replace navigation, failed redirect retry and the legacy chant tab.');
+
+// Every route has a source page; exercise the actual space page scripts as well as data.
+for (const route of routes) assert.ok(fs.existsSync(path.join(root, route.slice(1) + '.vue')), 'Missing registered page: ' + route);
+audio.audioPlaybackState = require('vue').ref({ phase: 'idle' });
+const atlas = page('pkg-space/body', ['body', 'journey', 'index', 'invalidLink', 'move', 'openQuiz']);
+const atlasLoad = hooks.onLoad.at(-1);
+atlasLoad({ id: 'not-a-planet', series: 'giants' });
+assert.equal(atlas.body.value.id, 'sun'); assert.equal(atlas.invalidLink.value, true);
+assert.equal(atlas.journey.value.length, 10);
+const unchanged = calls.length; atlas.move(-1); assert.equal(calls.length, unchanged, 'First body cannot move before the journey');
+atlasLoad({ id: 'earth', series: 'home' }); assert.equal(atlas.journey.value.length, 3);
+atlas.move(1); assert.equal(calls.at(-1).url, '/pkg-space/body/index?id=moon&series=home'); calls.at(-1).success(); flush(350);
+atlasLoad({ id: 'moon', series: 'home' }); const end = calls.length; atlas.move(1); assert.equal(calls.length, end);
+atlas.openQuiz(); assert.equal(calls.at(-1).url, '/pkg-space/quiz/index?series=home'); calls.at(-1).success(); flush(350);
+const spaceQuiz = page('pkg-space/quiz', ['series', 'questions', 'question', 'questionIndex', 'solved', 'wrongId', 'finished', 'earnedStar', 'choose', 'next', 'restart']);
+hooks.onLoad.at(-1)({ series: ['malformed'] }); assert.equal(spaceQuiz.series.value.id, 'home');
+spaceQuiz.next(); assert.equal(spaceQuiz.questionIndex.value, 0);
+spaceQuiz.choose('invalid'); assert.equal(spaceQuiz.wrongId.value, '');
+const wrong = spaceQuiz.question.value.choices.find(c => c.id !== spaceQuiz.question.value.target.id);
+spaceQuiz.choose(wrong.id); assert.equal(spaceQuiz.solved.value, false); assert.equal(spaceQuiz.wrongId.value, wrong.id);
+for (let round = 0; round < 2; round++) {
+ for (let i = 0; i < spaceQuiz.questions.value.length; i++) {
+  const id = spaceQuiz.question.value.target.id; spaceQuiz.choose(id); spaceQuiz.choose(id);
+  assert.equal(spaceQuiz.solved.value, true); spaceQuiz.next();
+ }
+ assert.equal(spaceQuiz.finished.value, true); assert.equal(spaceQuiz.earnedStar.value, round === 0, 'Series reward is earned once');
+ spaceQuiz.next(); assert.equal(spaceQuiz.finished.value, true);
+ spaceQuiz.restart(); assert.equal(spaceQuiz.questionIndex.value, 0); assert.equal(spaceQuiz.solved.value, false); assert.equal(spaceQuiz.wrongId.value, '');
+}
+console.log('Space page checks passed: all registered sources, invalid links, scoped journeys, boundaries, wrong-answer retry, guarded next, completion and one reward per series.');

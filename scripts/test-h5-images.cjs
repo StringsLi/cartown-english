@@ -41,5 +41,27 @@ for (const source of ["/pkg-reading/static/word-pictures/excavator.jpg", "/stati
   assert.equal(web.highResolutionAsset(source), source);
   assert.equal(native.highResolutionAsset(source), source);
 }
-assert.match(web.highResolutionAsset("/static/audio/words/cat.mp3"), /^cloud:\/\//, "The image fix preserves audio routing");
+let audioChecked = 0;
+const audioRoot = path.join(root, "docs/source-assets/audio-original");
+function checkAudio(directory) {
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    const file = path.join(directory, entry.name);
+    if (entry.isDirectory()) { checkAudio(file); continue; }
+    if (!/\.(mp3|wav)$/i.test(entry.name)) continue;
+    const relative = path.relative(audioRoot, file).split(path.sep).join("/");
+    const url = `/static/audio/${relative}`;
+    const request = url.replace(/\.wav$/i, ".mp3");
+    assert.equal(web.highResolutionAsset(request), url, "Browser audio uses its served original");
+    assert.equal(web.highResolutionAsset(url), url, "Audio resolution is idempotent");
+    assert.match(native.highResolutionAsset(request), /^cloud:\/\//, "Mini-program audio retains CloudBase originals");
+    audioChecked++;
+  }
+}
+checkAudio(audioRoot);
+assert.ok(audioChecked > 300, "All original phrase, word and book recordings are covered");
+for (const source of ["/pkg-cars/static/audio/car-models/tesla.mp3", "/pkg-space/static/audio/earth.mp3", "/pkg-music/static/audio/colors.mp3"]) {
+  assert.equal(web.highResolutionAsset(source), source);
+  assert.equal(native.highResolutionAsset(source), source);
+}
+console.log(`Audio routing checks passed: ${audioChecked} served originals, native CloudBase and bundled audio preservation.`);
 console.log(`Image routing checks passed: ${checked} web originals, idempotent URLs, bundled images and native CloudBase preservation.`);

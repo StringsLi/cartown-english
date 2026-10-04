@@ -1,14 +1,14 @@
-declare const wx: {
-  loadSubpackage?: (options: { name: string; success(): void; fail(error: unknown): void }) => unknown;
-};
+declare const require: { async(path: string): Promise<unknown> };
 const loaded = new Set<string>();
 const pending = new Map<string, Promise<void>>();
 
-/** Local media may belong to a package other than the currently visible page. */
+/** Page navigation loads its own package. Only cross-package media needs an async require. */
 export async function ensureMediaPackage(source: string): Promise<void> {
   // #ifdef MP-WEIXIN
   const name = /^\/(pkg-[a-z]+)\/static\//.exec(source)?.[1];
-  if (!name || typeof wx === "undefined") return;
+  if (!name || typeof getCurrentPages !== "function") return;
+  const current = getCurrentPages().slice(-1)[0]?.route || "";
+  if (current.startsWith(name + "/")) { loaded.add(name); return; }
   if (loaded.has(name)) return;
   const existing = pending.get(name);
   if (existing) return existing;
@@ -23,8 +23,13 @@ export async function ensureMediaPackage(source: string): Promise<void> {
     };
     const timer = setTimeout(() => finish(new Error("Media package load timed out")), 15000);
     try {
-      if (!wx.loadSubpackage) throw new Error("Media package loading is unavailable");
-      wx.loadSubpackage({ name, success: () => finish(), fail: error => finish(error || new Error("Media package loading failed")) });
+      // Native require.async loads the package; static markers are copied verbatim.
+      let load: Promise<unknown>;
+      if (name === "pkg-cars") load = require.async("../pkg-cars/static/media-ready.js");
+      else if (name === "pkg-music") load = require.async("../pkg-music/static/media-ready.js");
+      else if (name === "pkg-reading") load = require.async("../pkg-reading/static/media-ready.js");
+      else throw new Error("Open this world before using its media");
+      void load.then(() => finish(), error => finish(error || new Error("Media package loading failed")));
     } catch (error) { finish(error); }
   });
   pending.set(name, request);
