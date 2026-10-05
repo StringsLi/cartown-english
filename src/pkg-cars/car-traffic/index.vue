@@ -1,7 +1,7 @@
 <template>
   <view class="page traffic-page">
     <PageTopbar section="听动作 · 一起做" fallback="/pages/vehicles/index" />
-    <AudioFeedback />
+    <AudioFeedback /><ReadAlongLink :source-key="'car-traffic-' + prompt.id" :title="'红绿灯动作'" :text="prompt.task" :audio="phraseAudioPath(prompt.task)" :return-url="'/pkg-cars/car-traffic/index'"  />
     <view class="traffic-hero soft-card">
       <text class="section-kicker">Traffic Light</text>
       <text class="page-title">红绿灯动作</text>
@@ -28,12 +28,14 @@
 </template>
 
 <script setup lang="ts">
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
 import AudioFeedback from "@/components/AudioFeedback.vue";
 import PageTopbar from "@/components/PageTopbar.vue";
 import { computed, ref } from "vue";
 import BigButton from "@/components/BigButton.vue";
 import PremiumVehicleImage from "@/components/PremiumVehicleImage.vue";
 import { trafficPrompts } from "@/mock/cartown";
+import { phraseAudioPath } from "@/services/audioCatalog";
 import { speakEnglish } from "@/services/audioService";
 import { addCartownStar, getCartownProgress, saveCartownProgress } from "@/services/cartownProgressService";
 import { usePageShare } from "@/composables/usePageShare";

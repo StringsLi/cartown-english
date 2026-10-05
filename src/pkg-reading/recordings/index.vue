@@ -25,10 +25,10 @@
       <!-- #endif -->
     </view>
     <view v-if="!records.length" class="soft-card empty-card"><text class="empty-icon">♫</text><text class="card-title">还没有录音小纪念</text><text class="card-note">读一本绘本，点“跟我读”，录完会自动保存到这里。</text><BigButton label="去选一本绘本 ›" variant="ghost" @tap="goBooks" /></view>
-    <view v-if="records.length" class="record-filter"><input v-model="search" aria-label="按句子查找录音" placeholder="按英文句子查找录音" /><scroll-view scroll-x class="book-filter"><button role="button" :aria-pressed="!selectedBook" :class="{'book-filter__active': !selectedBook}" @tap="selectedBook = ''">全部 {{ records.length }}</button><button role="button" v-for="choice in bookChoices" :key="choice.id" :aria-pressed="selectedBook === choice.id" :class="{'book-filter__active': selectedBook === choice.id}" @tap="selectedBook = choice.id">{{ choice.title }} · {{ choice.count }}</button></scroll-view><text class="card-note">找到 {{ visibleRecords.length }} 条声音小纪念</text></view>
+    <view v-if="records.length" class="record-filter"><input v-model="search" aria-label="按句子或学习标题查找录音" placeholder="按句子或学习标题查找录音" /><scroll-view scroll-x class="book-filter"><button role="button" :aria-pressed="!selectedBook" :class="{'book-filter__active': !selectedBook}" @tap="selectedBook = ''">全部 {{ records.length }}</button><button role="button" v-for="choice in bookChoices" :key="choice.id" :aria-pressed="selectedBook === choice.id" :class="{'book-filter__active': selectedBook === choice.id}" @tap="selectedBook = choice.id">{{ choice.title }} · {{ choice.count }}</button></scroll-view><text class="card-note">找到 {{ visibleRecords.length }} 条声音小纪念</text></view>
     <view v-if="records.length && !visibleRecords.length" class="soft-card empty-card"><text class="card-title">换个句子找找看</text><BigButton label="显示全部录音" variant="ghost" @tap="search = ''; selectedBook = ''" /></view>
     <view v-for="(record,index) in visibleRecords" :key="record.createdAt + ':' + record.sentence" class="soft-card record-card">
-      <text class="record-index">{{ String(index + 1).padStart(2,'0') }} · {{ getBookById(record.bookId)?.title || '跟读练习' }}</text>
+      <text class="record-index">{{ String(index + 1).padStart(2,'0') }} · {{ record.sourceTitle || getBookById(record.bookId)?.title || '跟读练习' }}</text>
       <text class="record-sentence">{{ record.sentence }}</text>
       <text class="card-note">{{ record.createdAt }}{{ record.durationSeconds ? ` · ${record.durationSeconds} 秒` : '' }}</text>
       <view class="action-row"><BigButton label="听我的录音 ▶" variant="ghost" :disabled="busy" @tap="listen(record)" /><BigButton label="导出音频 ↓" :disabled="busy" @tap="prepareAudio(record)" /></view>
@@ -62,8 +62,8 @@ function showExportError(error: unknown) {
   exportError.value = recordExportError(error); exportDetail.value = recordExportDetails(error);
   uni.pageScrollTo({ scrollTop: 0, duration: 250 });
 }
-const visibleRecords = computed(() => records.value.filter(r => (!selectedBook.value || r.bookId === selectedBook.value) && r.sentence.toLowerCase().includes(search.value.trim().toLowerCase())));
-const bookChoices = computed(() => [...new Set(records.value.map(r => r.bookId))].map(id => ({ id, title: getBookById(id)?.title || "其他跟读", count: records.value.filter(r => r.bookId === id).length })));
+const visibleRecords = computed(() => records.value.filter(r => (!selectedBook.value || r.bookId === selectedBook.value) && (r.sentence + " " + (r.sourceTitle || "")).toLowerCase().includes(search.value.trim().toLowerCase())));
+const bookChoices = computed(() => [...new Set(records.value.map(r => r.bookId))].map(id => ({ id, title: getBookById(id)?.title || records.value.find(r => r.bookId === id)?.sourceTitle || "其他跟读", count: records.value.filter(r => r.bookId === id).length })));
 const playbackNote = computed(() => ({ idle: "", loading: "正在准备声音…", playing: "正在播放这段声音 ♪", ended: "听完啦，可以再听一次。", error: "声音暂时播放不了，可以重试；文件缺失时可从备份恢复。" })[recordPlaybackState.value.phase]);
 onShow(() => { records.value = getRepeatRecords(); });
 onHide(stopRecordPlayback); onUnload(() => { pageAlive = false; stopRecordPlayback(); releasePreparedRecord(prepared.value); });

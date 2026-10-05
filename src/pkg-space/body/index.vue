@@ -6,7 +6,7 @@
     <view class="body-title"><text class="english-title">{{ body.name }}</text><text class="chinese-title">{{ body.nameCn }}</text><text v-if="progress.heardIds.includes(body.id)" class="heard-badge">✓ 已点读</text></view>
     <button role="button" class="listen-name" :aria-label="`听${body.name}的英文发音`" @tap="listenName">{{ audioPlaybackState.phase === 'loading' ? '正在准备声音…' : '▶ 听英文名字' }}</button>
     <text class="audio-note" role="status">{{ audioNote }}</text>
-    <view class="sentence-card"><text class="card-kicker">和我说一句 · SAY IT WITH ME</text><text class="sentence">{{ body.sentence }}</text><text class="sentence-cn">{{ body.sentenceCn }}</text><button role="button" @tap="listenSentence">▶ 听这句话</button></view>
+    <view class="sentence-card"><text class="card-kicker">和我说一句 · SAY IT WITH ME</text><text class="sentence">{{ body.sentence }}</text><text class="sentence-cn">{{ body.sentenceCn }}</text><button role="button" @tap="listenSentence">▶ 听这句话</button><ReadAlongLink :source-key="'space-' + body.id + '-sentence'" :title="body.nameCn + ' · ' + body.name" :text="body.sentence" :audio="body.sentenceAudio" :return-url="'/pkg-space/body/index?id=' + body.id + (scopedJourney ? '&series=' + seriesId : '')" :text-cn="body.sentenceCn" /></view>
     <view class="fact-card"><text class="card-title">这颗星球的小秘密</text><text class="fact-copy">{{ body.fact }}</text></view>
     <view class="family-card"><text class="card-title">离开屏幕，玩一下</text><text class="fact-copy">{{ body.parentTask }}</text></view>
     <view class="journey-controls"><button role="button" :disabled="index === 0" @tap="move(-1)">‹ 上一位</button><button role="button" :disabled="index === journey.length - 1" @tap="move(1)">下一位 ›</button></view>
@@ -15,6 +15,7 @@
   </view>
 </template>
 <script setup lang="ts">
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
 import { ref, computed } from 'vue';
 import { onLoad, onShow } from '@dcloudio/uni-app';
 import { backTo, navigate } from '@/services/navigationService';

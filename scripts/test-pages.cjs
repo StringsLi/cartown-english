@@ -85,6 +85,9 @@ assert.equal(cartown.getCartownProgress().stars, stars + 1); count.nextChallenge
 const game = page('pkg-reading/game', ['words', 'questionIndex', 'currentWord', 'chooseWord', 'nextQuestion', 'showResult', 'score']);
 for (let i = 0; i < game.words.value.length; i++) { game.chooseWord(game.currentWord.value.word); game.chooseWord(game.currentWord.value.word); game.nextQuestion(); }
 assert.equal(game.showResult.value, true); assert.equal(game.score.value, game.words.value.length);
+const countryPage = page('pkg-world/world', ['confirmCountryReading','selectedCountry']);
+const selectedId = countryPage.selectedCountry.value.id;countryPage.confirmCountryReading('country-'+selectedId);
+assert.ok(world.getCountryProgress([selectedId]).explored.includes(selectedId), 'Selected-card playback records the actual country');
 const progress = load(path.join(root, 'services/progressService.ts')); const records = progress.getLearningState().gameRecords.length;
 game.nextQuestion(); assert.equal(progress.getLearningState().gameRecords.length, records);
 for (const book of books.getBooks()) for (const word of books.getBookWords(book.id)) assert.ok(fs.existsSync(path.join(root, word.image.replace(/^\//, ''))), 'Offline word picture: ' + word.word);
@@ -160,6 +163,10 @@ for (const name of ['car-logos','car-colors','car-count','car-traffic','car-stor
   assert.equal(calls.at(-1).mode, 'redirectTo', 'Failed legacy redirects are retryable');
   calls.at(-1).success(); flush(350);
 }
+const oldRepeat = page('pkg-reading/repeat', ['open']);
+hooks.onLoad.at(-1)({bookId:'book_cat_001', sentence:'I see a cat. & 我读给你听'});
+assert.equal(calls.at(-1).url, '/pkg-speaking/record/index?bookId=book_cat_001&sentence='+encodeURIComponent('I see a cat. & 我读给你听'));
+assert.equal(calls.at(-1).mode,'redirectTo');calls.at(-1).success();flush(350);
 console.log('Split-package checks passed: all six legacy links, query preservation, replace navigation, failed redirect retry and the legacy chant tab.');
 
 // Every route has a source page; exercise the actual space page scripts as well as data.

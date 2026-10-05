@@ -52,7 +52,7 @@
     </view>
 
     <BigButton class="learn-listen" label="▶ 听车型名" @tap="playVehicleName" />
-    <view class="learn-actions">
+    <ReadAlongLink :source-key="'car-' + vehicle.id" :title="vehicle.brand + ' · ' + vehicle.model" :text="vehicle.sentence" :audio="vehicle.sentenceAudio" :return-url="'/pkg-cars/car-learn/index'" :listen="true" /><view class="learn-actions">
       <BigButton label="上一辆" variant="ghost" @tap="previousVehicle" />
       <BigButton label="下一辆" variant="warm" @tap="nextVehicle" />
     </view>
@@ -61,6 +61,7 @@
 </template>
 
 <script setup lang="ts">
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
 import AudioFeedback from "@/components/AudioFeedback.vue";
 import PageTopbar from "@/components/PageTopbar.vue";
 import { navigate } from "@/services/navigationService";

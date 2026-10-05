@@ -1,0 +1,362 @@
+[
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/01-geely-xingyuan.mp3",
+    "bytes": 17048
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/02-wuling-hongguang-miniev.mp3",
+    "bytes": 16866
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/03-tesla-model-y.mp3",
+    "bytes": 14671
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/04-byd-qin-plus.mp3",
+    "bytes": 16134
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/05-nissan-sylphy.mp3",
+    "bytes": 12660
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/06-byd-seagull.mp3",
+    "bytes": 13757
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/07-volkswagen-lavida.mp3",
+    "bytes": 14854
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/08-byd-qin-l.mp3",
+    "bytes": 15220
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/09-xiaomi-su7.mp3",
+    "bytes": 18328
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/10-volkswagen-sagitar.mp3",
+    "bytes": 16866
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/11-geely-xingyue-l.mp3",
+    "bytes": 15403
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/12-geely-boyue-l.mp3",
+    "bytes": 16317
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/13-volkswagen-passat.mp3",
+    "bytes": 16866
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/14-byd-seal-06.mp3",
+    "bytes": 25826
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/15-toyota-camry.mp3",
+    "bytes": 13026
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/16-toyota-rav4.mp3",
+    "bytes": 17597
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/17-volkswagen-tiguan-l.mp3",
+    "bytes": 18694
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/18-volkswagen-magotan.mp3",
+    "bytes": 15220
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/19-tesla-model-3.mp3",
+    "bytes": 15403
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/20-byd-song-plus.mp3",
+    "bytes": 16134
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/21-byd-yuan-up.mp3",
+    "bytes": 13940
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/22-toyota-frontlander.mp3",
+    "bytes": 13208
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/23-byd-song-pro.mp3",
+    "bytes": 15403
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/24-chery-tiggo-8.mp3",
+    "bytes": 13940
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/25-changan-cs75-plus.mp3",
+    "bytes": 24180
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/26-xpeng-mona-m03.mp3",
+    "bytes": 19791
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/27-toyota-corolla-cross.mp3",
+    "bytes": 17963
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/28-volkswagen-tayron.mp3",
+    "bytes": 15768
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/29-honda-cr-v.mp3",
+    "bytes": 14123
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/30-audi-a6l.mp3",
+    "bytes": 17414
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/31-changan-eado.mp3",
+    "bytes": 11928
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/32-li-auto-l6.mp3",
+    "bytes": 18877
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/33-hongqi-h5.mp3",
+    "bytes": 16317
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/34-changan-lumin.mp3",
+    "bytes": 11746
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/35-geely-panda-mini.mp3",
+    "bytes": 15220
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/36-byd-dolphin.mp3",
+    "bytes": 13391
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/37-bmw-3-series.mp3",
+    "bytes": 22900
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/38-xiaomi-yu7.mp3",
+    "bytes": 17963
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/39-honda-accord.mp3",
+    "bytes": 11746
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/40-aito-m8.mp3",
+    "bytes": 14488
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/41-haval-big-dog.mp3",
+    "bytes": 13940
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/42-volkswagen-tharu.mp3",
+    "bytes": 15586
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/43-geely-xingrui.mp3",
+    "bytes": 13940
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/44-chery-arrizo-8.mp3",
+    "bytes": 15220
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/45-byd-song-l-dmi.mp3",
+    "bytes": 23448
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/46-wuling-bingo.mp3",
+    "bytes": 10283
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/47-byd-sealion-06.mp3",
+    "bytes": 27837
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/48-byd-yuan-plus.mp3",
+    "bytes": 16500
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/49-leapmotor-c10.mp3",
+    "bytes": 14123
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/car-sentences/50-geely-binyue.mp3",
+    "bytes": 11746
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-phrases/actions.mp3",
+    "bytes": 10648
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-phrases/animals.mp3",
+    "bytes": 9551
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-phrases/colors.mp3",
+    "bytes": 11746
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-phrases/feelings.mp3",
+    "bytes": 8820
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-phrases/food.mp3",
+    "bytes": 10283
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-phrases/numbers.mp3",
+    "bytes": 11014
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-phrases/shapes.mp3",
+    "bytes": 10831
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-phrases/weather.mp3",
+    "bytes": 10466
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/03eefa34.mp3",
+    "bytes": 7357
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/09ed36fd.mp3",
+    "bytes": 11380
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/101ab2fa.mp3",
+    "bytes": 10283
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/20ae9178.mp3",
+    "bytes": 10283
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/2e1357bb.mp3",
+    "bytes": 13574
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/38f14ecf.mp3",
+    "bytes": 13757
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/40465ac7.mp3",
+    "bytes": 12111
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/423a15b1.mp3",
+    "bytes": 10466
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/56de03c8.mp3",
+    "bytes": 9551
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/6fe019d9.mp3",
+    "bytes": 7723
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/7abd61b6.mp3",
+    "bytes": 9734
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/7b2c97e0.mp3",
+    "bytes": 15403
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/873cb30d.mp3",
+    "bytes": 8088
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/a6d05b64.mp3",
+    "bytes": 12843
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/a9753a42.mp3",
+    "bytes": 9368
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/afc8675f.mp3",
+    "bytes": 7906
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/affef82e.mp3",
+    "bytes": 10466
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/b8a97205.mp3",
+    "bytes": 13940
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/c398a13c.mp3",
+    "bytes": 11746
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/c3a7abc6.mp3",
+    "bytes": 11746
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/c40e60a8.mp3",
+    "bytes": 8088
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/cdabebf7.mp3",
+    "bytes": 13026
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/d4393a9c.mp3",
+    "bytes": 13208
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/d9a2f84c.mp3",
+    "bytes": 12294
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/dd064de8.mp3",
+    "bytes": 13391
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/dd38e5de.mp3",
+    "bytes": 8820
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/e19de83a.mp3",
+    "bytes": 13026
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/ebf0949e.mp3",
+    "bytes": 9368
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/f36d2aa7.mp3",
+    "bytes": 9917
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/f504db66.mp3",
+    "bytes": 11014
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/f9c4f14a.mp3",
+    "bytes": 12111
+  },
+  {
+    "file": "src/pkg-speaking/static/audio/parent-questions/ff082aee.mp3",
+    "bytes": 8271
+  }
+]

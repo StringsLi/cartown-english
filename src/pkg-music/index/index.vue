@@ -10,7 +10,7 @@
       <view v-for="topic in playgroundTopics" :key="`chant-${topic.id}`" class="chant-card" :style="{ backgroundColor: topic.tint }">
         <view class="chant-card__heading"><image class="chant-card__art" :src="chantArt(topic)" mode="aspectFit" /><view><text class="chant-card__title">{{ topic.chantTitle }}</text><text class="chant-card__tag">{{ topic.english }} · 节奏跟读</text></view><button role="button" class="round-play" :aria-label="`播放${topic.chantTitle}`" @tap="playChant(topic.chantAudio, topic.chantTitle)">▶</button></view>
         <text v-for="line in topic.chantLyrics" :key="line" class="chant-card__lyric">{{ line }}</text>
-        <button role="button" class="chant-card__link" @tap="openTopic(topic.id)">去认识这首歌的小伙伴 ›</button>
+        <ReadAlongLink :source-key="'chant-' + topic.id" :title="topic.chantTitle" :text="topic.chantLyrics.join(' ')" :audio="topic.chantAudio" :return-url="'/pkg-music/index/index'"  /><button role="button" class="chant-card__link" @tap="openTopic(topic.id)">去认识这首歌的小伙伴 ›</button>
       </view>
       <button role="button" class="stop-button" @tap="stopAudio">■ 停止播放</button>
     </view>
@@ -21,6 +21,7 @@
   </view>
 </template>
 <script setup lang="ts">
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
 import AudioFeedback from "@/components/AudioFeedback.vue";
 import BottomNav from "@/components/BottomNav.vue";
 import { playgroundTopics, type PlaygroundTopic, type PlaygroundTopicId } from "@/mock/playground";

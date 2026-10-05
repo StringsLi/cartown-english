@@ -21,7 +21,7 @@
       <text class="logo-learn__name">{{ activeLogo.name }}</text>
       <text class="logo-learn__zh">{{ activeLogo.zh }} · {{ activeLogo.country }}</text>
       <text class="logo-learn__cue">{{ activeLogo.cue }}</text>
-      <view class="logo-learn__actions">
+      <ReadAlongLink :source-key="'logo-' + activeLogo.id" :title="'车标 · ' + activeLogo.zh" :text="activeLogo.name" :audio="phraseAudioPath(activeLogo.name)" :return-url="'/pkg-cars/car-logos/index'"  /><view class="logo-learn__actions">
         <BigButton label="听名字" @tap="speakLogo(activeLogo.name)" />
         <BigButton label="下一个" variant="warm" @tap="nextLogo" />
       </view>
@@ -54,6 +54,7 @@
 </template>
 
 <script setup lang="ts">
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
 import AudioFeedback from "@/components/AudioFeedback.vue";
 import PageTopbar from "@/components/PageTopbar.vue";
 import { shuffleChoices } from "@/utils/practice";
@@ -61,6 +62,7 @@ import { computed, ref } from "vue";
 import BigButton from "@/components/BigButton.vue";
 import CartownLogoBadge from "@/components/CartownLogoBadge.vue";
 import { carLogos } from "@/mock/cartown";
+import { phraseAudioPath } from "@/services/audioCatalog";
 import { speakEnglish } from "@/services/audioService";
 import { addCartownStar, getCartownProgress, saveCartownProgress } from "@/services/cartownProgressService";
 import { usePageShare } from "@/composables/usePageShare";

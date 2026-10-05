@@ -12,6 +12,7 @@ type ArchiveAudio =
   | { encoding: "unavailable" };
 
 interface RepeatArchiveRecord {
+  sourceTitle?: string;
   bookId: string;
   sentence: string;
   durationSeconds?: number;
@@ -89,6 +90,7 @@ export async function restoreArchive(content: string, existingRecords: RepeatRec
     restored.push({
       userId: "local_child",
       bookId: record.bookId,
+      ...(typeof record.sourceTitle === "string" && record.sourceTitle.trim() ? { sourceTitle: record.sourceTitle.trim().slice(0, 80) } : {}),
       sentence: record.sentence,
       audioUrl,
       durationSeconds: typeof record.durationSeconds === "number" && Number.isFinite(record.durationSeconds) ? Math.max(1, Math.min(60, record.durationSeconds)) : undefined,
@@ -109,6 +111,7 @@ export async function restoreArchive(content: string, existingRecords: RepeatRec
 async function toArchiveRecord(record: RepeatRecord): Promise<RepeatArchiveRecord> {
   return {
     bookId: record.bookId,
+      ...(typeof record.sourceTitle === "string" && record.sourceTitle.trim() ? { sourceTitle: record.sourceTitle.trim().slice(0, 80) } : {}),
     sentence: record.sentence,
     durationSeconds: record.durationSeconds,
     createdAt: record.createdAt,

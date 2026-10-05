@@ -23,16 +23,17 @@
     <view class="goal-card soft-card">
       <text class="goal-card__label">今日学习目标</text>
       <text class="goal-card__sentence">{{ book.targetSentence }}</text>
+      <ReadAlongLink :source-key="'book-target-' + book.id" :title="book.title" :text="book.targetSentence" :audio="goalPage.audio" :return-url="'/pkg-reading/book-detail/index?bookId=' + book.id" v-if="goalPage" :book-id="book.id" :listen="true" :text-cn="goalPage.sentenceCn" />
       <text class="goal-card__hint">先听一遍，再和孩子一起慢慢读。</text>
     </view>
 
     <text class="section-title">核心单词</text>
     <view class="detail-words soft-card">
-      <WordChip v-for="word in words" :key="word.id" :word="word.word" :meaning="word.meaning" />
+      <view v-for="word in words" :key="word.id" class="detail-word"><WordChip :word="word.word" :meaning="word.meaning" /><ReadAlongLink :source-key="'book-word-' + word.id" :title="book.title + ' · ' + word.word" :text="word.word" :audio="word.audio" :return-url="'/pkg-reading/book-detail/index?bookId=' + book.id" :listen="true" :book-id="book.id" :text-cn="word.meaning" /></view>
     </view>
 
     <text class="section-title">陪读提示</text>
-    <ParentTipCard class="detail-tip" :title="parentTip.title" :questions="parentTip.questions" :activity="parentTip.activity" compact />
+    <ParentTipCard class="detail-tip" :title="parentTip.title" :questions="parentTip.questions" :activity="parentTip.activity" :book-id="book.id" :return-url="'/pkg-reading/book-detail/index?bookId=' + book.id" compact />
 
     <view class="detail-footer">
       <BigButton :label="readingButtonLabel" @tap="startReading" />
@@ -42,6 +43,7 @@
 </template>
 
 <script setup lang="ts">
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
 import AudioFeedback from "@/components/AudioFeedback.vue";
 import PageTopbar from "@/components/PageTopbar.vue";
 import { navigate } from "@/services/navigationService";
@@ -52,7 +54,7 @@ import { onLoad, onShow } from "@dcloudio/uni-app";
 import BigButton from "@/components/BigButton.vue";
 import ParentTipCard from "@/components/ParentTipCard.vue";
 import WordChip from "@/components/WordChip.vue";
-import { resolveBookId, getBookById, getBookWords, getParentTip, getThemeLabel, getTodayBook } from "@/services/bookService";
+import { resolveBookId, getBookById, getBookWords, getBookPages, getParentTip, getThemeLabel, getTodayBook } from "@/services/bookService";
 import { getProgress } from "@/services/progressService";
 import type { UserProgress } from "@/types/book";
 import { usePageShare } from "@/composables/usePageShare";
@@ -60,6 +62,7 @@ import { usePageShare } from "@/composables/usePageShare";
 usePageShare();
 const bookId = ref(getTodayBook().id);
 const book = computed(() => getBookById(bookId.value) ?? getTodayBook());
+const goalPage = computed(() => getBookPages(book.value.id).find(page => page.sentence === book.value.targetSentence));
 const words = computed(() => getBookWords(book.value.id));
 const parentTip = computed(() => getParentTip(book.value.id));
 const themeLabel = computed(() => getThemeLabel(book.value.theme));

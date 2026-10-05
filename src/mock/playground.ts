@@ -21,6 +21,7 @@ export interface PlaygroundTopic {
   accent: string;
   items: PlaygroundItem[];
   parentPhrase: string;
+  parentAudio: string;
   parentTip: string;
   offlineTask: string;
   storyTitle: string;
@@ -53,6 +54,7 @@ export const playgroundTopics: PlaygroundTopic[] = [
       { id: "purple", word: "purple", label: "紫色", symbol: "🚗", prompt: "Find something purple.", audio: `${audioRoot}/colors-purple.mp3`, wordAudio: `${audioRoot}/colors-purple-word.mp3`, art: `${artRoot}/purple-pickup.png` }
     ],
     parentPhrase: "Find something blue!",
+    parentAudio: "/pkg-speaking/static/audio/parent-phrases/colors.mp3",
     parentTip: "在家里找一件蓝色的东西，找到后一起说 “I found it!”。",
     offlineTask: "找两件蓝色物品，和家长比一比谁先找到。",
     storyTitle: "车车的彩色旅程",
@@ -79,6 +81,7 @@ export const playgroundTopics: PlaygroundTopic[] = [
       { id: "dog", word: "dog", label: "小狗", symbol: "🐶", prompt: "Find the dog.", audio: `${audioRoot}/animals-dog.mp3`, wordAudio: `${audioRoot}/animals-dog-word.mp3`, art: `${artRoot}/animals-dog.png` }
     ],
     parentPhrase: "Where is the lion?",
+    parentAudio: "/pkg-speaking/static/audio/parent-phrases/animals.mp3",
     parentTip: "拿玩具或绘本里的动物来玩，找到后模仿它的动作或叫声。",
     offlineTask: "找一只玩具动物，用英语说出名字，再学它走路。",
     storyTitle: "和小狮子说你好",
@@ -105,6 +108,7 @@ export const playgroundTopics: PlaygroundTopic[] = [
       { id: "strawberry", word: "strawberry", label: "草莓", symbol: "🍓", prompt: "Find the strawberry.", audio: `${audioRoot}/food-strawberry.mp3`, wordAudio: `${audioRoot}/food-strawberry-word.mp3`, art: `${artRoot}/food-strawberry.png` }
     ],
     parentPhrase: "Do you like apples?",
+    parentAudio: "/pkg-speaking/static/audio/parent-phrases/food.mp3",
     parentTip: "吃水果时问一问，孩子可以用点头、摇头或 “Yes!” 回答。",
     offlineTask: "点心时间指一指真正的水果，说 “I like apples.”。",
     storyTitle: "苹果点心时间",
@@ -131,6 +135,7 @@ export const playgroundTopics: PlaygroundTopic[] = [
       { id: "dance", word: "dance", label: "跳舞", symbol: "💃", prompt: "Dance with me!", audio: `${audioRoot}/actions-dance.mp3`, wordAudio: `${audioRoot}/actions-dance-word.mp3`, art: `${artRoot}/actions-dance.png` }
     ],
     parentPhrase: "Clap your hands!",
+    parentAudio: "/pkg-speaking/static/audio/parent-phrases/actions.mp3",
     parentTip: "点完图片，全家一起做动作。听懂并做出来就很好。",
     offlineTask: "家长随机说两个动作，让孩子做给你看，然后交换角色。",
     storyTitle: "小小运动会",
@@ -157,6 +162,7 @@ export const playgroundTopics: PlaygroundTopic[] = [
       { id: "five", word: "five", label: "五", symbol: "5", prompt: "Find five stars.", audio: `${audioRoot}/numbers-five.mp3`, wordAudio: `${audioRoot}/numbers-five-word.mp3`, art: `${artRoot}/numbers-five.png` }
     ],
     parentPhrase: "How many stars?",
+    parentAudio: "/pkg-speaking/static/audio/parent-phrases/numbers.mp3",
     parentTip: "先用手指或积木数一数，再慢慢说数字。可以让孩子给你一个、两个或三个积木。",
     offlineTask: "摆出五个积木，家长说一个数字，孩子取出对应数量。",
     storyTitle: "五颗星星",
@@ -183,6 +189,7 @@ export const playgroundTopics: PlaygroundTopic[] = [
       { id: "heart", word: "heart", label: "心形", symbol: "♥", prompt: "Find the heart.", audio: `${audioRoot}/shapes-heart.mp3`, wordAudio: `${audioRoot}/shapes-heart-word.mp3`, art: `${artRoot}/shapes-heart.png` }
     ],
     parentPhrase: "Can you find a circle?",
+    parentAudio: "/pkg-speaking/static/audio/parent-phrases/shapes.mp3",
     parentTip: "从杯口、窗户、积木里找形状。孩子指对了就可以，不急着让他读出来。",
     offlineTask: "在家里找一个圆形和一个正方形，再用手比一个心形。",
     storyTitle: "形状搭搭屋",
@@ -209,6 +216,7 @@ export const playgroundTopics: PlaygroundTopic[] = [
       { id: "windy", word: "windy", label: "刮风", symbol: "🌬️", prompt: "Find the windy sky.", audio: `${audioRoot}/weather-windy.mp3`, wordAudio: `${audioRoot}/weather-windy-word.mp3`, art: `${artRoot}/weather-windy.png` }
     ],
     parentPhrase: "Is it sunny today?",
+    parentAudio: "/pkg-speaking/static/audio/parent-phrases/weather.mp3",
     parentTip: "出门前一起看窗外。用一个天气词描述今天的天空，再选适合的衣服。",
     offlineTask: "站在窗前说说天气；晴天比太阳，雨天比撑伞，刮风时吹一口气。",
     storyTitle: "小车的雨天旅行",
@@ -235,6 +243,7 @@ export const playgroundTopics: PlaygroundTopic[] = [
       { id: "calm", word: "calm", label: "平静", symbol: "😌", prompt: "Find the calm face.", audio: `${audioRoot}/feelings-calm.mp3`, wordAudio: `${audioRoot}/feelings-calm-word.mp3`, art: `${artRoot}/feelings-calm.png` }
     ],
     parentPhrase: "How do you feel?",
+    parentAudio: "/pkg-speaking/static/audio/parent-phrases/feelings.mp3",
     parentTip: "做一个表情，请孩子选相同的脸。所有心情都可以被说出来，难过时可以抱一抱。",
     offlineTask: "对着镜子做开心、困倦和平静的表情，用一个英语词说说现在的心情。",
     storyTitle: "一个温暖的拥抱",

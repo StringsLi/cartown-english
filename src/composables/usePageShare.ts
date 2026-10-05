@@ -11,12 +11,14 @@ interface RuntimePage {
 }
 
 interface PageShareOptions {
+  path?: () => string;
   title?: string | (() => string);
 }
 
 const HOME_ROUTE = "pages/index/index";
 
 const pageShareTitles: Record<string, string> = {
+  "pkg-speaking/record/index": "跟我读一句，一起练习自然表达",
   "pkg-music/index/index": "小小儿歌电台，和孩子一起念、一起动",
   "pkg-space/index/index": "太阳系小旅行，一起认识太阳和八大行星",
   "pkg-space/body/index": "听一听，认识我们的太空邻居",
@@ -80,8 +82,9 @@ export function usePageShare(options: PageShareOptions = {}) {
     // #ifdef MP-WEIXIN
     uni.showShareMenu({
       withShareTicket: true,
-      menus: ["shareAppMessage", "shareTimeline"]
+      menus: options.path ? ["shareAppMessage"] : ["shareAppMessage", "shareTimeline"]
     });
+    if (options.path) uni.hideShareMenu({ hideShareItems: ["shareTimeline"], menus: ["shareTimeline"] });
     // #endif
   });
 
@@ -92,7 +95,7 @@ export function usePageShare(options: PageShareOptions = {}) {
 
     return {
       title: resolveTitle(options),
-      path: `/${route}${query ? `?${query}` : ""}`
+      path: options.path ? options.path() : `/${route}${query ? `?${query}` : ""}`
     };
   });
 

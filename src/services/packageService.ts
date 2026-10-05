@@ -28,6 +28,10 @@ export async function ensureMediaPackage(source: string): Promise<void> {
       if (name === "pkg-cars") load = require.async("../pkg-cars/static/media-ready.js");
       else if (name === "pkg-music") load = require.async("../pkg-music/static/media-ready.js");
       else if (name === "pkg-reading") load = require.async("../pkg-reading/static/media-ready.js");
+      else if (name === "pkg-learning") load = require.async("../pkg-learning/static/media-ready.js");
+      else if (name === "pkg-space") load = require.async("../pkg-space/static/media-ready.js");
+      else if (name === "pkg-adventure") load = require.async("../pkg-adventure/static/media-ready.js");
+      else if (name === "pkg-speaking") load = require.async("../pkg-speaking/static/media-ready.js");
       else throw new Error("Open this world before using its media");
       void load.then(() => finish(), error => finish(error || new Error("Media package loading failed")));
     } catch (error) { finish(error); }

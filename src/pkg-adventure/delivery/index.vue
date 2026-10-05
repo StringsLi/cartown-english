@@ -11,7 +11,7 @@
       <text class="adventure-prompt">{{ currentPhrase.text }}</text>
       <button role="button" class="adventure-listen" @tap="listen"><text>▶</text><text>{{ step === 0 ? '听选车提示' : step === 1 ? '听水果订单' : '听目的地' }}</text></button>
 
-      <view v-if="step === 0" class="delivery-choices">
+      <ReadAlongLink :source-key="'delivery-' + mission.id + '-' + step" :title="mission.title" :text="currentPhrase.text" :audio="currentPhrase.audio" :return-url="'/pkg-adventure/delivery/index?mission=' + mission.id"  /><view v-if="step === 0" class="delivery-choices">
         <button role="button" v-for="car in deliveryCars" :key="car.id" class="delivery-choice car-choice" :aria-label="car.label" @tap="chooseCar(car.id)"><image :src="car.art" mode="aspectFit" /><text>{{ car.label }}</text><text class="car-choice__model">{{ car.model }}</text></button>
       </view>
       <view v-else-if="step === 1">
@@ -29,13 +29,14 @@
     <view v-else class="adventure-card adventure-complete">
       <text class="adventure-complete__star">★</text><text class="adventure-complete__title">送到啦！</text><text class="adventure-complete__note">{{ earned ? '收集一枚送达印章，获得 1 颗小星星。' : '又完成了一趟送货，老朋友很开心。' }}</text>
       <button role="button" class="adventure-listen" @tap="playPhrase('hereYouAre')">▶ Here you are!</button>
-      <view class="adventure-offline"><text>拿出玩具，接着玩</text><text>{{ mission.offlineTask }}</text></view>
+      <ReadAlongLink :source-key="'delivery-' + mission.id + '-done'" :title="mission.title" :text="adventurePhrases.hereYouAre.text" :audio="adventurePhrases.hereYouAre.audio" :return-url="'/pkg-adventure/delivery/index?mission=' + mission.id"  /><view class="adventure-offline"><text>拿出玩具，接着玩</text><text>{{ mission.offlineTask }}</text></view>
       <button role="button" v-if="nextMission" class="adventure-primary next-mission" @tap="openNext">下一趟 · {{ nextMission.title }}</button>
       <button role="button" class="adventure-text-button" @tap="restart">再送一次</button><button role="button" class="adventure-text-button" @tap="backToAdventure">返回小冒险</button>
     </view>
   </view>
 </template>
 <script setup lang="ts">
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
 import { navigate } from "@/services/navigationService";
 import { computed, ref } from "vue";
 import { onLoad, onHide, onUnload } from "@dcloudio/uni-app";

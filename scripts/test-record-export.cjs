@@ -14,7 +14,7 @@ function fixture(platform) {
  }
  return {load,files,shares,links,setWriteFailure:v=>writeFails=v,setShareError:v=>shareError=v,setGestureRequired:v=>requireGesture=v,withGesture:fn=>{inGesture=true;try{return fn();}finally{inGesture=false;}}};
 }
-const record=(audioUrl="/saved/voice.mp3")=>({userId:"local_child",bookId:"mom",sentence:"Hello, Mom!",createdAt:"2026-10-03 10:00:00",durationSeconds:2,audioUrl});
+const record=(audioUrl="/saved/voice.mp3")=>({userId:"local_child",bookId:"mom",sourceTitle:"亲子小剧场",sentence:"Hello, Mom!",createdAt:"2026-10-03 10:00:00",durationSeconds:2,audioUrl});
 (async()=>{
  const env=fixture("MP-WEIXIN"),archive=env.load("recordArchiveService"),output=env.load("recordExportService");
  const file=await archive.prepareRepeatRecordAudio(record());assert.ok(file.fileName.endsWith(".mp3"));assert.equal(env.files.get(file.filePath).toString(),"ID3-original-audio");assert.equal(env.shares.length,0);
@@ -43,8 +43,8 @@ const record=(audioUrl="/saved/voice.mp3")=>({userId:"local_child",bookId:"mom",
  env.setGestureRequired(false);
  const backup=await archive.prepareRepeatRecordArchive([record(),record("/missing.mp3"),{...record("/saved/voice.wav"),sentence:"Hello, Dad!"}]);assert.equal(backup.count,2);assert.equal(backup.skipped,1);
  const secondFile=await archive.prepareRepeatRecordAudio(record());assert.notEqual(secondFile.filePath,file.filePath);
- const json=env.files.get(backup.filePath).toString(),parsed=JSON.parse(json);assert.equal(parsed.records[0].audio.value,Buffer.from("ID3-original-audio").toString("base64"));
- const restored=await archive.restoreArchive(json);assert.equal(restored.records.length,2);assert.notEqual(restored.records[0].audioUrl,restored.records[1].audioUrl);assert.ok(restored.records[1].audioUrl.endsWith(".wav"));assert.equal(env.files.get(restored.records[0].audioUrl).toString(),"ID3-original-audio");
+ const json=env.files.get(backup.filePath).toString(),parsed=JSON.parse(json);assert.equal(parsed.records[0].sourceTitle,"亲子小剧场");assert.equal(parsed.records[0].audio.value,Buffer.from("ID3-original-audio").toString("base64"));
+ const restored=await archive.restoreArchive(json);assert.equal(restored.records.length,2);assert.equal(restored.records[0].sourceTitle,"亲子小剧场");assert.notEqual(restored.records[0].audioUrl,restored.records[1].audioUrl);assert.ok(restored.records[1].audioUrl.endsWith(".wav"));assert.equal(env.files.get(restored.records[0].audioUrl).toString(),"ID3-original-audio");
  const fileCount=env.files.size;const duplicate=await archive.restoreArchive(json,restored.records);assert.equal(duplicate.duplicates,2);assert.equal(duplicate.records.length,0);assert.equal(env.files.size,fileCount);
  env.files.delete(restored.records[0].audioUrl);const repair=await archive.restoreArchive(json,restored.records);assert.equal(repair.duplicates,1);assert.equal(repair.records.length,1);assert.equal(env.files.get(repair.records[0].audioUrl).toString(),"ID3-original-audio");
  const repeated=JSON.parse(json);repeated.records=[...repeated.records,...repeated.records];const unique=await archive.restoreArchive(JSON.stringify(repeated));assert.equal(unique.duplicates,2);assert.equal(unique.records.length,2);

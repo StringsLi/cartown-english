@@ -10,6 +10,7 @@ export type BestSellingCar = {
   image: string;
   audio: string;
   sentence: string;
+  sentenceAudio: string;
 };
 
 const imageRoot = "/pkg-cars/static/best-selling-cars";
@@ -76,5 +77,6 @@ export const bestSellingCars: BestSellingCar[] = [
   powertrain: powertrain as string,
   image: `${imageRoot}/${id}.jpg`,
   audio: `/static/audio/car-models/${id}.mp3`,
+  sentenceAudio: `/pkg-speaking/static/audio/car-sentences/${id}.mp3`,
   sentence: `This is the ${englishName}.`
 }));

@@ -18,7 +18,7 @@
       <view class="speaker-row"><image :src="`${adventureArtRoot}/actions-wave.png`" mode="aspectFit" /><view><text>{{ scene.roles[currentLine.role] }}</text><text>{{ currentLine.role === childRole ? '孩子的角色' : '家长的角色' }}</text></view><text class="speaker-row__tag">{{ currentLine.role === childRole ? 'YOUR TURN' : 'TOGETHER' }}</text></view>
       <view class="dialog-bubble" :class="{ 'dialog-bubble--child': currentLine.role === childRole }"><text>{{ currentPhrase.text }}</text><text v-if="showTranslation" class="dialog-bubble__translation">{{ currentLine.translation }}</text></view>
       <button role="button" class="adventure-listen" @tap="listenCurrent">▶ 听这句，跟着说</button>
-      <text class="dialog-action">{{ currentLine.action }}</text>
+      <ReadAlongLink :source-key="'roleplay-' + scene.id + '-' + lineIndex" :title="scene.title" :text="currentPhrase.text" :audio="currentPhrase.audio" :return-url="'/pkg-adventure/roleplay/index?scene=' + scene.id" :text-cn="currentLine.translation" /><text class="dialog-action">{{ currentLine.action }}</text>
       <button role="button" class="translation-toggle" :aria-expanded="showTranslation" @tap="showTranslation = !showTranslation">{{ showTranslation ? '收起中文提示' : '家长看中文提示' }} {{ showTranslation ? '⌃' : '⌄' }}</button>
       <button role="button" class="adventure-primary dialog-next" @tap="nextLine">{{ nextLabel }}</button>
       <text class="dialog-note">一起说或做动作，准备好了再下一句。</text>
@@ -36,6 +36,7 @@
   </view>
 </template>
 <script setup lang="ts">
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
 import { computed, ref } from "vue";
 import { onLoad, onHide, onUnload } from "@dcloudio/uni-app";
 import AudioFeedback from "@/components/AudioFeedback.vue";

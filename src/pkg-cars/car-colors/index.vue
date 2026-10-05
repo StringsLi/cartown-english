@@ -1,7 +1,7 @@
 <template>
   <view class="page car-page">
     <PageTopbar section="听颜色 · 找小车" fallback="/pages/vehicles/index" />
-    <AudioFeedback />
+    <AudioFeedback /><ReadAlongLink :source-key="'car-colors-' + target.id" :title="'颜色汽车'" :text="target.task" :audio="phraseAudioPath(target.task)" :return-url="'/pkg-cars/car-colors/index'"  />
     <view class="car-hero soft-card">
       <text class="section-kicker">Color Cars</text>
       <text class="page-title">颜色汽车</text>
@@ -27,6 +27,7 @@
 </template>
 
 <script setup lang="ts">
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
 import AudioFeedback from "@/components/AudioFeedback.vue";
 import PageTopbar from "@/components/PageTopbar.vue";
 import { shuffleChoices } from "@/utils/practice";
@@ -34,6 +35,7 @@ import { computed, ref } from "vue";
 import BigButton from "@/components/BigButton.vue";
 import PremiumVehicleImage from "@/components/PremiumVehicleImage.vue";
 import { colorCars } from "@/mock/cartown";
+import { phraseAudioPath } from "@/services/audioCatalog";
 import { speakEnglish } from "@/services/audioService";
 import { addCartownStar, getCartownProgress, saveCartownProgress } from "@/services/cartownProgressService";
 import { usePageShare } from "@/composables/usePageShare";

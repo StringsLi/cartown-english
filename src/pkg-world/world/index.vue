@@ -66,6 +66,7 @@
       </view>
     </view>
 
+    <view class="country-reading soft-card"><CachedImage class="country-reading__image" :src="countryImage(selectedCountry)" :alt="selectedCountry.word === 'China' && countryView === 'map' ? '中国地图，含台湾省轮廓' : selectedCountry.word" mode="aspectFit" /><text class="country-reading__title">{{ selectedCountry.word }}</text><text class="country-reading__sentence">{{ selectedCountry.sentence }}</text><text v-if="selectedCountry.word === 'China' && countryView === 'map'" class="country-reading__hint">中国 · 含台湾省轮廓</text><ReadAlongLink :source-key="'country-' + selectedCountry.id" :title="'世界探索 · ' + selectedCountry.word" :text="selectedCountry.word + '. ' + selectedCountry.sentence" :audio="phraseAudioPath(selectedCountry.word + '. ' + selectedCountry.sentence)" :return-url="'/pkg-world/world/index'" :listen="true" @played="confirmCountryReading" /></view>
     <view class="country-grid">
       <button role="button"
         v-for="item in visibleCountries"
@@ -101,6 +102,7 @@
 </template>
 
 <script setup lang="ts">
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
 import AudioFeedback from "@/components/AudioFeedback.vue";
 import PageTopbar from "@/components/PageTopbar.vue";
 import { onShow } from "@dcloudio/uni-app";
@@ -109,6 +111,7 @@ import { computed, ref } from "vue";
 
 import CachedImage from "@/components/CachedImage.vue";
 import { worldGroups } from "@/mock/topics";
+import { phraseAudioPath } from "@/services/audioCatalog";
 import { speakEnglish } from "@/services/audioService";
 import type { TopicWord } from "@/types/topic";
 import { usePageShare } from "@/composables/usePageShare";
@@ -119,6 +122,7 @@ usePageShare();
 const COUNTRY_VIEW_STORAGE_KEY = "cartown_country_view";
 const heroWorldImage = "/static/ui/world-road-trip.jpg";
 const allCountries = worldGroups.flatMap((group) => group.words);
+const selectedCountry = ref(allCountries.find(item => item.word === "China") || allCountries[0]);
 const DAILY_COUNTRY_COUNT = 3;
 const activeGroup = ref("today");
 const validIds = allCountries.map(country => country.id);
@@ -169,6 +173,7 @@ function countryImage(item: TopicWord): string {
 }
 
 function playCountry(item: TopicWord) {
+  selectedCountry.value = item;
   const date = todayKey();
   const previousDone = dailyDone.value;
   speakEnglish(item.word + ". " + item.sentence, () => {
@@ -177,6 +182,13 @@ function playCountry(item: TopicWord) {
     if (date === todayKey()) { currentDate.value = date; todayIds.value = progress.today; }
     if (previousDone < DAILY_COUNTRY_COUNT && dailyDone.value === DAILY_COUNTRY_COUNT) uni.showToast({ title: "今日 3 国听完啦！", icon: "none" });
   });
+}
+
+function confirmCountryReading(sourceKey: string) {
+  const item = allCountries.find(country => 'country-' + country.id === sourceKey);
+  if (!item) return;
+  const value = recordCountryListening(item.id, validIds, todayKey());
+  exploredIds.value = value.explored; todayIds.value = value.today; currentDate.value = todayKey();
 }
 
 function isCountryLearned(item: TopicWord): boolean {
@@ -192,6 +204,7 @@ function dailyCountrySelection(countries: TopicWord[], dateKey: string, count: n
 </script>
 
 <style scoped lang="scss">
+.country-reading { padding:24rpx; margin-bottom:24rpx; }.country-reading__image { display:block; width:100%; height:220rpx; }.country-reading__title,.country-reading__sentence,.country-reading__hint { display:block; margin-top:12rpx; line-height:1.6; }.country-reading__title { font-size:32rpx; font-weight:800; }.country-reading__sentence { font-size:25rpx; }.country-reading__hint { font-size:22rpx; color:#5c7d70; }
 .world-daily { display:flex; flex-direction:column; gap:10rpx; margin-top:20rpx; padding:24rpx; background:#e8efe6; font-size:24rpx; font-weight:800; color:#527769; } .world-daily text + text { font-size:22rpx; font-weight:400; line-height:1.5; }
 .world-page {
   background: $color-cream;

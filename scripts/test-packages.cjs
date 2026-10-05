@@ -57,7 +57,12 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
   assert.equal(await own.service('mediaCacheService').resolveCachedMedia('/pkg-space/static/textures/earth.jpg', 'image'), '/pkg-space/static/textures/earth.jpg');
   assert.equal(own.requests.length, 0, 'own-package media must not call any loader');
   assert.equal(own.timers.size, 0);
-  await assert.rejects(runtime().service('mediaCacheService').resolveCachedMedia('/pkg-space/static/textures/earth.jpg', 'image'), /Open this world/);
+  for (const name of ['pkg-learning', 'pkg-space', 'pkg-adventure', 'pkg-speaking']) {
+    const cross = runtime(); const first = cross.service('mediaCacheService').resolveCachedMedia('/' + name + '/static/audio/test.mp3', 'audio');
+    assert.equal(cross.requests.length, 1); assert.equal(cross.requests[0].name, name); cross.requests[0].success(); await first;
+    await cross.service('mediaCacheService').resolveCachedMedia('/' + name + '/static/audio/test.mp3', 'audio'); assert.equal(cross.requests.length, 1);
+  }
+  await assert.rejects(runtime().service('mediaCacheService').resolveCachedMedia('/pkg-unknown/static/textures/earth.jpg', 'image'), /Open this world/);
 
   const stopped = runtime(), audio = stopped.service('audioService');
   audio.playAudio(chant, 'colors'); audio.stopAudio(); stopped.requests[0].success(); await tick();

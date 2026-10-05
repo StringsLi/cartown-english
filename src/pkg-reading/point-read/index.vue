@@ -57,12 +57,12 @@
       <text class="word-card__word">{{ selectedHotspot.word }}</text>
       <text class="word-card__phonetic">{{ selectedHotspot.phonetic }}</text>
       <text class="word-card__meaning">{{ selectedHotspot.wordCn }}</text>
-      <AudioButton label="再听一次" :src="selectedHotspot.audio" :fallback-text="selectedHotspot.word" size="large" />
+      <AudioButton label="再听一次" :src="selectedHotspot.audio" :fallback-text="selectedHotspot.word" size="large" /><ReadAlongLink :source-key="'book-hotspot-' + book.id + '-' + currentPageNumber" :title="book.title + ' · ' + selectedHotspot.word" :text="selectedHotspot.word" :audio="selectedHotspot.audio" :return-url="'/pkg-reading/point-read/index?bookId=' + book.id + '&pageIndex=' + currentPageNumber" :book-id="book.id" :text-cn="selectedHotspot.wordCn" />
     </view>
 
     <view v-if="currentPage" class="sentence-card soft-card">
       <text class="sentence-card__en">{{ currentPage.sentence }}</text>
-      <text class="sentence-card__cn">{{ currentPage.sentenceCn }}</text>
+      <text class="sentence-card__cn">{{ currentPage.sentenceCn }}</text><ReadAlongLink :source-key="'book-page-' + book.id + '-' + currentPageNumber" :title="book.title" :text="currentPage.sentence" :audio="currentPage.audio" :return-url="'/pkg-reading/point-read/index?bookId=' + book.id + '&pageIndex=' + currentPageNumber" :book-id="book.id" :listen="true" :text-cn="currentPage.sentenceCn" />
     </view>
 
     <view class="point-actions">
@@ -74,6 +74,7 @@
 </template>
 
 <script setup lang="ts">
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
 import AudioFeedback from "@/components/AudioFeedback.vue";
 import PageTopbar from "@/components/PageTopbar.vue";
 import { navigate } from "@/services/navigationService";

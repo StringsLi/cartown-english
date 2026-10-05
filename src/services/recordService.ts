@@ -4,7 +4,7 @@ import { configureAudioPlayback, getAudioVolume, stopAudio } from "@/services/au
 export interface SavedRecording { filePath: string; durationSeconds: number }
 export interface RecordSession { started: Promise<void>; finished: Promise<SavedRecording> }
 interface ActiveSession {
-  started: boolean; stopped: boolean; stopRequested: boolean; startedAt: number;
+  started: boolean; stopped: boolean; stopRequested: boolean; startedAt: number; maxSeconds: number;
   resolveStart(): void; rejectStart(error: unknown): void;
   resolveFinish(result: SavedRecording): void; rejectFinish(error: unknown): void;
   finished: Promise<SavedRecording>; startTimer?: ReturnType<typeof setTimeout>;
@@ -32,9 +32,9 @@ function getRecorderManager(): UniApp.RecorderManager {
         if (!result.tempFilePath) throw new Error("没有录到声音，请再试一次");
         const filePath = await saveRecordFile(result.tempFilePath);
         const duration = typeof result.duration === "number" && result.duration > 0 ? result.duration : Date.now() - session.startedAt;
-        session.resolveFinish({ filePath, durationSeconds: Math.max(1, Math.min(10, Math.round(duration / 1000))) });
+        session.resolveFinish({ filePath, durationSeconds: Math.max(1, Math.min(session.maxSeconds, Math.round(duration / 1000))) });
       } catch (error) {
-        if (error instanceof RecordSaveError) error.durationSeconds = Math.max(1, Math.min(10, Math.round((typeof result.duration === "number" ? result.duration : Date.now() - session.startedAt) / 1000)));
+        if (error instanceof RecordSaveError) error.durationSeconds = Math.max(1, Math.min(session.maxSeconds, Math.round((typeof result.duration === "number" ? result.duration : Date.now() - session.startedAt) / 1000)));
         session.rejectFinish(error);
       }
       finally { if (active === session) active = null; }
@@ -48,7 +48,8 @@ function failCapture(error: unknown): void {
   session.stopped = true; clearTimeout(session.startTimer); active = null;
   session.rejectStart(error); session.rejectFinish(error);
 }
-export async function startRecord(): Promise<RecordSession> {
+export async function startRecord(maxSeconds = 10): Promise<RecordSession> {
+  maxSeconds = maxSeconds === 30 ? 30 : 10;
   if (pendingStart || active) throw new Error("上一段录音正在处理，请稍等");
   // #ifdef H5
   throw new Error("网页可回听和导出，录制请打开微信小程序");
@@ -63,10 +64,10 @@ export async function startRecord(): Promise<RecordSession> {
     const started = new Promise<void>((resolve,reject) => { resolveStart = resolve; rejectStart = reject; });
     const finished = new Promise<SavedRecording>((resolve,reject) => { resolveFinish = resolve; rejectFinish = reject; });
     void started.catch(() => {}); void finished.catch(() => {});
-    const session: ActiveSession = { started: false, stopped: false, stopRequested: false, startedAt: Date.now(), resolveStart, rejectStart, resolveFinish, rejectFinish, finished };
+    const session: ActiveSession = { started: false, stopped: false, stopRequested: false, startedAt: Date.now(), maxSeconds, resolveStart, rejectStart, resolveFinish, rejectFinish, finished };
     active = session;
     session.startTimer = setTimeout(() => { if (active === session && !session.started) { failCapture(new Error("录音启动超时，请重试")); try { manager.stop(); } catch { /* 已结束失败会话 */ } } }, 8000);
-    try { manager.start({ duration: 10000, sampleRate: 16000, numberOfChannels: 1, encodeBitRate: 48000, format: "mp3" }); }
+    try { manager.start({ duration: maxSeconds * 1000, sampleRate: 16000, numberOfChannels: 1, encodeBitRate: 48000, format: "mp3" }); }
     catch (e) { failCapture(e); }
     return { started, finished };
   } finally { pendingStart = false; }

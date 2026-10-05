@@ -34,6 +34,7 @@
       <text class="section-link" @tap="goStation('/pkg-cars/car-learn/index')">学习 50 辆</text>
     </view>
 
+    <view class="vehicle-reading soft-card"><text class="vehicle-reading__word">{{ selectedVehicle.word }} · {{ selectedVehicle.meaning }}</text><text class="vehicle-reading__sentence">{{ selectedVehicle.sentence }}</text><ReadAlongLink :source-key="'vehicle-' + selectedVehicle.id" :title="'交通工具 · ' + selectedVehicle.meaning" :text="selectedVehicle.word + '. ' + selectedVehicle.sentence" :audio="phraseAudioPath(selectedVehicle.word + '. ' + selectedVehicle.sentence)" :listen="true" return-url="/pages/vehicles/index" /></view>
     <view class="vehicle-grid">
       <button role="button" v-for="item in featuredWords" :key="item.id" class="vehicle-word soft-card" @tap="playWord(item)">
         <view class="vehicle-word__image-wrap">
@@ -63,6 +64,9 @@
 </template>
 
 <script setup lang="ts">
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
+import { ref } from "vue";
+import { phraseAudioPath } from "@/services/audioCatalog";
 import AudioFeedback from "@/components/AudioFeedback.vue";
 import PageTopbar from "@/components/PageTopbar.vue";
 import { navigate } from "@/services/navigationService";
@@ -101,6 +105,7 @@ const featuredWords = featuredVehicleIds.flatMap((id) => {
   const item = allVehicleWords.find((word) => word.id === id);
   return item ? [item] : [];
 });
+const selectedVehicle = ref(featuredWords[0]);
 const featuredLogos = carLogos.slice(0, 4);
 
 function playSentence() {
@@ -108,6 +113,7 @@ function playSentence() {
 }
 
 function playWord(item: TopicWord) {
+  selectedVehicle.value = item;
   speakEnglish(`${item.word}. ${item.sentence}`);
 }
 
@@ -117,6 +123,7 @@ function goStation(path: string) {
 </script>
 
 <style scoped lang="scss">
+.vehicle-reading { padding:24rpx; margin-bottom:20rpx; }.vehicle-reading__word,.vehicle-reading__sentence { display:block; line-height:1.6; }.vehicle-reading__word { font-size:28rpx; font-weight:800; }.vehicle-reading__sentence { font-size:24rpx; margin-top:12rpx; }
 .topic-header {
   display: flex;
   align-items: flex-start;

@@ -1,7 +1,7 @@
 <template>
   <view class="page car-page">
     <PageTopbar section="点一点 · 数一数" fallback="/pages/vehicles/index" />
-    <AudioFeedback />
+    <AudioFeedback /><ReadAlongLink :source-key="'car-count-' + challenge.id" :title="'数数汽车'" :text="challenge.task" :audio="phraseAudioPath(challenge.task)" :return-url="'/pkg-cars/car-count/index'"  />
     <view class="car-hero soft-card">
       <text class="section-kicker">Count Cars</text>
       <text class="page-title">{{ challenge.count }}</text>
@@ -31,12 +31,14 @@
 </template>
 
 <script setup lang="ts">
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
 import AudioFeedback from "@/components/AudioFeedback.vue";
 import PageTopbar from "@/components/PageTopbar.vue";
 import { computed, ref } from "vue";
 import BigButton from "@/components/BigButton.vue";
 import PremiumVehicleImage from "@/components/PremiumVehicleImage.vue";
 import { countingChallenges } from "@/mock/cartown";
+import { phraseAudioPath } from "@/services/audioCatalog";
 import { speakEnglish } from "@/services/audioService";
 import { addCartownStar, getCartownProgress, saveCartownProgress } from "@/services/cartownProgressService";
 import { usePageShare } from "@/composables/usePageShare";

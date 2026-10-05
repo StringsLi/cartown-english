@@ -254,6 +254,17 @@
           }
         }
       ]
+    },
+    {
+      "root": "pkg-speaking",
+      "pages": [
+        {
+          "path": "record/index",
+          "style": {
+            "navigationBarTitleText": "听一听 · 跟我读"
+          }
+        }
+      ]
     }
   ],
   "preloadRule": {
