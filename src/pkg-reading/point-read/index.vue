@@ -1,5 +1,7 @@
 <template>
   <view class="page point-page">
+    <PageTopbar section="点读时间" fallback="/pages/books/index" />
+    <AudioFeedback />
     <view class="point-top soft-card">
       <view>
         <text class="section-kicker">Tap and Listen</text>
@@ -16,7 +18,7 @@
         :page-index="currentPage.pageIndex"
       />
       <CachedImage
-        v-else-if="!imageFailed"
+        v-else-if="!imageFailed || !currentPage.vehicleStoryId"
         class="point-scene__image"
         :src="currentPage.image"
         mode="aspectFill"
@@ -37,7 +39,7 @@
         <view class="point-art__ground" />
       </view>
 
-      <button
+      <button role="button"
         v-for="hotspot in currentPage.hotspots"
         :key="hotspot.word"
         class="point-hotspot"
@@ -55,12 +57,12 @@
       <text class="word-card__word">{{ selectedHotspot.word }}</text>
       <text class="word-card__phonetic">{{ selectedHotspot.phonetic }}</text>
       <text class="word-card__meaning">{{ selectedHotspot.wordCn }}</text>
-      <AudioButton label="再听一次" :src="selectedHotspot.audio" :fallback-text="selectedHotspot.word" size="large" />
+      <AudioButton label="再听一次" :src="selectedHotspot.audio" :fallback-text="selectedHotspot.word" size="large" /><ReadAlongLink :source-key="'book-hotspot-' + book.id + '-' + currentPageNumber" :title="book.title + ' · ' + selectedHotspot.word" :text="selectedHotspot.word" :audio="selectedHotspot.audio" :return-url="'/pkg-reading/point-read/index?bookId=' + book.id + '&pageIndex=' + currentPageNumber" :book-id="book.id" :text-cn="selectedHotspot.wordCn" />
     </view>
 
     <view v-if="currentPage" class="sentence-card soft-card">
       <text class="sentence-card__en">{{ currentPage.sentence }}</text>
-      <text class="sentence-card__cn">{{ currentPage.sentenceCn }}</text>
+      <text class="sentence-card__cn">{{ currentPage.sentenceCn }}</text><ReadAlongLink :source-key="'book-page-' + book.id + '-' + currentPageNumber" :title="book.title" :text="currentPage.sentence" :audio="currentPage.audio" :return-url="'/pkg-reading/point-read/index?bookId=' + book.id + '&pageIndex=' + currentPageNumber" :book-id="book.id" :listen="true" :text-cn="currentPage.sentenceCn" />
     </view>
 
     <view class="point-actions">
@@ -72,14 +74,18 @@
 </template>
 
 <script setup lang="ts">
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
+import AudioFeedback from "@/components/AudioFeedback.vue";
+import PageTopbar from "@/components/PageTopbar.vue";
+import { navigate } from "@/services/navigationService";
 import { computed, ref, watch } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import AudioButton from "@/components/AudioButton.vue";
 import BigButton from "@/components/BigButton.vue";
 import CachedImage from "@/components/CachedImage.vue";
 import VehicleStoryArt from "@/components/VehicleStoryArt.vue";
-import { playAudio } from "@/services/audioService";
-import { getBookById, getBookPages, getTodayBook } from "@/services/bookService";
+import { playAudio, stopAudio } from "@/services/audioService";
+import { normalizeBookPage, resolveBookId, getBookById, getBookPages, getTodayBook } from "@/services/bookService";
 import type { Hotspot } from "@/types/book";
 import { usePageShare } from "@/composables/usePageShare";
 
@@ -99,28 +105,20 @@ const isLastPage = computed(() => activePageIndex.value >= totalPages.value - 1)
 
 onLoad((query) => {
   const params = query as Record<string, string | undefined>;
-  bookId.value = params.bookId || getTodayBook().id;
-  activePageIndex.value = normalizePageIndex(params.pageIndex);
+  bookId.value = resolveBookId(params.bookId);
+  activePageIndex.value = normalizeBookPage(params.pageIndex, totalPages.value);
 });
 
 watch(
   () => currentPage.value?.id,
   () => {
+    stopAudio();
     imageFailed.value = false;
     selectedHotspot.value = currentPage.value?.hotspots[0] ?? null;
   },
   { immediate: true }
 );
 
-function normalizePageIndex(pageIndex?: string): number {
-  const parsed = Number(pageIndex);
-
-  if (!Number.isFinite(parsed) || parsed < 1) {
-    return 0;
-  }
-
-  return parsed - 1;
-}
 
 function hotspotStyle(hotspot: Hotspot) {
   return {
@@ -148,9 +146,9 @@ function nextPage() {
 }
 
 function goReader() {
-  uni.redirectTo({
+  navigate({
     url: `/pkg-reading/reader/index?bookId=${book.value.id}&pageIndex=${currentPageNumber.value}`
-  });
+  }, "redirectTo");
 }
 </script>
 
@@ -347,7 +345,7 @@ function goReader() {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12rpx;
   width: 100%;
-  max-width: 900px;
+  max-width: 820px;
   padding: 18rpx 24rpx calc(18rpx + env(safe-area-inset-bottom));
   border-top: 1rpx solid rgba(107, 175, 232, 0.16);
   background: rgba(255, 248, 236, 0.94);

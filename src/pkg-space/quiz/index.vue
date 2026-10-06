@@ -1,0 +1,37 @@
+<template>
+  <view class="quiz-page">
+    <view class="quiz-nav"><button role="button" @tap="backTo('/pkg-space/index/index')">‹ 太阳系</button><text>LISTEN & FIND</text><text>{{ Math.min(questionIndex + 1, questions.length) }} / {{ questions.length }}</text></view>
+    <view v-if="!finished">
+      <text class="quiz-kicker">{{ series.title }}</text><text class="quiz-title">听一听，找星球</text><text class="quiz-subtitle">可以反复听，答错也没关系。</text>
+      <view class="question-progress"><view v-for="(q,i) in questions" :key="q.target.id" :class="{'question-dot--done':i < questionIndex, 'question-dot--active':i === questionIndex}" /></view>
+      <button role="button" class="prompt-button" @tap="playPrompt"><text class="speaker">♫</text><text>{{ audioPlaybackState.phase === 'loading' ? '正在准备声音…' : '再听一次英文提示' }}</text><text>▶</text></button>
+      <text class="audio-warning" v-if="audioPlaybackState.phase === 'error'">声音没有播出来，请再点上面的按钮。</text>
+      <view class="quiz-choices"><button role="button" v-for="choice in question.choices" :key="choice.id" class="choice" :class="{'choice--correct':solved && choice.id === question.target.id, 'choice--retry':wrongId === choice.id}" :disabled="solved" :aria-label="choice.nameCn" @tap="choose(choice.id)"><view class="choice-art"><PlanetArt :body="choice" /></view><text>{{ choice.nameCn }}</text><text class="choice-mark" v-if="solved && choice.id === question.target.id">✓</text></button></view>
+      <view class="answer-note" role="status"><text v-if="solved">找到了！{{ question.target.name }} · {{ question.target.nameCn }}</text><text v-else-if="wrongId">再听一次，慢慢找。你可以的！</text><text v-else>点图片，告诉我你听到了哪位朋友。</text></view>
+      <button role="button" v-if="solved" class="next-button" @tap="next">{{ questionIndex === questions.length - 1 ? '完成这一站，收集印章 ★' : '下一位太空朋友 ›' }}</button>
+    </view>
+    <view v-else class="finish-card"><text class="finish-star">★</text><text class="quiz-title">这一站，探索完成！</text><text class="quiz-subtitle">{{ series.title }} · 找到了 {{ questions.length }} 位太空朋友</text><text class="reward-note">{{ earnedStar ? '第一次完成这一站，收集 1 颗星星和一枚印章。' : '这枚印章已经收集过啦，复习也很棒。' }}</text><view class="finish-bodies"><view v-for="item in seriesBodies(series.id)" :key="item.id"><view class="finish-art"><PlanetArt :body="item" /></view><text>{{ item.name }}</text></view></view><button role="button" class="next-button" @tap="returnMap">回太空护照，看看印章 ›</button><button role="button" class="again-button" @tap="restart">再玩一次</button></view>
+  </view>
+</template>
+<script setup lang="ts">
+import { ref, computed } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
+import { backTo, navigate } from '@/services/navigationService';
+import { usePageShare } from '@/composables/usePageShare';
+import { playAudio, stopAudio, audioPlaybackState } from '@/services/audioService';
+import PlanetArt from '../components/PlanetArt.vue';
+import { getSpaceSeries, seriesBodies } from '@/mock/solarSystem';
+import { createSpaceRound, completeSpaceSeries, markSpaceHeard } from '@/services/spaceLearningService';
+usePageShare();
+const seriesId = ref('home'), questions = ref(createSpaceRound('home')), questionIndex = ref(0), solved = ref(false), wrongId = ref(''), finished = ref(false), earnedStar = ref(false);
+const solvedIds = ref<string[]>([]), series = computed(() => getSpaceSeries(seriesId.value)), question = computed(() => questions.value[questionIndex.value]);
+onLoad(options => { seriesId.value = getSpaceSeries(typeof options?.series === 'string' ? options.series : '').id; restart(); });
+function playPrompt() { if(finished.value) return; const target=question.value.target; playAudio(target.promptAudio,`Find ${target.name}.`,()=>markSpaceHeard(target.id)); }
+function choose(id: string) { if(solved.value || finished.value || !question.value.choices.some(choice=>choice.id === id)) return; stopAudio(); if(id !== question.value.target.id) { wrongId.value=id; playAudio('/pkg-space/static/audio/try-again.mp3','Try again!'); return; } solved.value=true; wrongId.value=''; solvedIds.value.push(id); playAudio('/pkg-space/static/audio/great-job.mp3','Great job!'); }
+function next() { if(!solved.value || finished.value) return; stopAudio(); if(questionIndex.value === questions.value.length-1) { earnedStar.value=completeSpaceSeries(seriesId.value,solvedIds.value); finished.value=true; } else { questionIndex.value++; solved.value=false; wrongId.value=''; playPrompt(); } }
+function restart() { stopAudio(); questions.value=createSpaceRound(seriesId.value); questionIndex.value=0; solved.value=false; wrongId.value=''; finished.value=false; earnedStar.value=false; solvedIds.value=[]; playPrompt(); }
+function returnMap() { navigate({url:'/pkg-space/index/index'},'reLaunch'); }
+</script>
+<style scoped>
+.quiz-page { min-height:100vh; box-sizing:border-box; padding:24rpx 34rpx 55rpx; background:#0e182a; color:#f3efe7; }.quiz-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:35rpx; }.quiz-nav button { min-height:44px; color:#b8cce4; padding:0; font-size:24rpx; }.quiz-nav text { font-size:18rpx; letter-spacing:2rpx; color:#7c96b6; }.quiz-kicker { display:block; font-size:22rpx; color:#ceb38a; margin-bottom:15rpx; }.quiz-title { display:block; font-size:42rpx; font-weight:700; line-height:1.6; }.quiz-subtitle { display:block; font-size:24rpx; color:#8fa7c6; line-height:1.8; margin-top:10rpx; }.question-progress { display:flex; gap:12rpx; margin:28rpx 0; }.question-progress view { flex:1; height:7rpx; background:#2a3b56; border-radius:10rpx; }.question-progress .question-dot--done { background:#8fbbb3; }.question-progress .question-dot--active { background:#d9bd87; }.prompt-button { display:flex; align-items:center; justify-content:space-between; gap:15rpx; min-height:100rpx; padding:22rpx 25rpx; border-radius:25rpx; background:#253a57; color:#d9e5f2; font-size:25rpx; }.speaker { font-size:39rpx; color:#debd81; }.audio-warning { display:block; margin-top:16rpx; color:#e7b698; font-size:22rpx; line-height:1.7; }.quiz-choices { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20rpx; margin-top:30rpx; }.choice { position:relative; border:2rpx solid #2c3d58; border-radius:28rpx; background:#17243b; padding:10rpx 10rpx 24rpx; color:#d9e3f1; font-size:27rpx; }.choice-art { width:210rpx; height:210rpx; margin:0 auto; }.choice--correct { border-color:#85bfb1; background:#19363d; }.choice--retry { border-color:#bd9175; }.choice-mark { position:absolute; top:15rpx; right:18rpx; color:#b3e3d1; font-size:32rpx; }.answer-note { min-height:90rpx; padding:25rpx 0 10rpx; text-align:center; color:#b2c7dc; font-size:25rpx; line-height:1.8; }.next-button { display:flex; justify-content:center; align-items:center; min-height:max(96rpx, 44px); margin-top:20rpx; border-radius:25rpx; background:#d8bb84; color:#17243a; font-size:25rpx; font-weight:700; padding:15rpx 8rpx; }.finish-card { text-align:center; padding-top:55rpx; }.finish-star { display:block; color:#e8c888; font-size:140rpx; margin-bottom:35rpx; text-shadow:0 0 45rpx rgba(226,181,98,.3); }.reward-note { display:block; font-size:23rpx; line-height:1.8; color:#cab88f; margin:22rpx 0; }.finish-bodies { display:flex; justify-content:space-around; margin:35rpx 0; }.finish-bodies > view { flex:1; }.finish-art { width:125rpx; height:125rpx; margin:0 auto; }.finish-bodies text { display:block; font-size:20rpx; color:#a4bed7; }.again-button { min-height:44px; margin-top:22rpx; color:#9cb6d4; font-size:24rpx; }
+</style>

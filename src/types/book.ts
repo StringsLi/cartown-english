@@ -82,6 +82,7 @@ export interface UserProgress {
 }
 
 export interface RepeatRecord {
+  sourceTitle?: string;
   userId: string;
   bookId: string;
   sentence: string;

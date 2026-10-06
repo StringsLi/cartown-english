@@ -1,0 +1,146 @@
+[
+  {
+    "route": "/pages/index/index",
+    "scrollWidth": 430,
+    "textLength": 311,
+    "width": 430
+  },
+  {
+    "route": "/pages/books/index",
+    "scrollWidth": 430,
+    "textLength": 1316,
+    "width": 430
+  },
+  {
+    "route": "/pages/vehicles/index",
+    "scrollWidth": 430,
+    "textLength": 256,
+    "width": 430
+  },
+  {
+    "route": "/pkg-learning/car-logos/index",
+    "scrollWidth": 430,
+    "textLength": 516,
+    "width": 430
+  },
+  {
+    "route": "/pkg-learning/car-colors/index",
+    "scrollWidth": 430,
+    "textLength": 101,
+    "width": 430
+  },
+  {
+    "route": "/pkg-learning/car-count/index",
+    "scrollWidth": 430,
+    "textLength": 81,
+    "width": 430
+  },
+  {
+    "route": "/pkg-learning/car-traffic/index",
+    "scrollWidth": 430,
+    "textLength": 86,
+    "width": 430
+  },
+  {
+    "route": "/pkg-learning/car-stories/index",
+    "scrollWidth": 430,
+    "textLength": 843,
+    "width": 430
+  },
+  {
+    "route": "/pkg-learning/car-garage/index",
+    "scrollWidth": 430,
+    "textLength": 222,
+    "width": 430
+  },
+  {
+    "route": "/pkg-learning/playground/index",
+    "scrollWidth": 430,
+    "textLength": 478,
+    "width": 430
+  },
+  {
+    "route": "/pkg-learning/playground-game/index",
+    "scrollWidth": 430,
+    "textLength": 402,
+    "width": 430
+  },
+  {
+    "route": "/pkg-cars/car-learn/index",
+    "scrollWidth": 430,
+    "textLength": 154,
+    "width": 430
+  },
+  {
+    "route": "/pkg-world/world/index",
+    "scrollWidth": 430,
+    "textLength": 247,
+    "width": 430
+  },
+  {
+    "route": "/pkg-reading/book-detail/index",
+    "scrollWidth": 430,
+    "textLength": 289,
+    "width": 430
+  },
+  {
+    "route": "/pkg-reading/reader/index",
+    "scrollWidth": 430,
+    "textLength": 85,
+    "width": 430
+  },
+  {
+    "route": "/pkg-reading/point-read/index",
+    "scrollWidth": 430,
+    "textLength": 91,
+    "width": 430
+  },
+  {
+    "route": "/pkg-reading/game/index",
+    "scrollWidth": 430,
+    "textLength": 128,
+    "width": 430
+  },
+  {
+    "route": "/pkg-reading/repeat/index",
+    "scrollWidth": 430,
+    "textLength": 214,
+    "width": 430
+  },
+  {
+    "route": "/pkg-reading/recordings/index",
+    "scrollWidth": 430,
+    "textLength": 230,
+    "width": 430
+  },
+  {
+    "route": "/pkg-user/parent/index",
+    "scrollWidth": 430,
+    "textLength": 388,
+    "width": 430
+  },
+  {
+    "route": "/pkg-user/profile/index",
+    "scrollWidth": 430,
+    "textLength": 186,
+    "width": 430
+  },
+  {
+    "route": "/pkg-adventure/index/index",
+    "scrollWidth": 430,
+    "textLength": 505,
+    "width": 430
+  },
+  {
+    "route": "/pkg-adventure/delivery/index",
+    "scrollWidth": 430,
+    "textLength": 136,
+    "width": 430
+  },
+  {
+    "route": "/pkg-adventure/roleplay/index",
+    "scrollWidth": 430,
+    "textLength": 136,
+    "width": 430
+  }
+]

@@ -1,5 +1,7 @@
 <template>
-  <view class="page world-page screen-with-nav">
+  <view class="page world-page ">
+    <PageTopbar section="世界探索" fallback="/pages/vehicles/index" />
+    <AudioFeedback />
     <view class="world-head">
       <view>
         <text class="world-head__kicker">WORLD ROAD TRIP</text>
@@ -13,20 +15,22 @@
     </view>
 
     <view class="world-hero">
-      <CachedImage class="world-hero__image" :src="heroWorldImage" mode="aspectFill" />
+      <view class="world-hero__image"><CachedImage :src="heroWorldImage" mode="aspectFill" /></view>
       <view class="world-hero__copy">
         <view>
           <text class="world-hero__eyebrow">50-COUNTRY MAP</text>
           <text class="world-hero__title">Hello, world!</text>
           <text class="world-hero__desc">沿着路线出发，认识五大区域。</text>
         </view>
-        <button class="world-hero__audio" @tap="playHeroSentence">▶ 听一听</button>
+        <button role="button" class="world-hero__audio" @tap="playHeroSentence">▶ 听一听</button>
       </view>
     </view>
 
+    <view class="world-daily soft-card"><text>今天的小耳朵 · {{ dailyDone }} / {{ DAILY_COUNTRY_COUNT }}</text><text>{{ dailyDone === DAILY_COUNTRY_COUNT ? "今天的小目标完成啦，去玩真实的小车吧。" : "听到国家的英语名字，才会记入今天的进度。" }}</text></view>
+
     <scroll-view class="region-scroll" scroll-x :show-scrollbar="false">
       <view class="region-tabs">
-        <button
+        <button role="button"
           v-for="filter in countryFilters"
           :key="filter.id"
           class="region-tab"
@@ -45,14 +49,14 @@
         <text class="world-count">{{ visibleCountries.length }} 个国家</text>
       </view>
       <view class="country-view-toggle" aria-label="国家图片显示方式">
-        <button
+        <button role="button"
           class="country-view-toggle__button"
           :class="{ 'country-view-toggle__button--active': countryView === 'flag' }"
           @tap="switchCountryView('flag')"
         >
           国旗
         </button>
-        <button
+        <button role="button"
           class="country-view-toggle__button"
           :class="{ 'country-view-toggle__button--active': countryView === 'map' }"
           @tap="switchCountryView('map')"
@@ -62,8 +66,9 @@
       </view>
     </view>
 
+    <view class="country-reading soft-card"><CachedImage class="country-reading__image" :src="countryImage(selectedCountry)" :alt="selectedCountry.word === 'China' && countryView === 'map' ? '中国地图，含台湾省轮廓' : selectedCountry.word" mode="aspectFit" /><text class="country-reading__title">{{ selectedCountry.word }}</text><text class="country-reading__sentence">{{ selectedCountry.sentence }}</text><text v-if="selectedCountry.word === 'China' && countryView === 'map'" class="country-reading__hint">中国 · 含台湾省轮廓</text><ReadAlongLink :source-key="'country-' + selectedCountry.id" :title="'世界探索 · ' + selectedCountry.word" :text="selectedCountry.word + '. ' + selectedCountry.sentence" :audio="phraseAudioPath(selectedCountry.word + '. ' + selectedCountry.sentence)" :return-url="'/pkg-world/world/index'" :listen="true" @played="confirmCountryReading" /></view>
     <view class="country-grid">
-      <button
+      <button role="button"
         v-for="item in visibleCountries"
         :key="item.id"
         class="country-card"
@@ -92,41 +97,54 @@
       </view>
     </view>
 
-    <BottomNav active="learn" />
+
   </view>
 </template>
 
 <script setup lang="ts">
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
+import AudioFeedback from "@/components/AudioFeedback.vue";
+import PageTopbar from "@/components/PageTopbar.vue";
+import { onShow } from "@dcloudio/uni-app";
+import { getCountryProgress, recordCountryListening } from "@/services/worldProgressService";
 import { computed, ref } from "vue";
-import BottomNav from "@/components/BottomNav.vue";
+
 import CachedImage from "@/components/CachedImage.vue";
 import { worldGroups } from "@/mock/topics";
+import { phraseAudioPath } from "@/services/audioCatalog";
 import { speakEnglish } from "@/services/audioService";
 import type { TopicWord } from "@/types/topic";
 import { usePageShare } from "@/composables/usePageShare";
 import { todayKey } from "@/utils/date";
 
 usePageShare();
-const EXPLORED_STORAGE_KEY = "cartown_explored_countries";
+
 const COUNTRY_VIEW_STORAGE_KEY = "cartown_country_view";
 const heroWorldImage = "/static/ui/world-road-trip.jpg";
 const allCountries = worldGroups.flatMap((group) => group.words);
+const selectedCountry = ref(allCountries.find(item => item.word === "China") || allCountries[0]);
 const DAILY_COUNTRY_COUNT = 3;
 const activeGroup = ref("today");
-const exploredIds = ref<string[]>(uni.getStorageSync(EXPLORED_STORAGE_KEY) || []);
+const validIds = allCountries.map(country => country.id);
+const progress = getCountryProgress(validIds);
+const exploredIds = ref(progress.explored);
+const todayIds = ref(progress.today);
+const currentDate = ref(todayKey());
+onShow(() => { currentDate.value = todayKey(); const value = getCountryProgress(validIds); exploredIds.value = value.explored; todayIds.value = value.today; });
 type CountryView = "flag" | "map";
 const savedCountryView = uni.getStorageSync(COUNTRY_VIEW_STORAGE_KEY);
 const countryView = ref<CountryView>(savedCountryView === "map" ? "map" : "flag");
 
-const dailyCountries = dailyCountrySelection(allCountries, todayKey(), DAILY_COUNTRY_COUNT);
+const dailyCountries = computed(() => dailyCountrySelection(allCountries, currentDate.value, DAILY_COUNTRY_COUNT));
+const dailyDone = computed(() => dailyCountries.value.filter(country => todayIds.value.includes(country.id)).length);
 const countryFilters = [
-  { id: "today", label: "今日任务", count: dailyCountries.length },
+  { id: "today", label: "今日任务", count: DAILY_COUNTRY_COUNT },
   { id: "all", label: "全部", count: allCountries.length },
   ...worldGroups.map((group) => ({ id: group.id, label: group.title, count: group.words.length }))
 ];
 
 const visibleCountries = computed(() => {
-  if (activeGroup.value === "today") return dailyCountries;
+  if (activeGroup.value === "today") return dailyCountries.value;
   if (activeGroup.value === "all") return allCountries;
   return worldGroups.find((group) => group.id === activeGroup.value)?.words || [];
 });
@@ -155,15 +173,22 @@ function countryImage(item: TopicWord): string {
 }
 
 function playCountry(item: TopicWord) {
-  const isNewCountry = !exploredIds.value.includes(item.id);
-  if (isNewCountry) {
-    exploredIds.value = [...exploredIds.value, item.id];
-    uni.setStorageSync(EXPLORED_STORAGE_KEY, exploredIds.value);
-  }
-  speakEnglish(item.word + ". " + item.sentence);
-  if (isNewCountry && activeGroup.value === "today" && dailyCountries.every((country) => exploredIds.value.includes(country.id))) {
-    uni.showToast({ title: "今日 3 国完成！", icon: "none" });
-  }
+  selectedCountry.value = item;
+  const date = todayKey();
+  const previousDone = dailyDone.value;
+  speakEnglish(item.word + ". " + item.sentence, () => {
+    const progress = recordCountryListening(item.id, validIds, date);
+    exploredIds.value = progress.explored;
+    if (date === todayKey()) { currentDate.value = date; todayIds.value = progress.today; }
+    if (previousDone < DAILY_COUNTRY_COUNT && dailyDone.value === DAILY_COUNTRY_COUNT) uni.showToast({ title: "今日 3 国听完啦！", icon: "none" });
+  });
+}
+
+function confirmCountryReading(sourceKey: string) {
+  const item = allCountries.find(country => 'country-' + country.id === sourceKey);
+  if (!item) return;
+  const value = recordCountryListening(item.id, validIds, todayKey());
+  exploredIds.value = value.explored; todayIds.value = value.today; currentDate.value = todayKey();
 }
 
 function isCountryLearned(item: TopicWord): boolean {
@@ -179,6 +204,8 @@ function dailyCountrySelection(countries: TopicWord[], dateKey: string, count: n
 </script>
 
 <style scoped lang="scss">
+.country-reading { padding:24rpx; margin-bottom:24rpx; }.country-reading__image { display:block; width:100%; height:220rpx; }.country-reading__title,.country-reading__sentence,.country-reading__hint { display:block; margin-top:12rpx; line-height:1.6; }.country-reading__title { font-size:32rpx; font-weight:800; }.country-reading__sentence { font-size:25rpx; }.country-reading__hint { font-size:22rpx; color:#5c7d70; }
+.world-daily { display:flex; flex-direction:column; gap:10rpx; margin-top:20rpx; padding:24rpx; background:#e8efe6; font-size:24rpx; font-weight:800; color:#527769; } .world-daily text + text { font-size:22rpx; font-weight:400; line-height:1.5; }
 .world-page {
   background: $color-cream;
 }

@@ -1,13 +1,11 @@
 <template>
   <view class="page detail-page">
+    <PageTopbar section="绘本馆" fallback="/pages/books/index" />
+    <AudioFeedback />
     <view class="detail-hero">
       <view class="detail-cover soft-card">
         <RedCarMascot v-if="book.vehicleStoryId === 'red-car'" class="detail-cover__image" />
-        <CachedImage v-else-if="!coverFailed" class="detail-cover__image" :src="book.cover" mode="aspectFill" @error="coverFailed = true" />
-        <view v-else class="detail-cover__fallback">
-          <text class="detail-cover__fallback-label">Picture Book</text>
-          <text class="detail-cover__fallback-title">{{ book.title }}</text>
-        </view>
+        <CachedImage v-else class="detail-cover__image" :src="book.cover" :alt="book.title" mode="aspectFill" />
       </view>
 
       <view class="detail-intro">
@@ -25,16 +23,17 @@
     <view class="goal-card soft-card">
       <text class="goal-card__label">今日学习目标</text>
       <text class="goal-card__sentence">{{ book.targetSentence }}</text>
+      <ReadAlongLink :source-key="'book-target-' + book.id" :title="book.title" :text="book.targetSentence" :audio="goalPage.audio" :return-url="'/pkg-reading/book-detail/index?bookId=' + book.id" v-if="goalPage" :book-id="book.id" :listen="true" :text-cn="goalPage.sentenceCn" />
       <text class="goal-card__hint">先听一遍，再和孩子一起慢慢读。</text>
     </view>
 
     <text class="section-title">核心单词</text>
     <view class="detail-words soft-card">
-      <WordChip v-for="word in words" :key="word.id" :word="word.word" :meaning="word.meaning" />
+      <view v-for="word in words" :key="word.id" class="detail-word"><WordChip :word="word.word" :meaning="word.meaning" /><ReadAlongLink :source-key="'book-word-' + word.id" :title="book.title + ' · ' + word.word" :text="word.word" :audio="word.audio" :return-url="'/pkg-reading/book-detail/index?bookId=' + book.id" :listen="true" :book-id="book.id" :text-cn="word.meaning" /></view>
     </view>
 
     <text class="section-title">陪读提示</text>
-    <ParentTipCard class="detail-tip" :title="parentTip.title" :questions="parentTip.questions" :activity="parentTip.activity" compact />
+    <ParentTipCard class="detail-tip" :title="parentTip.title" :questions="parentTip.questions" :activity="parentTip.activity" :book-id="book.id" :return-url="'/pkg-reading/book-detail/index?bookId=' + book.id" compact />
 
     <view class="detail-footer">
       <BigButton :label="readingButtonLabel" @tap="startReading" />
@@ -44,49 +43,47 @@
 </template>
 
 <script setup lang="ts">
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
+import AudioFeedback from "@/components/AudioFeedback.vue";
+import PageTopbar from "@/components/PageTopbar.vue";
+import { navigate } from "@/services/navigationService";
 import CachedImage from "@/components/CachedImage.vue";
 import RedCarMascot from "@/components/RedCarMascot.vue";
-import { computed, ref, watch } from "vue";
-import { onLoad } from "@dcloudio/uni-app";
+import { computed, ref } from "vue";
+import { onLoad, onShow } from "@dcloudio/uni-app";
 import BigButton from "@/components/BigButton.vue";
 import ParentTipCard from "@/components/ParentTipCard.vue";
 import WordChip from "@/components/WordChip.vue";
-import { getBookById, getBookWords, getParentTip, getThemeLabel, getTodayBook } from "@/services/bookService";
+import { resolveBookId, getBookById, getBookWords, getBookPages, getParentTip, getThemeLabel, getTodayBook } from "@/services/bookService";
 import { getProgress } from "@/services/progressService";
 import type { UserProgress } from "@/types/book";
 import { usePageShare } from "@/composables/usePageShare";
 
 usePageShare();
 const bookId = ref(getTodayBook().id);
-const coverFailed = ref(false);
 const book = computed(() => getBookById(bookId.value) ?? getTodayBook());
+const goalPage = computed(() => getBookPages(book.value.id).find(page => page.sentence === book.value.targetSentence));
 const words = computed(() => getBookWords(book.value.id));
 const parentTip = computed(() => getParentTip(book.value.id));
 const themeLabel = computed(() => getThemeLabel(book.value.theme));
-const savedProgress = computed(() => getProgress(book.value.id) as UserProgress | undefined);
+const savedProgress = ref<UserProgress>();
+onShow(() => { const value = getProgress(book.value.id) as UserProgress | undefined; savedProgress.value = value ? { ...value } : undefined; });
 const resumePage = computed(() => savedProgress.value?.readStatus === "reading" ? savedProgress.value.currentPage : 1);
 const readingButtonLabel = computed(() => resumePage.value > 1 ? `继续阅读 · 第 ${resumePage.value} 页` : "开始阅读");
 
 onLoad((query) => {
   const params = query as Record<string, string | undefined>;
-  bookId.value = params.bookId || getTodayBook().id;
+  bookId.value = resolveBookId(params.bookId);
 });
 
-watch(
-  () => book.value.cover,
-  () => {
-    coverFailed.value = false;
-  }
-);
-
 function startReading() {
-  uni.navigateTo({
+  navigate({
     url: `/pkg-reading/reader/index?bookId=${book.value.id}&pageIndex=${resumePage.value}`
   });
 }
 
 function goParent() {
-  uni.navigateTo({
+  navigate({
     url: `/pkg-user/parent/index?bookId=${book.value.id}`
   });
 }

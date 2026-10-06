@@ -128,6 +128,63 @@ for (const fileName of carAudioFiles) {
   if (details.size < 1024) errors.push("Car model pronunciation is empty or invalid: " + fileName);
 }
 
+const playgroundAudioDirectory = path.join(sourceRoot, "pkg-learning", "static", "playground-audio");
+const chantAudioDirectory = path.join(sourceRoot, "pkg-music", "static", "audio");
+const playgroundAudioFiles = (await readdir(playgroundAudioDirectory)).filter(name => name.endsWith(".mp3"));
+const chantAudioFiles = (await readdir(chantAudioDirectory)).filter(name => name.endsWith(".mp3"));
+const playgroundSource = await readFile(path.join(sourceRoot, "mock", "playground.ts"), "utf8");
+const referencedAudio = [...playgroundSource.matchAll(/\$\{audioRoot\}\/([a-z-]+\.mp3)/g)].map(match => match[1]);
+const referencedChants = [...playgroundSource.matchAll(/\$\{chantRoot\}\/([a-z-]+\.mp3)/g)].map(match => match[1]);
+const wordArt = [...playgroundSource.matchAll(/\$\{artRoot\}\/([a-z-]+\.png)/g)].map(match => match[1]);
+const themeIds = [...playgroundSource.matchAll(/^    id: "([a-z]+)",/gm)].map(match => match[1]);
+if (themeIds.length !== 8 || new Set(themeIds).size !== 8 || wordArt.length !== 40 || new Set(wordArt).size !== 40) {
+  errors.push("Expected eight unique playground themes and forty unique illustrated words.");
+}
+if (referencedAudio.length !== 88 || referencedChants.length !== 8 || new Set([...referencedAudio, ...referencedChants]).size !== 96) {
+  errors.push("Expected 40 word sounds, 40 prompts, eight stories, and eight chants across two packages.");
+}
+for (const [directory, packaged, referenced] of [[playgroundAudioDirectory, playgroundAudioFiles, referencedAudio], [chantAudioDirectory, chantAudioFiles, referencedChants]]) {
+  if (packaged.length !== referenced.length) errors.push("Playground audio count does not match: " + directory);
+  for (const fileName of referenced) {
+    await requireFile(path.join(directory, fileName), "Missing playground audio: " + fileName);
+    const audioFile = await readFile(path.join(directory, fileName)).catch(() => Buffer.alloc(0));
+    if (audioFile.length < 1024 || audioFile.toString("ascii", 0, 3) !== "ID3") errors.push("Invalid playground audio: " + fileName);
+  }
+}
+const chantArt = [...playgroundSource.matchAll(/items: \[\s*\{[^\n]+?art: `\$\{artRoot\}\/([^`]+)/g)].map(match => match[1]);
+if (chantArt.length !== 8) errors.push("Expected eight local chant pictures.");
+for (const name of chantArt) await requireFile(path.join(sourceRoot, "pkg-music/static/art", name), "Missing chant picture: " + name);
+for (const fileName of [...wordArt, ...themeIds.map(id => `scene-${id}.png`)]) {
+  const artPath = path.join(sourceRoot, "pkg-learning", "static", "playground", "art", fileName);
+  await requireFile(artPath, "Missing playground artwork: " + fileName);
+}
+await requireFile(
+  path.join(sourceRoot, "pkg-learning", "static", "playground", "friends.jpg"),
+  "Missing playground illustration."
+);
+
+const adventureSource = await readFile(path.join(sourceRoot, "mock", "adventures.ts"), "utf8");
+const adventureAudio = [...adventureSource.matchAll(/\$\{adventureAudioRoot\}\/([a-z-]+\.mp3)/g)].map(match => match[1]);
+const adventureDirectory = path.join(sourceRoot, "pkg-adventure");
+const adventureAudioFiles = (await readdir(path.join(adventureDirectory, "static", "audio"))).filter(name => name.endsWith(".mp3"));
+if (!adventureAudio.length || new Set(adventureAudio).size !== adventureAudio.length || adventureAudioFiles.length !== adventureAudio.length) errors.push("Adventure phrase catalog must be unique and match packaged audio files.");
+for (const name of adventureAudio) {
+  const file = await readFile(path.join(adventureDirectory, "static", "audio", name)).catch(() => Buffer.alloc(0));
+  if (file.length < 1024 || file.toString("ascii", 0, 3) !== "ID3") errors.push("Missing or invalid adventure audio: " + name);
+}
+const adventureArt = new Set([...adventureSource.matchAll(/\$\{adventureArtRoot\}\/([a-z-]+\.png)/g)].map(match => match[1]));
+adventureArt.add("actions-wave.png");
+for (const name of adventureArt) await requireFile(path.join(adventureDirectory, "static", "art", name), "Missing adventure art: " + name);
+const pagesConfig = JSON.parse(await readFile(path.join(sourceRoot, "pages.json"), "utf8"));
+const adventurePackage = pagesConfig.subPackages.find(pkg => pkg.root === "pkg-adventure");
+for (const route of ["index/index", "delivery/index", "roleplay/index"]) {
+  if (!adventurePackage?.pages.some(page => page.path === route)) errors.push("Missing adventure route: " + route);
+  await requireFile(path.join(adventureDirectory, route + ".vue"), "Missing adventure page: " + route);
+}
+for (const file of (await walk(adventureDirectory)).filter(file => /\.(vue|ts|scss)$/.test(file))) {
+  if (/\/pkg-(?:learning|reading|cars|world)\/static\//.test(await readFile(file, "utf8"))) errors.push("Adventure references media in another subpackage: " + path.relative(root, file));
+}
+
 const cloudConfig = await readFile(path.join(sourceRoot, "config", "cloud.ts"), "utf8");
 if (!cloudConfig.includes("cloud1-d5gbtry8n16a02de8")) {
   errors.push("CloudBase environment ID is not configured for the selected environment.");
@@ -167,7 +224,8 @@ console.log(
   "Content validation passed: " + totalHighResolutionFiles +
   " high-resolution source assets, " + phraseFiles.length +
   " phrase audios, " + carAudioFiles.length +
-  " car model audios, " + countries.length + " countries."
+  " car model audios, " + (playgroundAudioFiles.length + chantAudioFiles.length) +
+  " playground audios, " + adventureAudioFiles.length + " adventure audios, " + countries.length + " countries."
 );
 
 async function requireFile(filePath, message) {

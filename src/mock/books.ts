@@ -39,7 +39,7 @@ export const mockBooks: Book[] = ([
   {
     id: "book_cat_001",
     title: "I See a Cat",
-    cover: "/static/books/cat/cover.jpg",
+    cover: "/static/first-books/cat/cover.jpg",
     level: "A",
     ageRange: "3-5",
     theme: "Animals",
@@ -53,7 +53,7 @@ export const mockBooks: Book[] = ([
   {
     id: "book_apple_001",
     title: "Red Apple",
-    cover: "/static/books/apple/cover.webp",
+    cover: "/static/first-books/apple/cover.jpg",
     level: "A",
     ageRange: "3-5",
     theme: "Food",
@@ -67,7 +67,7 @@ export const mockBooks: Book[] = ([
   {
     id: "book_bear_001",
     title: "My Teddy Bear",
-    cover: "/static/books/bear/cover.webp",
+    cover: "/static/first-books/bear/cover.jpg",
     level: "A",
     ageRange: "3-5",
     theme: "Toys",
@@ -81,7 +81,7 @@ export const mockBooks: Book[] = ([
   {
     id: "book_mom_001",
     title: "This Is My Mom",
-    cover: "/static/books/mom/cover.webp",
+    cover: "/static/first-books/mom/cover.jpg",
     level: "A",
     ageRange: "3-5",
     theme: "Family",
@@ -95,7 +95,7 @@ export const mockBooks: Book[] = ([
   {
     id: "book_jump_001",
     title: "I Can Jump",
-    cover: "/static/books/jump/cover.webp",
+    cover: "/static/first-books/jump/cover.jpg",
     level: "A",
     ageRange: "3-5",
     theme: "Actions",
@@ -199,33 +199,33 @@ export const mockBooks: Book[] = ([
 ] satisfies Book[]).map((book) => ({ ...book, cover: highResolutionAsset(book.cover) }));
 
 export const mockWords: Word[] = ([
-  { id: "word_cat", word: "cat", phonetic: "/kæt/", meaning: "猫", image: "/static/books/cat/word-cat.webp", audio: "/static/audio/words/cat.mp3", level: "A", theme: "Animals" },
-  { id: "word_black", word: "black", phonetic: "/blæk/", meaning: "黑色", image: "/static/books/cat/word-black.webp", audio: "/static/audio/words/black.mp3", level: "A", theme: "Colors" },
-  { id: "word_jump", word: "jump", phonetic: "/dʒʌmp/", meaning: "跳", image: "/static/books/jump/word-jump.webp", audio: "/static/audio/words/jump.mp3", level: "A", theme: "Actions" },
-  { id: "word_apple", word: "apple", phonetic: "/ˈæpl/", meaning: "苹果", image: "/static/books/apple/word-apple.webp", audio: "/static/audio/words/apple.mp3", level: "A", theme: "Food" },
-  { id: "word_red", word: "red", phonetic: "/red/", meaning: "红色", image: "/static/books/apple/word-red.webp", audio: "/static/audio/words/red.mp3", level: "A", theme: "Colors" },
-  { id: "word_eat", word: "eat", phonetic: "/iːt/", meaning: "吃", image: "/static/books/apple/word-eat.webp", audio: "/static/audio/words/eat.mp3", level: "A", theme: "Actions" },
-  { id: "word_bear", word: "bear", phonetic: "/ber/", meaning: "熊", image: "/static/books/bear/word-bear.webp", audio: "/static/audio/words/bear.mp3", level: "A", theme: "Toys" },
-  { id: "word_soft", word: "soft", phonetic: "/sɔːft/", meaning: "柔软的", image: "/static/books/bear/word-soft.webp", audio: "/static/audio/words/soft.mp3", level: "A", theme: "Toys" },
-  { id: "word_hug", word: "hug", phonetic: "/hʌɡ/", meaning: "拥抱", image: "/static/books/bear/word-hug.webp", audio: "/static/audio/words/hug.mp3", level: "A", theme: "Family" },
-  { id: "word_mom", word: "mom", phonetic: "/mɑːm/", meaning: "妈妈", image: "/static/books/mom/word-mom.webp", audio: "/static/audio/words/mom.mp3", level: "A", theme: "Family" },
-  { id: "word_love", word: "love", phonetic: "/lʌv/", meaning: "爱", image: "/static/books/mom/word-love.webp", audio: "/static/audio/words/love.mp3", level: "A", theme: "Family" },
-  { id: "word_run", word: "run", phonetic: "/rʌn/", meaning: "跑", image: "/static/books/jump/word-run.webp", audio: "/static/audio/words/run.mp3", level: "A", theme: "Actions" },
-  { id: "word_clap", word: "clap", phonetic: "/klæp/", meaning: "拍手", image: "/static/books/jump/word-clap.webp", audio: "/static/audio/words/clap.mp3", level: "A", theme: "Actions" },
-  { id: "word_car", word: "car", phonetic: "/kɑːr/", meaning: "小汽车", image: "/static/topic-icons/vehicles/car.webp", audio: "/static/audio/words/car.mp3", level: "A", theme: "Vehicles" },
-  { id: "word_stop", word: "stop", phonetic: "/stɑːp/", meaning: "停下", image: "/static/topic-icons/vehicles/car.webp", audio: "/static/audio/words/stop.mp3", level: "A", theme: "Vehicles" },
-  { id: "word_rain", word: "rain", phonetic: "/reɪn/", meaning: "雨", image: "/static/topic-icons/vehicles/car.webp", audio: "/static/audio/words/rain.mp3", level: "A", theme: "Vehicles" },
-  { id: "word_digger", word: "digger", phonetic: "/ˈdɪɡər/", meaning: "挖掘机", image: "/static/topic-icons/vehicles/excavator.webp", audio: "/static/audio/words/digger.mp3", level: "A", theme: "Vehicles" },
-  { id: "word_dig", word: "dig", phonetic: "/dɪɡ/", meaning: "挖", image: "/static/topic-icons/vehicles/excavator.webp", audio: "/static/audio/words/dig.mp3", level: "A", theme: "Vehicles" },
-  { id: "word_park", word: "park", phonetic: "/pɑːrk/", meaning: "公园", image: "/static/topic-icons/vehicles/excavator.webp", audio: "/static/audio/words/park.mp3", level: "A", theme: "Vehicles" },
-  { id: "word_fire_truck", word: "fire truck", phonetic: "/ˈfaɪər trʌk/", meaning: "消防车", image: "/static/topic-icons/vehicles/fire-truck.webp", audio: "/static/audio/words/fire-truck.mp3", level: "A", theme: "Vehicles" },
-  { id: "word_ladder", word: "ladder", phonetic: "/ˈlædər/", meaning: "梯子", image: "/static/topic-icons/vehicles/fire-truck.webp", audio: "/static/audio/words/ladder.mp3", level: "A", theme: "Vehicles" },
-  { id: "word_safe", word: "safe", phonetic: "/seɪf/", meaning: "安全的", image: "/static/topic-icons/vehicles/fire-truck.webp", audio: "/static/audio/words/safe.mp3", level: "A", theme: "Vehicles" },
-  { id: "word_bus", word: "bus", phonetic: "/bʌs/", meaning: "公共汽车", image: "/static/topic-icons/vehicles/bus.webp", audio: "/static/audio/words/bus.mp3", level: "A", theme: "Vehicles" },
-  { id: "word_bridge", word: "bridge", phonetic: "/brɪdʒ/", meaning: "桥", image: "/static/topic-icons/vehicles/bus.webp", audio: "/static/audio/words/bridge.mp3", level: "A", theme: "Vehicles" },
-  { id: "word_home", word: "home", phonetic: "/hoʊm/", meaning: "家", image: "/static/topic-icons/vehicles/bus.webp", audio: "/static/audio/words/home.mp3", level: "A", theme: "Vehicles" },
-  { id: "word_police_car", word: "police car", phonetic: "/pəˈliːs kɑːr/", meaning: "警车", image: "/static/topic-icons/vehicles/police-car.webp", audio: "/static/audio/words/police-car.mp3", level: "A", theme: "Vehicles" },
-  { id: "word_van", word: "van", phonetic: "/væn/", meaning: "厢式货车", image: "/static/topic-icons/vehicles/van.webp", audio: "/static/audio/words/van.mp3", level: "A", theme: "Vehicles" }
+  { id: "word_cat", word: "cat", phonetic: "/kæt/", meaning: "猫", image: "/pkg-reading/static/word-pictures/word-cat.jpg", audio: "/static/audio/words/cat.mp3", level: "A", theme: "Animals" },
+  { id: "word_black", word: "black", phonetic: "/blæk/", meaning: "黑色", image: "/pkg-reading/static/word-pictures/word-black.jpg", audio: "/static/audio/words/black.mp3", level: "A", theme: "Colors" },
+  { id: "word_jump", word: "jump", phonetic: "/dʒʌmp/", meaning: "跳", image: "/pkg-reading/static/word-pictures/word-jump.jpg", audio: "/static/audio/words/jump.mp3", level: "A", theme: "Actions" },
+  { id: "word_apple", word: "apple", phonetic: "/ˈæpl/", meaning: "苹果", image: "/pkg-reading/static/word-pictures/word-apple.jpg", audio: "/static/audio/words/apple.mp3", level: "A", theme: "Food" },
+  { id: "word_red", word: "red", phonetic: "/red/", meaning: "红色", image: "/pkg-reading/static/word-pictures/word-red.jpg", audio: "/static/audio/words/red.mp3", level: "A", theme: "Colors" },
+  { id: "word_eat", word: "eat", phonetic: "/iːt/", meaning: "吃", image: "/pkg-reading/static/word-pictures/word-eat.jpg", audio: "/static/audio/words/eat.mp3", level: "A", theme: "Actions" },
+  { id: "word_bear", word: "bear", phonetic: "/ber/", meaning: "熊", image: "/pkg-reading/static/word-pictures/word-bear.jpg", audio: "/static/audio/words/bear.mp3", level: "A", theme: "Toys" },
+  { id: "word_soft", word: "soft", phonetic: "/sɔːft/", meaning: "柔软的", image: "/pkg-reading/static/word-pictures/word-soft.jpg", audio: "/static/audio/words/soft.mp3", level: "A", theme: "Toys" },
+  { id: "word_hug", word: "hug", phonetic: "/hʌɡ/", meaning: "拥抱", image: "/pkg-reading/static/word-pictures/word-hug.jpg", audio: "/static/audio/words/hug.mp3", level: "A", theme: "Family" },
+  { id: "word_mom", word: "mom", phonetic: "/mɑːm/", meaning: "妈妈", image: "/pkg-reading/static/word-pictures/word-mom.jpg", audio: "/static/audio/words/mom.mp3", level: "A", theme: "Family" },
+  { id: "word_love", word: "love", phonetic: "/lʌv/", meaning: "爱", image: "/pkg-reading/static/word-pictures/word-love.jpg", audio: "/static/audio/words/love.mp3", level: "A", theme: "Family" },
+  { id: "word_run", word: "run", phonetic: "/rʌn/", meaning: "跑", image: "/pkg-reading/static/word-pictures/word-run.jpg", audio: "/static/audio/words/run.mp3", level: "A", theme: "Actions" },
+  { id: "word_clap", word: "clap", phonetic: "/klæp/", meaning: "拍手", image: "/pkg-reading/static/word-pictures/word-clap.jpg", audio: "/static/audio/words/clap.mp3", level: "A", theme: "Actions" },
+  { id: "word_car", word: "car", phonetic: "/kɑːr/", meaning: "小汽车", image: "/pkg-reading/static/word-pictures/car.jpg", audio: "/static/audio/words/car.mp3", level: "A", theme: "Vehicles" },
+  { id: "word_stop", word: "stop", phonetic: "/stɑːp/", meaning: "停下", image: "/pkg-reading/static/word-pictures/car.jpg", audio: "/static/audio/words/stop.mp3", level: "A", theme: "Vehicles" },
+  { id: "word_rain", word: "rain", phonetic: "/reɪn/", meaning: "雨", image: "/pkg-reading/static/word-pictures/car.jpg", audio: "/static/audio/words/rain.mp3", level: "A", theme: "Vehicles" },
+  { id: "word_digger", word: "digger", phonetic: "/ˈdɪɡər/", meaning: "挖掘机", image: "/pkg-reading/static/word-pictures/excavator.jpg", audio: "/static/audio/words/digger.mp3", level: "A", theme: "Vehicles" },
+  { id: "word_dig", word: "dig", phonetic: "/dɪɡ/", meaning: "挖", image: "/pkg-reading/static/word-pictures/excavator.jpg", audio: "/static/audio/words/dig.mp3", level: "A", theme: "Vehicles" },
+  { id: "word_park", word: "park", phonetic: "/pɑːrk/", meaning: "公园", image: "/pkg-reading/static/word-pictures/excavator.jpg", audio: "/static/audio/words/park.mp3", level: "A", theme: "Vehicles" },
+  { id: "word_fire_truck", word: "fire truck", phonetic: "/ˈfaɪər trʌk/", meaning: "消防车", image: "/pkg-reading/static/word-pictures/fire-truck.jpg", audio: "/static/audio/words/fire-truck.mp3", level: "A", theme: "Vehicles" },
+  { id: "word_ladder", word: "ladder", phonetic: "/ˈlædər/", meaning: "梯子", image: "/pkg-reading/static/word-pictures/fire-truck.jpg", audio: "/static/audio/words/ladder.mp3", level: "A", theme: "Vehicles" },
+  { id: "word_safe", word: "safe", phonetic: "/seɪf/", meaning: "安全的", image: "/pkg-reading/static/word-pictures/fire-truck.jpg", audio: "/static/audio/words/safe.mp3", level: "A", theme: "Vehicles" },
+  { id: "word_bus", word: "bus", phonetic: "/bʌs/", meaning: "公共汽车", image: "/pkg-reading/static/word-pictures/bus.jpg", audio: "/static/audio/words/bus.mp3", level: "A", theme: "Vehicles" },
+  { id: "word_bridge", word: "bridge", phonetic: "/brɪdʒ/", meaning: "桥", image: "/pkg-reading/static/word-pictures/bus.jpg", audio: "/static/audio/words/bridge.mp3", level: "A", theme: "Vehicles" },
+  { id: "word_home", word: "home", phonetic: "/hoʊm/", meaning: "家", image: "/pkg-reading/static/word-pictures/bus.jpg", audio: "/static/audio/words/home.mp3", level: "A", theme: "Vehicles" },
+  { id: "word_police_car", word: "police car", phonetic: "/pəˈliːs kɑːr/", meaning: "警车", image: "/pkg-reading/static/word-pictures/police-car.jpg", audio: "/static/audio/words/police-car.mp3", level: "A", theme: "Vehicles" },
+  { id: "word_van", word: "van", phonetic: "/væn/", meaning: "厢式货车", image: "/pkg-reading/static/word-pictures/van.jpg", audio: "/static/audio/words/van.mp3", level: "A", theme: "Vehicles" }
 ] satisfies Word[]).map((word) => ({
   ...word,
   image: highResolutionAsset(word.image),
@@ -393,7 +393,9 @@ export const mockBookPages: BookPage[] = pageContent.flatMap((book) =>
       id: `page_${book.bookId}_${pageNumber}`,
       bookId: book.bookId,
       pageIndex,
-      image: book.imageRoot
+      image: ["cat", "apple", "bear", "mom", "jump"].includes(book.folder)
+        ? `/pkg-reading/static/first-books/${book.folder}/page${pageNumber}.jpg`
+        : book.imageRoot
         ? `${book.imageRoot}/page${pageNumber}.jpg`
         : highResolutionAsset(`/static/books/${book.vehicleStoryId ?? book.folder}/page${pageNumber}.jpg`),
       sentence,

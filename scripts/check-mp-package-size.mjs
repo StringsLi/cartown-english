@@ -10,8 +10,7 @@ const mediaLimit = 200 * 1024;
 const mediaExtensions = new Set([".png", ".bmp", ".jpg", ".jpeg", ".gif", ".webp", ".mp3", ".wav", ".m4a", ".aac"]);
 const forbiddenMainFiles = [
   "mock/bestSellingCars.js",
-  "services/recordArchiveService.js",
-  "services/recordService.js"
+  "services/recordArchiveService.js"
 ];
 const packageSizes = new Map();
 const outputFiles = await listFiles(outputRoot);
@@ -22,6 +21,12 @@ for (const packageRoot of packageRoots) {
 }
 
 let hasQualityFailure = false;
+const totalBytes = [...packageSizes.values()].reduce((sum, bytes) => sum + bytes, 0);
+console.log(`total: ${(totalBytes / 1024 / 1024).toFixed(3)} MiB`);
+if (totalBytes >= 20 * 1024 * 1024) {
+  console.error("Combined mini program packages must be smaller than 20 MiB.");
+  hasQualityFailure = true;
+}
 for (const [name, bytes] of packageSizes) {
   const size = (bytes / 1024 / 1024).toFixed(3);
   console.log(`${name}: ${size} MiB`);
@@ -42,6 +47,19 @@ for (const relativePath of forbiddenMainFiles) {
   }
 }
 
+// 录音服务现在由 App 在切后台时停止录制/回放，放在主包供页面共享。
+// 仍检查主包的服务是否有真实入口引用，避免旧构建残留被打包。
+try {
+  await stat(path.join(outputRoot, "services", "recordService.js"));
+  const appJs = await readFile(path.join(outputRoot, "app.js"), "utf8");
+  if (!/require\(["']\.\/services\/recordService\.js["']\)/.test(appJs)) {
+    console.error("Unused main-package module detected: services/recordService.js");
+    hasQualityFailure = true;
+  }
+} catch (error) {
+  if (error?.code !== "ENOENT") throw error;
+}
+
 for (const filePath of outputFiles) {
   if (!mediaExtensions.has(path.extname(filePath).toLowerCase())) continue;
   const bytes = (await stat(filePath)).size;
@@ -51,8 +69,19 @@ for (const filePath of outputFiles) {
   }
 }
 
-for (const filePath of outputFiles.filter((item) => path.extname(item) === ".js" && isMainPackageFile(item))) {
+for (const filePath of outputFiles.filter((item) => path.extname(item) === ".js")) {
   const content = await readFile(filePath, "utf8");
+  if (/\bwx(?:\$\d+)?\.loadSubpackage\b/.test(content)) {
+    console.error(`Mini-game-only API in mini-program output: ${path.relative(outputRoot, filePath)}`);
+    hasQualityFailure = true;
+  }
+  for (const call of content.matchAll(/require\.async\(["']([^"']+)["']\)/g)) {
+    const resolved = path.resolve(path.dirname(filePath), call[1]);
+    if (!outputFiles.includes(resolved)) {
+      console.error(`Async module missing after bundling: ${path.relative(outputRoot, filePath)} -> ${call[1]}`);
+      hasQualityFailure = true;
+    }
+  }
   const requirePattern = /require\(["']([^"']+)["']\)/g;
   let match;
   while ((match = requirePattern.exec(content))) {
@@ -63,8 +92,9 @@ for (const filePath of outputFiles.filter((item) => path.extname(item) === ".js"
     const resolved = path.resolve(path.dirname(filePath), request);
     const relative = path.relative(outputRoot, resolved).split(path.sep).join("/");
     const targetPackage = packageRoots.find((root) => relative === root || relative.startsWith(`${root}/`));
-    if (targetPackage) {
-      console.error(`Main-package JS synchronously requires ${targetPackage}: ${path.relative(outputRoot, filePath)} -> ${request}`);
+    const ownerPackage = packageOf(filePath);
+    if (targetPackage && targetPackage !== ownerPackage) {
+      console.error(`${ownerPackage || "Main-package"} JS synchronously requires ${targetPackage}: ${path.relative(outputRoot, filePath)} -> ${request}`);
       hasQualityFailure = true;
     }
   }
@@ -72,9 +102,9 @@ for (const filePath of outputFiles.filter((item) => path.extname(item) === ".js"
 
 if (hasQualityFailure) process.exit(1);
 
-function isMainPackageFile(filePath) {
+function packageOf(filePath) {
   const relative = path.relative(outputRoot, filePath).split(path.sep).join("/");
-  return !packageRoots.some((root) => relative === root || relative.startsWith(`${root}/`));
+  return packageRoots.find(root => relative === root || relative.startsWith(`${root}/`));
 }
 
 async function directorySize(directory, excludedTopLevelDirectories = new Set()) {

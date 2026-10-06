@@ -1,536 +1,102 @@
 <template>
   <view class="page home-page screen-with-nav">
     <view class="brand-row">
-      <view class="brand-copy">
-        <text class="brand-kicker">CAR EXPLORER</text>
-        <text class="brand-title">车车探索小助手</text>
-        <text class="brand-greeting">{{ childName }}，今天想开哪辆车出发？</text>
-      </view>
-      <button class="star-pill" aria-label="查看奖励车库" @tap="goGarage">
-        <text class="star-pill__star">★</text>
-        <text>{{ earnedStars }}</text>
+      <view class="brand-copy"><text class="section-kicker">LITTLE DRIVER CLUB</text><text class="page-title">车车英语乐园</text><text class="greeting">{{ childName }}，今天想去哪里玩？</text></view>
+      <button role="button" class="star-pocket" aria-label="查看我的车库" @tap="goGarage"><text class="star-pocket__value">★ {{ progress.stars }}</text><text class="star-pocket__label">我的车库 ›</text></button>
+    </view>
+
+    <view class="today-trip">
+      <view class="today-trip__heading"><text class="today-trip__tag">今天的小旅程</text><text class="today-trip__progress">{{ finishedSteps }} / 3 个小活动</text></view>
+      <view class="today-trip__body"><view class="today-trip__copy"><text class="today-trip__title">{{ primaryTitle }}</text><text class="today-trip__note">{{ primaryNote }}</text></view><image class="today-trip__car" src="/static/ui/home-red-car.png" mode="aspectFit" /></view>
+      <button role="button" class="home-primary" @tap="primaryAction"><text>{{ primaryLabel }}</text><text class="home-primary__arrow">›</text></button>
+      <view class="daily-steps"><button role="button" v-for="(step, index) in dailySteps" :key="step.title" class="daily-step" :class="{ 'daily-step--done': step.done }" :aria-label="step.title + '，' + step.detail + (step.done ? '，已完成' : '')" @tap="openStep(index)"><text class="daily-step__mark">{{ step.done ? '✓' : index + 1 }}</text><view class="daily-step__copy"><text class="daily-step__title">{{ step.title }}</text><text class="daily-step__detail">{{ step.detail }}</text></view></button></view>
+    </view>
+    <AudioFeedback />
+
+    <view class="section-head home-section-head"><text class="section-title">选一个喜欢的世界</text><text class="section-caption">随时换，慢慢玩</text></view>
+    <view class="world-grid">
+      <button role="button" v-for="item in homeWorlds" :key="item.id" class="world-card" :class="'world-card--' + item.id" :aria-label="item.title + '，' + item.note" @tap="openDestination(item.url)">
+        <view class="world-card__top"><HomeModuleArt :kind="item.kind" /><text class="world-card__arrow">↗</text></view>
+        <text class="world-card__title">{{ item.title }}</text><text class="world-card__english">{{ item.english }}</text><text class="world-card__note">{{ item.note }}</text>
       </button>
     </view>
 
-    <view class="explore-hero" @tap="goBookDetail(explorerBook)">
-      <view class="explore-hero__art"><RedCarMascot /></view>
-      <view class="explore-hero__shade" />
-      <view class="explore-hero__copy">
-        <text class="explore-hero__eyebrow">TODAY'S TRIP</text>
-        <text class="explore-hero__title">和红车车一起探索</text>
-        <text class="explore-hero__desc">听一听、点一点，完成今天的三站小旅程。</text>
-        <button class="explore-hero__listen" @tap.stop="playExplore">
-          <text class="explore-hero__play">▶</text>
-          <text>Let's explore!</text>
-        </button>
-      </view>
-      <view class="explore-hero__route">{{ completedStops }}/3 站</view>
+    <view class="section-head home-section-head"><text class="section-title">车车练习站</text><text class="section-caption">听一听，再动手</text></view>
+    <view class="practice-grid">
+      <button role="button" v-for="item in homePractices" :key="item.id" class="practice-card" :class="'practice-card--' + item.id" @tap="openDestination(item.url)"><text class="practice-card__icon">{{ item.icon }}</text><view class="practice-card__copy"><text class="practice-card__title">{{ item.title }}</text><text class="practice-card__note">{{ item.note }}</text></view><text class="practice-card__arrow">›</text></button>
     </view>
 
-    <view class="route-strip">
-      <view v-for="(stop, index) in routeStops" :key="stop.label" class="route-stop">
-        <view class="route-stop__marker" :class="{ 'route-stop__marker--done': index < completedStops }">
-          {{ index < completedStops ? "✓" : index + 1 }}
-        </view>
-        <text class="route-stop__label">{{ stop.label }}</text>
-      </view>
-      <view class="route-strip__road" />
+    <view class="section-head home-section-head"><text class="section-title">一起陪玩</text><text class="section-caption">声音与小纪念</text></view>
+    <view class="family-tools">
+      <button role="button" class="tool-row" @tap="openChants"><text class="tool-row__icon tool-row__icon--music">♫</text><view class="tool-row__copy"><text class="tool-row__title">儿歌电台</text><text class="tool-row__note">听节奏，和孩子一起动一动</text></view><text class="tool-row__arrow">›</text></button>
+      <button role="button" class="tool-row" @tap="openFamilyPlay"><text class="tool-row__icon tool-row__icon--family">♡</text><view class="tool-row__copy"><text class="tool-row__title">亲子小任务</text><text class="tool-row__note">一句英语，带进日常生活</text></view><text class="tool-row__arrow">›</text></button>
+      <button role="button" class="tool-row tool-row--last" @tap="openRecordings"><text class="tool-row__icon tool-row__icon--voice">♪</text><view class="tool-row__copy"><text class="tool-row__title">声音小纪念</text><text class="tool-row__note">{{ recordingCount ? '本机保存 ' + recordingCount + ' 条录音 · 回听与备份' : '跟读后保存的录音，可以回听和备份' }}</text></view><text class="tool-row__arrow">›</text></button>
     </view>
-
-    <view class="section-head">
-      <view>
-        <text class="section-kicker">CHOOSE A MISSION</text>
-        <text class="section-title">探索任务</text>
-      </view>
-      <text class="section-link" @tap="goGarage">我的车库</text>
-    </view>
-
-    <view class="mission-grid">
-      <button class="mission-card mission-card--story" @tap="goBooks">
-        <view class="mission-card__art"><RedCarMascot compact /></view>
-        <view class="mission-card__shade" />
-        <view class="mission-card__copy">
-          <text class="mission-card__count">9 本</text>
-          <text class="mission-card__title">车车绘本</text>
-          <text class="mission-card__desc">听故事去旅行</text>
-        </view>
-      </button>
-
-      <button class="mission-card mission-card--vehicle" @tap="goVehicles">
-        <CachedImage class="mission-card__art" :src="vehicleMissionImage" mode="aspectFill" />
-        <view class="mission-card__shade" />
-        <view class="mission-card__copy">
-          <text class="mission-card__count">50 辆</text>
-          <text class="mission-card__title">认识车辆</text>
-          <text class="mission-card__desc">看真车学车型</text>
-        </view>
-      </button>
-
-      <button class="mission-card mission-card--world" @tap="goWorld">
-        <CachedImage class="mission-card__art" :src="worldMissionImage" mode="aspectFill" />
-        <view class="mission-card__shade" />
-        <view class="mission-card__copy">
-          <text class="mission-card__count">50 国</text>
-          <text class="mission-card__title">世界地图</text>
-          <text class="mission-card__desc">坐车车看世界</text>
-        </view>
-      </button>
-
-      <button class="mission-card mission-card--logo" @tap="goLogos">
-        <CachedImage class="mission-card__art" :src="logoMissionImage" mode="aspectFill" />
-        <view class="mission-card__shade" />
-        <view class="mission-card__copy">
-          <text class="mission-card__count">50 个</text>
-          <text class="mission-card__title">车标发现</text>
-          <text class="mission-card__desc">认一认汽车标志</text>
-        </view>
-      </button>
-    </view>
-
-    <view class="explorer-progress soft-card">
-      <view class="explorer-progress__badge">★</view>
-      <view class="explorer-progress__copy">
-        <text class="explorer-progress__title">本周探索足迹</text>
-        <text class="explorer-progress__desc">已读 {{ stats.readBookCount }} 本 · 认识 {{ stats.learnedWordCount }} 个词</text>
-        <view class="explorer-progress__track">
-          <view class="explorer-progress__fill" :style="{ width: weeklyProgress + '%' }" />
-        </view>
-      </view>
-      <button class="explorer-progress__link" @tap="goParent">家长查看</button>
-    </view>
-
+    <button role="button" v-if="reviewTopic" class="review-card" @tap="openReview"><view class="review-card__copy"><text class="review-card__title">老朋友，再见面</text><text class="review-card__note">{{ reviewTopic.title }} · 复习 {{ reviewCount }} 个小伙伴</text></view><text class="review-card__link">去听听 ›</text></button>
+    <button role="button" class="parent-summary" @tap="goParent"><view class="parent-summary__copy"><text class="parent-summary__title">给家长看的小足迹</text><text class="parent-summary__note">听过 {{ summary.heard }} 个词 · 独立找对 {{ summary.independent }} 个词</text></view><text class="parent-summary__link">查看 ›</text></button>
+    <text class="home-footnote">想停就停，进度保存在这台设备。</text>
     <BottomNav active="home" />
   </view>
 </template>
-
 <script setup lang="ts">
+import { navigate } from "@/services/navigationService";
 import { computed, ref } from "vue";
-import { onShow } from "@dcloudio/uni-app";
+import { onShow, onHide, onUnload } from "@dcloudio/uni-app";
 import BottomNav from "@/components/BottomNav.vue";
-import CachedImage from "@/components/CachedImage.vue";
-import RedCarMascot from "@/components/RedCarMascot.vue";
-import { getBookById, getTodayBook } from "@/services/bookService";
-import { getHomeStats, getLearningState } from "@/services/progressService";
+import AudioFeedback from "@/components/AudioFeedback.vue";
+import HomeModuleArt from "@/components/HomeModuleArt.vue";
+import { homeWorlds, homePractices } from "@/mock/homeDiscovery";
+import { getLearningState } from "@/services/progressService";
 import { getCartownProgress } from "@/services/cartownProgressService";
-import { highResolutionAsset } from "@/services/assetService";
-import { speakEnglish } from "@/services/audioService";
-import type { Book } from "@/types/book";
+import { getPlaygroundTopic, getSuggestedPlaygroundTopic } from "@/mock/playground";
+import { getTodayPlay, getPlaygroundLearning, getPlaygroundSummary, getReviewTopic, getReviewItems } from "@/services/playgroundLearningService";
+import { stopAudio } from "@/services/audioService";
 import { usePageShare } from "@/composables/usePageShare";
-
 usePageShare();
-const explorerBook = getBookById("book_red_car_001") ?? getTodayBook();
-const stats = ref(getHomeStats());
-const learningState = ref(getLearningState());
-const cartownProgress = ref(getCartownProgress());
-const routeStops = [
-  { label: "听一个词" },
-  { label: "读车车故事" },
-  { label: "发现一个国家" }
-];
-
-const childName = computed(() => learningState.value.childNickname || "小小探索家");
-const earnedStars = computed(() => Math.min(99, cartownProgress.value.stars));
-const completedStops = computed(() => stats.value.todayCompleted ? 3 : Math.min(2, stats.value.readBookCount % 3));
-const weeklyProgress = computed(() => Math.min(100, Math.round(stats.value.weeklyReadingSeconds / 18)));
-const vehicleMissionImage = "/static/ui/top-selling-car.jpg";
-const worldMissionImage = "/static/ui/world-road-trip.jpg";
-const logoMissionImage = highResolutionAsset("/static/cartown-logos/byd.webp");
-
-onShow(() => {
-  stats.value = getHomeStats();
-  learningState.value = getLearningState();
-  cartownProgress.value = getCartownProgress();
-});
-
-function playExplore() {
-  speakEnglish("Let's explore!");
-}
-
-function goBookDetail(book: Book) {
-  uni.navigateTo({ url: "/pkg-reading/book-detail/index?bookId=" + book.id });
-}
-
-function goBooks() {
-  uni.reLaunch({ url: "/pages/books/index" });
-}
-
-function goParent() {
-  uni.reLaunch({ url: "/pkg-user/parent/index?bookId=" + explorerBook.id });
-}
-
-function goVehicles() {
-  uni.reLaunch({ url: "/pages/vehicles/index" });
-}
-
-function goWorld() {
-  uni.navigateTo({ url: "/pkg-world/world/index" });
-}
-
-function goLogos() {
-  uni.navigateTo({ url: "/pkg-learning/car-logos/index" });
-}
-
-function goGarage() {
-  uni.navigateTo({ url: "/pkg-learning/car-garage/index" });
-}
+const childName = ref(getLearningState().childNickname || "小小司机");
+const progress = ref(getCartownProgress()), daily = ref({ ...getTodayPlay() });
+const session = ref(getPlaygroundLearning().session), summary = ref(getPlaygroundSummary(progress.value.playgroundHeardWordIds));
+const reviewTopic = ref(getReviewTopic());
+const recordingCount = ref(getLearningState().repeatRecords.length);
+const reviewCount = ref(reviewTopic.value ? getReviewItems(reviewTopic.value.id).length : 0);
+const suggestedTopic = computed(() => getSuggestedPlaygroundTopic(progress.value.playgroundCompletedTopicIds));
+const resumeTopic = computed(() => session.value && getPlaygroundTopic(session.value.topicId));
+const dailySteps = computed(() => [
+  { title: "听 3 个词", detail: `${Math.min(3, daily.value.heardIds.length)} / 3`, done: daily.value.heardIds.length >= 3 },
+  { title: "找对 2 张图", detail: `${Math.min(2, daily.value.solvedIds.length)} / 2`, done: daily.value.solvedIds.length >= 2 },
+  { title: "玩 1 个故事", detail: `${Math.min(1, daily.value.adventureIds.length)} / 1`, done: daily.value.adventureIds.length >= 1 }
+]);
+const todayDone = computed(() => dailySteps.value.every(s => s.done));
+onShow(() => { recordingCount.value = getLearningState().repeatRecords.length; childName.value = getLearningState().childNickname || "小小司机"; progress.value = getCartownProgress(); daily.value = { ...getTodayPlay() }; session.value = getPlaygroundLearning().session; summary.value = getPlaygroundSummary(progress.value.playgroundHeardWordIds); reviewTopic.value = getReviewTopic(); reviewCount.value = reviewTopic.value ? getReviewItems(reviewTopic.value.id).length : 0; });
+onHide(stopAudio); onUnload(stopAudio);
+function openDestination(url: string) { navigate({ url }); }
+function primaryAction() { if (session.value && resumeTopic.value) resume(); else startToday(); }
+function openChants() { openDestination("/pkg-music/index/index"); }
+function openFamilyPlay() { openDestination("/pkg-learning/playground/index?tab=parent"); }
+function openRecordings() { openDestination("/pkg-reading/recordings/index"); }
+const finishedSteps = computed(() => dailySteps.value.filter(step => step.done).length);
+const primaryTitle = computed(() => session.value && resumeTopic.value ? "接着玩 · " + resumeTopic.value.title : todayDone.value ? "今天的小旅程完成啦" : "听一听，找一找，开车出发");
+const primaryNote = computed(() => session.value && resumeTopic.value ? session.value.mode === "learn" ? "上次点读到第 " + (session.value.wordIndex + 1) + " 个小伙伴" : (session.value.reviewOnly ? "复习" : "找图") + "第 " + (session.value.questionIndex + 1) + " / " + session.value.questionIds.length + " 题" : todayDone.value ? "拿出玩具车，和家长接着演一演。" : "从" + suggestedTopic.value.title + "开始，想听几遍都可以。");
+const primaryLabel = computed(() => session.value && resumeTopic.value ? "继续上次的小旅程" : todayDone.value ? "再玩一个车车故事" : "开始今天的小旅程");
+function startToday() { openStep(todayDone.value ? 2 : dailySteps.value.findIndex(s => !s.done)); }
+function openStep(index: number) { if (index === 2) return goAdventure(); stopAudio(); navigate({ url: `/pkg-learning/playground-game/index?topic=${suggestedTopic.value.id}${index === 1 ? '&mode=quiz' : ''}` }); }
+function resume() { if (session.value) navigate({ url: `/pkg-learning/playground-game/index?topic=${session.value.topicId}&resume=1` }); }
+function openReview() { if (reviewTopic.value) navigate({ url: `/pkg-learning/playground-game/index?topic=${reviewTopic.value.id}&mode=quiz&review=1` }); }
+function goAdventure() { navigate({ url: "/pkg-adventure/index/index" }); }
+function goGarage() { navigate({ url: "/pkg-cars/car-garage/index" }); }
+function goParent() { navigate({ url: "/pkg-user/parent/index" }, "reLaunch"); }
 </script>
-
 <style scoped lang="scss">
-.home-page {
-  background:
-    radial-gradient(circle at 94% 2%, rgba(89, 159, 185, 0.15), transparent 25%),
-    $color-cream;
-}
-
-.brand-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 22rpx;
-  padding: 4rpx 0 24rpx;
-}
-
-.brand-copy,
-.brand-title,
-.brand-greeting {
-  display: block;
-}
-
-.brand-kicker {
-  font-size: 18rpx;
-  font-weight: 900;
-  color: #287b92;
-  letter-spacing: 2rpx;
-}
-
-.brand-title {
-  margin-top: 5rpx;
-  font-size: 39rpx;
-  font-weight: 900;
-  color: #243f50;
-  line-height: 1.12;
-}
-
-.brand-greeting {
-  margin-top: 8rpx;
-  font-size: 22rpx;
-  color: #65727a;
-}
-
-.star-pill {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7rpx;
-  min-width: 94rpx;
-  height: 58rpx;
-  padding: 0 18rpx;
-  border: 2rpx solid rgba(214, 155, 38, 0.28);
-  border-radius: 29rpx;
-  font-size: 23rpx;
-  font-weight: 900;
-  color: #77520c;
-  background: #fff4cc;
-  box-shadow: 0 8rpx 18rpx rgba(123, 86, 19, 0.08);
-}
-
-.star-pill__star {
-  color: #eba91d;
-}
-
-.explore-hero {
-  position: relative;
-  height: 380rpx;
-  overflow: hidden;
-  border-radius: 8rpx;
-  background: #b9d6df;
-  box-shadow: 0 18rpx 38rpx rgba(45, 74, 86, 0.16);
-}
-
-.explore-hero__art,
-.explore-hero__shade {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.explore-hero__shade {
-  background: linear-gradient(90deg, rgba(23, 48, 61, 0.88) 0%, rgba(23, 48, 61, 0.6) 52%, rgba(23, 48, 61, 0.04) 82%);
-}
-
-.explore-hero__copy {
-  position: relative;
-  z-index: 2;
-  width: 64%;
-  padding: 38rpx 30rpx;
-}
-
-.explore-hero__eyebrow,
-.explore-hero__title,
-.explore-hero__desc {
-  display: block;
-}
-
-.explore-hero__eyebrow {
-  font-size: 18rpx;
-  font-weight: 900;
-  color: #ffd96e;
-  letter-spacing: 2rpx;
-}
-
-.explore-hero__title {
-  margin-top: 12rpx;
-  font-size: 38rpx;
-  font-weight: 900;
-  color: #ffffff;
-  line-height: 1.17;
-}
-
-.explore-hero__desc {
-  margin-top: 12rpx;
-  font-size: 22rpx;
-  color: rgba(255, 255, 255, 0.84);
-  line-height: 1.45;
-}
-
-.explore-hero__listen {
-  display: inline-flex;
-  align-items: center;
-  gap: 10rpx;
-  min-height: 62rpx;
-  margin-top: 23rpx;
-  padding: 0 23rpx;
-  border-radius: 31rpx;
-  font-size: 22rpx;
-  font-weight: 900;
-  color: #243f50;
-  background: #ffd96e;
-}
-
-.explore-hero__play {
-  font-size: 18rpx;
-}
-
-.explore-hero__route {
-  position: absolute;
-  top: 20rpx;
-  right: 20rpx;
-  z-index: 2;
-  padding: 9rpx 16rpx;
-  border: 1rpx solid rgba(255, 255, 255, 0.42);
-  border-radius: 24rpx;
-  font-size: 19rpx;
-  font-weight: 800;
-  color: #ffffff;
-  background: rgba(17, 45, 58, 0.42);
-}
-
-.route-strip {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10rpx;
-  margin-top: 24rpx;
-  padding: 0 12rpx;
-}
-
-.route-strip__road {
-  position: absolute;
-  top: 25rpx;
-  right: 17%;
-  left: 17%;
-  z-index: 0;
-  border-top: 4rpx dashed #b9b5a9;
-}
-
-.route-stop {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8rpx;
-}
-
-.route-stop__marker {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 52rpx;
-  height: 52rpx;
-  border: 4rpx solid $color-cream;
-  border-radius: 50%;
-  font-size: 20rpx;
-  font-weight: 900;
-  color: #7a7770;
-  background: #dedbd2;
-}
-
-.route-stop__marker--done {
-  color: #ffffff;
-  background: #3c9b76;
-}
-
-.route-stop__label {
-  font-size: 19rpx;
-  font-weight: 800;
-  color: #5d666a;
-}
-
-.section-head .section-kicker,
-.section-head .section-title {
-  margin: 0;
-}
-
-.section-head .section-title {
-  margin-top: 4rpx;
-}
-
-.mission-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16rpx;
-}
-
-.mission-card {
-  position: relative;
-  width: 100%;
-  height: 248rpx;
-  overflow: hidden;
-  border: 1rpx solid rgba(39, 62, 73, 0.1);
-  border-radius: 8rpx;
-  text-align: left;
-  box-shadow: 0 10rpx 24rpx rgba(47, 58, 74, 0.07);
-}
-
-.mission-card__art {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.mission-card__shade {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg, rgba(24, 47, 57, 0.88) 0%, rgba(24, 47, 57, 0.08) 78%);
-}
-
-.mission-card__copy {
-  position: absolute;
-  right: 18rpx;
-  bottom: 17rpx;
-  left: 18rpx;
-  z-index: 2;
-}
-
-.mission-card__count,
-.mission-card__title,
-.mission-card__desc {
-  display: block;
-}
-
-.mission-card__count {
-  width: max-content;
-  padding: 5rpx 10rpx;
-  border-radius: 18rpx;
-  font-size: 17rpx;
-  font-weight: 900;
-  color: #315768;
-  background: rgba(255, 255, 255, 0.82);
-}
-
-.mission-card__title {
-  margin-top: 8rpx;
-  font-size: 28rpx;
-  font-weight: 900;
-  color: #263f4b;
-}
-
-.mission-card__desc {
-  margin-top: 4rpx;
-  font-size: 19rpx;
-  color: #68757b;
-}
-
-.mission-card .mission-card__title,
-.mission-card .mission-card__desc {
-  color: #ffffff;
-}
-
-.mission-card--vehicle { background: #dff0ed; }
-.mission-card--world { background: #e6eef8; }
-.mission-card--logo { background: #fff0d7; }
-
-.explorer-progress {
-  display: grid;
-  grid-template-columns: 62rpx 1fr auto;
-  gap: 16rpx;
-  align-items: center;
-  margin-top: 24rpx;
-  padding: 22rpx;
-}
-
-.explorer-progress__badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 60rpx;
-  height: 60rpx;
-  border-radius: 50%;
-  font-size: 30rpx;
-  color: #ffffff;
-  background: #e1a832;
-}
-
-.explorer-progress__title,
-.explorer-progress__desc {
-  display: block;
-}
-
-.explorer-progress__title {
-  font-size: 23rpx;
-  font-weight: 900;
-  color: #243f50;
-}
-
-.explorer-progress__desc {
-  margin-top: 5rpx;
-  font-size: 18rpx;
-  color: #718087;
-}
-
-.explorer-progress__track {
-  width: 100%;
-  height: 9rpx;
-  margin-top: 11rpx;
-  overflow: hidden;
-  border-radius: 5rpx;
-  background: #e4e1d8;
-}
-
-.explorer-progress__fill {
-  height: 100%;
-  min-width: 7%;
-  border-radius: inherit;
-  background: #3c9b76;
-}
-
-.explorer-progress__link {
-  padding: 16rpx 10rpx;
-  font-size: 19rpx;
-  font-weight: 800;
-  color: #287b92;
-}
-
-@media (min-width: 900px) {
-  .explore-hero {
-    height: 440rpx;
-  }
-
-  .mission-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
+.home-page { background: #faf8f1; }
+.brand-row { display: flex; align-items: center; justify-content: space-between; gap: 18rpx; margin: 5rpx 0 28rpx; }.brand-copy { min-width: 0; }.brand-row .section-kicker { font-size: 17rpx; letter-spacing: 2rpx; color: #867668; margin-bottom: 10rpx; }.brand-row .page-title { font-size: 38rpx; color: #314d44; }.greeting { display: block; font-size: 23rpx; line-height: 1.55; color: #756f62; margin-top: 12rpx; }
+.star-pocket { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: none; min-height: 44px; padding: 14rpx 18rpx; border-radius: 23rpx; background: #f4e8ca; color: #876937; }.star-pocket__value { font-size: 26rpx; font-weight: 900; line-height: 1.2; }.star-pocket__label { margin-top: 7rpx; font-size: 18rpx; line-height: 1.3; }
+.today-trip { padding: 26rpx; border: 1rpx solid #d9e3d4; border-radius: 30rpx; background: linear-gradient(140deg,#e8f0df,#f0f3e8); }.today-trip__heading { display: flex; align-items: center; justify-content: space-between; gap: 12rpx; }.today-trip__tag { font-size: 21rpx; font-weight: 800; color: #627458; }.today-trip__progress { font-size: 19rpx; color: #73816b; }.today-trip__body { display: flex; align-items: center; gap: 12rpx; min-height: 130rpx; margin-top: 12rpx; }.today-trip__copy { flex: 1; min-width: 0; }.today-trip__title { display: block; font-size: 31rpx; line-height: 1.5; font-weight: 900; color: #304c41; }.today-trip__note { display: block; margin-top: 9rpx; font-size: 22rpx; line-height: 1.6; color: #64715e; }.today-trip__car { width: 155rpx; height: 116rpx; flex: none; }.home-primary { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 48px; margin: 18rpx 0 15rpx; padding: 18rpx 26rpx; border-radius: 21rpx; background: #31584b; color: #fffdf7; font-size: 27rpx; font-weight: 800; line-height: 1.4; }.home-primary__arrow { flex: none; margin-left: 12rpx; font-size: 35rpx; }
+.daily-steps { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7rpx; }.daily-step { display: flex; align-items: center; justify-content: center; gap: 9rpx; min-height: 44px; padding: 11rpx 4rpx; border-radius: 17rpx; background: #ffffff90; text-align: left; }.daily-step__mark { display: flex; align-items: center; justify-content: center; width: 28rpx; height: 28rpx; flex: none; border-radius: 50%; background: #e2e9d8; color: #72856a; font-size: 18rpx; font-weight: 800; }.daily-step--done .daily-step__mark { background: #65876a; color: #fff; }.daily-step__copy { min-width: 0; }.daily-step__title,.daily-step__detail { display: block; line-height: 1.45; }.daily-step__title { color: #52664d; font-size: 20rpx; font-weight: 700; white-space: nowrap; }.daily-step__detail { margin-top: 3rpx; color: #73836b; font-size: 18rpx; }
+.home-section-head { margin: 34rpx 0 18rpx; gap: 12rpx; }.home-section-head .section-title { font-size: 29rpx; color: #354d45; }.section-caption { flex: none; font-size: 19rpx; color: #81796e; }
+.world-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16rpx; }.world-card { display: flex; flex-direction: column; align-items: flex-start; padding: 20rpx 22rpx 23rpx; border: 1rpx solid #ffffffd9; border-radius: 27rpx; text-align: left; background: #eae4f2; color: #51466b; }.world-card--book { background: #f6e9d8; color: #775738; }.world-card--world { background: #e0edf0; color: #3f6e7b; }.world-card--logo { background: #e9efdf; color: #567146; }.world-card--town { background: #f5e5de; color: #97614b; }.world-card--space { background: #e8e6f0; color: #686085; }.world-card__top { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 9rpx; }.world-card__arrow { font-size: 27rpx; opacity: .7; }.world-card__title { font-size: 29rpx; line-height: 1.4; font-weight: 900; color: #364b43; }.world-card__english { display: block; margin-top: 6rpx; font-size: 19rpx; line-height: 1.4; font-weight: 700; }.world-card__note { display: block; margin-top: 9rpx; font-size: 21rpx; line-height: 1.5; color: #6f746a; }
+.practice-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12rpx; }.practice-card { display: flex; align-items: center; gap: 10rpx; min-height: 110rpx; padding: 19rpx 14rpx; border-radius: 22rpx; border: 1rpx solid #e8e3d8; background: #fffdf8; text-align: left; }.practice-card__icon { display: flex; align-items: center; justify-content: center; flex: none; width: 50rpx; height: 52rpx; border-radius: 15rpx; color: #7d7766; background: #eee9dd; font-size: 18rpx; font-weight: 900; }.practice-card--colors .practice-card__icon { color: #b67861; background: #f5e5db; font-size: 32rpx; }.practice-card--count .practice-card__icon { color: #677d65; background: #e6eddf; }.practice-card--traffic .practice-card__icon { color: #678190; background: #e4edf2; }.practice-card__copy { flex: 1; min-width: 0; }.practice-card__title { display: block; font-size: 23rpx; line-height: 1.4; font-weight: 800; color: #425449; }.practice-card__note { display: block; margin-top: 6rpx; font-size: 18rpx; line-height: 1.5; color: #7b7c70; }.practice-card__arrow { font-size: 27rpx; color: #a49c8e; flex: none; }
+.family-tools { padding: 0 23rpx; border-radius: 27rpx; border: 1rpx solid #e7e0d4; background: #fffdf8; }.tool-row { display: flex; align-items: center; gap: 18rpx; width: 100%; padding: 23rpx 0; border-bottom: 1rpx solid #eee8dd; text-align: left; }.tool-row--last { border-bottom: 0; }.tool-row__icon { display: flex; justify-content: center; align-items: center; width: 65rpx; height: 65rpx; border-radius: 20rpx; flex: none; font-size: 32rpx; }.tool-row__icon--music { color: #8b779e; background: #eee7f2; }.tool-row__icon--family { color: #a47966; background: #f5e6df; }.tool-row__icon--voice { color: #6d8b7b; background: #e4eee5; }.tool-row__copy { flex: 1; min-width: 0; }.tool-row__title { display: block; font-size: 25rpx; font-weight: 800; line-height: 1.5; color: #455449; }.tool-row__note { display: block; margin-top: 5rpx; font-size: 21rpx; line-height: 1.6; color: #777c70; }.tool-row__arrow { font-size: 29rpx; color: #9b9d8f; flex: none; }
+.review-card { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 16rpx; padding: 23rpx; margin-top: 20rpx; border-radius: 24rpx; background: #fff0d7; text-align: left; }.review-card__copy { flex: 1; min-width: 0; }.review-card__title { display: block; font-size: 25rpx; line-height: 1.5; font-weight: 800; color: #7e6544; }.review-card__note { display: block; font-size: 21rpx; line-height: 1.6; color: #8f7655; margin-top: 6rpx; }.review-card__link { font-size: 21rpx; color: #8f7655; flex: none; }
+.parent-summary { display: flex; justify-content: space-between; align-items: center; gap: 14rpx; width: 100%; padding: 29rpx 5rpx; margin-top: 6rpx; text-align: left; }.parent-summary__copy { flex: 1; min-width: 0; }.parent-summary__title { display: block; font-size: 24rpx; line-height: 1.5; font-weight: 800; color: #6c7768; }.parent-summary__note { display: block; margin-top: 6rpx; font-size: 20rpx; line-height: 1.6; color: #808579; }.parent-summary__link { font-size: 21rpx; flex: none; color: #778170; }.home-footnote { display: block; text-align: center; font-size: 20rpx; line-height: 1.6; color: #8b8a7c; padding-bottom: 12rpx; }
+@media (max-width: 350px) { .today-trip__car { width: 128rpx; height: 105rpx; }.today-trip__title { font-size: 29rpx; }.daily-step { gap: 6rpx; }.world-card { padding: 18rpx; }.practice-card { gap: 8rpx; padding: 18rpx 12rpx; }.practice-card__icon { width: 43rpx; }.practice-card__arrow { display: none; } }
 </style>

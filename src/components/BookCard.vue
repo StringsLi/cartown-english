@@ -1,10 +1,7 @@
 <template>
-  <view class="book-card soft-card" :class="`book-card--${props.variant}`" @tap="emit('select', props.book)">
+  <button role="button" class="book-card soft-card" :aria-label="`打开绘本 ${props.book.title}`" :class="`book-card--${props.variant}`" @tap="emit('select', props.book)">
     <view class="book-card__cover" :class="`book-card__cover--${props.book.theme.toLowerCase().replace(' ', '-')}`">
-      <CachedImage v-if="!imageFailed" class="book-card__image" :src="props.book.cover" mode="aspectFill" @error="imageFailed = true" />
-      <view v-else class="book-card__fallback">
-        <text class="book-card__fallback-title">{{ props.book.title }}</text>
-      </view>
+      <CachedImage class="book-card__image" :src="props.book.cover" :alt="props.book.title" mode="aspectFill" />
       <text v-if="props.isRead" class="book-card__read">已读</text>
     </view>
 
@@ -16,12 +13,12 @@
         <text v-for="word in props.book.keywords" :key="word" class="book-card__word">{{ word }}</text>
       </view>
     </view>
-  </view>
+  </button>
 </template>
 
 <script setup lang="ts">
 import CachedImage from "@/components/CachedImage.vue";
-import { computed, ref, watch } from "vue";
+import { computed } from "vue";
 import { getThemeLabel } from "@/services/bookService";
 import type { Book } from "@/types/book";
 
@@ -41,19 +38,15 @@ const emit = defineEmits<{
   (event: "select", book: Book): void;
 }>();
 
-const imageFailed = ref(false);
 const themeLabel = computed(() => getThemeLabel(props.book.theme));
 
-watch(
-  () => props.book.cover,
-  () => {
-    imageFailed.value = false;
-  }
-);
 </script>
 
 <style scoped lang="scss">
 .book-card {
+  width: 100%;
+  text-align: left;
+  line-height: 1.5;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -75,24 +68,6 @@ watch(
 .book-card__image {
   width: 100%;
   height: 100%;
-}
-
-.book-card__fallback {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  padding: 24rpx;
-}
-
-.book-card__fallback-title {
-  font-size: 36rpx;
-  font-weight: 900;
-  color: $color-primary-dark;
-  text-align: center;
-  letter-spacing: 0;
-  line-height: 1.25;
 }
 
 .book-card__read {

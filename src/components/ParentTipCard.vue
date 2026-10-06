@@ -5,6 +5,7 @@
       <view v-for="question in props.questions" :key="question.en" class="parent-tip__question">
         <text class="parent-tip__en">{{ question.en }}</text>
         <text class="parent-tip__cn">{{ question.cn }}</text>
+        <ReadAlongLink v-if="props.returnUrl" :source-key="'parent-question-' + (props.bookId || 'book') + '-' + phraseHash(question.en)" :title="props.title" :text="question.en" :text-cn="question.cn" :audio="parentQuestionAudio(question.en)" :listen="true" :book-id="props.bookId" :return-url="props.returnUrl" />
       </view>
     </view>
     <text v-if="props.activity" class="parent-tip__activity">{{ props.activity }}</text>
@@ -12,6 +13,9 @@
 </template>
 
 <script setup lang="ts">
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
+import { parentQuestionAudio } from "@/services/readAlongService";
+import { phraseHash } from "@/services/audioCatalog";
 import type { ParentQuestion } from "@/types/book";
 
 const props = withDefaults(
@@ -20,6 +24,8 @@ const props = withDefaults(
     questions: ParentQuestion[];
     activity?: string;
     compact?: boolean;
+    bookId?: string;
+    returnUrl?: string;
   }>(),
   {
     activity: "",

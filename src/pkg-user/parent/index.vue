@@ -2,7 +2,7 @@
   <view class="page parent-page screen-with-nav">
     <view class="parent-header">
       <text class="page-title">家长中心</text>
-      <button class="settings-button" aria-label="打开孩子资料" @tap="goProfile">⌁</button>
+      <button role="button" class="settings-button" aria-label="打开孩子资料" @tap="goProfile">⌁</button>
     </view>
 
     <view class="child-card soft-card">
@@ -11,7 +11,7 @@
         <text class="child-card__name">{{ childName }}</text>
         <text class="child-card__age">亲子阅读 · Level {{ book.level }}</text>
       </view>
-      <button class="child-card__switch" @tap="goProfile">编辑资料</button>
+      <button role="button" class="child-card__switch" @tap="goProfile">编辑资料</button>
     </view>
 
     <view class="week-card soft-card">
@@ -23,7 +23,7 @@
         </view>
         <text class="week-card__delta">{{ weeklyDeltaText }}</text>
       </view>
-      <CachedImage class="week-card__image" :src="highResolutionAsset('/static/books/mom/cover.webp')" mode="aspectFill" />
+      <view class="week-card__image"><CachedImage :src="'/static/first-books/mom/cover.jpg'" mode="aspectFill" /></view>
     </view>
 
     <view class="streak-card soft-card">
@@ -52,7 +52,7 @@
       <view class="progress-card__level-row">
         <view>
           <text class="progress-card__level">L{{ book.level }} 级别</text>
-          <text class="progress-card__desc">已完成 {{ stats.readBookCount }} / 20 本</text>
+          <text class="progress-card__desc">已完成 {{ stats.readBookCount }} / {{ mockBooks.length }} 本</text>
         </view>
         <view class="level-medal">L{{ book.level }}</view>
       </view>
@@ -64,23 +64,24 @@
     <view class="report-card soft-card">
       <view class="section-head report-card__head">
         <text class="section-title">学习报告</text>
-        <text class="report-card__date">近 7 天</text>
+        <text class="report-card__date">累计记录</text>
       </view>
-      <view v-for="skill in skillScores" :key="skill.label" class="skill-row">
+      <text class="report-note">以下为参与记录，帮助安排陪伴节奏。</text>
+      <view v-for="skill in activityMetrics" :key="skill.label" class="skill-row">
         <text class="skill-row__label">{{ skill.label }}</text>
         <view class="skill-row__track">
-          <view class="skill-row__fill" :style="{ width: `${skill.score}%` }" />
+          <view class="skill-row__fill" :style="{ width: `${skill.percent}%` }" />
         </view>
-        <text class="skill-row__score">{{ skill.score }}</text>
+        <text class="skill-row__score">{{ skill.value }}</text>
       </view>
       <view class="report-card__summary">
         <view class="report-stat">
           <text class="report-stat__value">{{ stats.learnedWordCount }}</text>
-          <text class="report-stat__label">已学单词</text>
+          <text class="report-stat__label">绘本词汇</text>
         </view>
         <view class="report-stat">
           <text class="report-stat__value">{{ learningState.repeatRecords.length }}</text>
-          <text class="report-stat__label">跟读次数</text>
+          <text class="report-stat__label">保存录音</text>
         </view>
         <view class="report-stat">
           <text class="report-stat__value">{{ cartownProgress.stars }}</text>
@@ -88,6 +89,20 @@
         </view>
       </view>
     </view>
+
+    <button role="button" class="playground-report soft-card" @tap="goPlayground">
+      <view>
+        <text class="playground-report__title">小小英语乐园</text>
+        <text class="playground-report__detail">已探索 {{ playgroundDoneCount }} / {{ playgroundTopics.length }} 个主题 · 已点读 {{ playgroundHeardCount }} / {{ playgroundWordCount }} 个词</text>
+      </view>
+      <text class="playground-report__more">查看 ›</text>
+    </button>
+
+    <view class="playground-report soft-card"><view><text class="playground-report__title">小耳朵的找图记录</text><text class="playground-report__detail">听过 {{ wordSummary.heard }} 个词 · 独立找对 {{ wordSummary.independent }} 个词 · 待复习 {{ wordSummary.review }} 个词</text><text class="playground-report__detail">独立找对指第一次就选对；重试后的正确答案不算独立找对。</text></view><button role="button" v-if="wordSummary.review" class="playground-report__more" @tap="goReview">陪孩子复习 ›</button></view>
+
+    <button role="button" class="playground-report adventure-report soft-card" @tap="goAdventure"><view><text class="playground-report__title">车车英语小冒险</text><text class="playground-report__detail">已送达 {{ deliveryDoneCount }} / {{ deliveryMissions.length }} 个故事 · 已表演 {{ roleplayDoneCount }} / {{ roleplayScenes.length }} 个场景</text><text class="playground-report__detail">陪玩完成记录，随时可以换角色再演。</text></view><text class="playground-report__more">去玩 ›</text></button>
+
+    <button role="button" class="playground-report soft-card" @tap="goRecordings"><view><text class="playground-report__title">孩子的录音小册</text><text class="playground-report__detail">本机保存 {{ learningState.repeatRecords.length }} 条 · 回听、导出音频和备份</text></view><text class="playground-report__more">打开 ›</text></button>
 
     <view class="parent-advice soft-card">
       <view class="parent-advice__icon">♥</view>
@@ -102,21 +117,29 @@
 </template>
 
 <script setup lang="ts">
+import { navigate } from "@/services/navigationService";
 import CachedImage from "@/components/CachedImage.vue";
 import { computed, ref } from "vue";
 import { onLoad, onShow } from "@dcloudio/uni-app";
 import BottomNav from "@/components/BottomNav.vue";
 import { getBookById, getParentTip, getTodayBook } from "@/services/bookService";
+import { getPlaygroundSummary, getReviewTopic } from "@/services/playgroundLearningService";
+import { mockBooks } from "@/mock/books";
 import { getCartownProgress } from "@/services/cartownProgressService";
+import { playgroundTopics, playgroundWordCount } from "@/mock/playground";
+import { deliveryMissions, roleplayScenes } from "@/mock/adventures";
 import { highResolutionAsset } from "@/services/assetService";
 import { getCurrentWeekActivity, getHomeStats, getLearningState } from "@/services/progressService";
 import { usePageShare } from "@/composables/usePageShare";
 
 usePageShare();
 const bookId = ref(getTodayBook().id);
+function goRecordings() { navigate({ url: "/pkg-reading/recordings/index" }); }
 const stats = ref(getHomeStats());
 const learningState = ref(getLearningState());
 const cartownProgress = ref(getCartownProgress());
+const wordSummary = ref(getPlaygroundSummary(cartownProgress.value.playgroundHeardWordIds));
+function goReview() { const topic = getReviewTopic(); if (topic) navigate({ url: `/pkg-learning/playground-game/index?topic=${topic.id}&mode=quiz&review=1` }); }
 const weekActivity = ref(getCurrentWeekActivity());
 const book = computed(() => getBookById(bookId.value) ?? getTodayBook());
 const parentTip = computed(() => getParentTip(book.value.id));
@@ -132,12 +155,15 @@ const weeklyDeltaText = computed(() => {
   if (difference === 0) return "与上周持平";
   return difference > 0 ? `比上周多 ${difference} 分钟` : `比上周少 ${Math.abs(difference)} 分钟`;
 });
-const readingPercent = computed(() => Math.min(100, Math.round((stats.value.readBookCount / 20) * 100)));
-const skillScores = computed(() => [
-  { label: "听读", score: Math.min(100, Math.round((stats.value.readBookCount / 20) * 100)) },
-  { label: "词汇", score: Math.min(100, Math.round((stats.value.learnedWordCount / 40) * 100)) },
-  { label: "跟读", score: Math.min(100, learningState.value.repeatRecords.length * 10) },
-  { label: "练习", score: Math.min(100, learningState.value.gameRecords.length * 10) }
+const readingPercent = computed(() => Math.min(100, Math.round((stats.value.readBookCount / mockBooks.length) * 100)));
+const playgroundHeardCount = computed(() => playgroundTopics.reduce((count, topic) => count + topic.items.filter((item) => cartownProgress.value.playgroundHeardWordIds.includes(`${topic.id}:${item.id}`)).length, 0));
+const playgroundDoneCount = computed(() => playgroundTopics.filter((topic) => cartownProgress.value.playgroundCompletedTopicIds.includes(topic.id)).length);
+const deliveryDoneCount = computed(() => deliveryMissions.filter(mission => cartownProgress.value.completedDeliveryMissionIds.includes(mission.id)).length);
+const roleplayDoneCount = computed(() => roleplayScenes.filter(scene => cartownProgress.value.completedRoleplaySceneIds.includes(scene.id)).length);
+const activityMetrics = computed(() => [
+  { label: "绘本", value: `${stats.value.readBookCount}/${mockBooks.length}`, percent: readingPercent.value },
+  { label: "点读", value: `${playgroundHeardCount.value}/${playgroundWordCount}`, percent: playgroundHeardCount.value / playgroundWordCount * 100 },
+  { label: "找图", value: `${wordSummary.value.independent}/${playgroundWordCount}`, percent: wordSummary.value.independent / playgroundWordCount * 100 }
 ]);
 
 onLoad((query) => {
@@ -148,6 +174,7 @@ onLoad((query) => {
 onShow(refreshReport);
 
 function refreshReport() {
+  wordSummary.value = getPlaygroundSummary(getCartownProgress().playgroundHeardWordIds);
   stats.value = getHomeStats();
   learningState.value = getLearningState();
   cartownProgress.value = getCartownProgress();
@@ -155,11 +182,17 @@ function refreshReport() {
 }
 
 function goProfile() {
-  uni.navigateTo({ url: "/pkg-user/profile/index" });
+  navigate({ url: "/pkg-user/profile/index" });
 }
+
+function goPlayground() {
+  navigate({ url: "/pkg-learning/playground/index" });
+}
+function goAdventure() { navigate({ url: "/pkg-adventure/index/index" }); }
 </script>
 
 <style scoped lang="scss">
+.report-note { display:block; margin-bottom:22rpx; font-size:22rpx; line-height:1.5; color:$color-muted; }
 .parent-header {
   display: flex;
   align-items: center;
@@ -426,7 +459,7 @@ function goProfile() {
 
 .skill-row {
   display: grid;
-  grid-template-columns: 64rpx 1fr 42rpx;
+  grid-template-columns: 64rpx 1fr 90rpx;
   gap: 14rpx;
   align-items: center;
   margin-top: 15rpx;
@@ -494,6 +527,24 @@ function goProfile() {
   padding: 22rpx;
   background: #f7eee8;
 }
+
+.playground-report {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14rpx;
+  width: 100%;
+  margin-top: 18rpx;
+  padding: 22rpx;
+  text-align: left;
+  background: #eaf3e5;
+}
+
+.playground-report__title,.playground-report__detail { display: block; }
+.playground-report__title { font-size: 23rpx; font-weight: 900; color: $color-primary-dark; }
+.playground-report__detail { margin-top: 6rpx; font-size: 19rpx; line-height: 1.4; color: $color-muted; }
+.playground-report__more { flex: none; font-size: 20rpx; font-weight: 800; color: #4b8063; }
+.adventure-report { background: #f7eedc; }
 
 .parent-advice__icon {
   display: flex;

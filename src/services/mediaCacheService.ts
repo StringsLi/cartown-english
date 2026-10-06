@@ -1,3 +1,4 @@
+import { ensureMediaPackage } from "@/services/packageService";
 import { highResolutionAsset, isCloudAsset } from "@/services/assetService";
 
 type MediaKind = "audio" | "image";
@@ -58,12 +59,16 @@ const CACHE_STORAGE_KEY = "cartown_media_cache_index";
 const MAX_CACHE_BYTES = 80 * 1024 * 1024;
 const inFlight = new Map<string, Promise<string>>();
 let cacheIndex: CacheIndex | null = null;
+let cacheGeneration = 0;
 
 export async function resolveCachedMedia(source: string, kind: MediaKind): Promise<string> {
   const asset = highResolutionAsset(source);
   if (!asset || (!isCloudAsset(asset) && !/^https?:\/\//i.test(asset))) {
+    await ensureMediaPackage(asset);
     return asset;
   }
+
+  if (typeof wx === "undefined") return resolveNetworkUrl(asset);
 
   const cached = findCachedFile(asset);
   if (cached) {
@@ -98,6 +103,7 @@ export async function preloadCachedMedia(items: MediaPreloadItem[]): Promise<voi
 }
 
 export function clearMediaCache(): void {
+  cacheGeneration += 1;
   const index = getCacheIndex();
   for (const entry of Object.values(index.entries)) {
     removeSavedFile(entry.path);
@@ -107,6 +113,7 @@ export function clearMediaCache(): void {
 }
 
 async function downloadAndCache(asset: string, kind: MediaKind): Promise<string> {
+  const generation = cacheGeneration;
   const downloadUrl = await resolveNetworkUrl(asset);
   const tempFilePath = await downloadFile(downloadUrl);
   let savedFilePath: string;
@@ -119,6 +126,7 @@ async function downloadAndCache(asset: string, kind: MediaKind): Promise<string>
   }
 
   const size = await fileSize(savedFilePath);
+  if (generation !== cacheGeneration) { removeSavedFile(savedFilePath); return downloadUrl; }
   const index = getCacheIndex();
   index.entries[asset] = {
     path: savedFilePath,
@@ -265,4 +273,13 @@ function persistIndex(): void {
   if (cacheIndex) {
     uni.setStorageSync(CACHE_STORAGE_KEY, cacheIndex);
   }
+}
+
+export function invalidateCachedMedia(source: string): void {
+  if (typeof wx === "undefined") return;
+  const asset = highResolutionAsset(source);
+  if (!isCloudAsset(asset) && !/^https?:\/\//i.test(asset)) return;
+  const entry = getCacheIndex().entries[asset];
+  if (!entry) return;
+  removeSavedFile(entry.path); delete getCacheIndex().entries[asset]; persistIndex();
 }

@@ -57,3 +57,19 @@ export function getThemeLabel(theme: BookTheme): string {
 }
 
 export { levelLabels, themeFilters };
+
+export function resolveBookId(value?: string): string {
+  if (!value) return getTodayBook().id;
+  if (getBookById(value)?.isPublished) return value;
+  uni.showToast({ title: "这本绘本暂不可用，先读推荐故事吧", icon: "none" });
+  return getTodayBook().id;
+}
+export function normalizeBookPage(value: unknown, total: number): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? Math.max(0, Math.min(Math.max(0, total - 1), Math.floor(parsed) - 1)) : 0;
+}
+
+export function decodeRouteText(value?: string): string {
+  if (!value) return "";
+  try { return decodeURIComponent(value).slice(0, 200); } catch { return value.slice(0, 200); }
+}

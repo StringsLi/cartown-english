@@ -1,0 +1,86 @@
+{
+  "repository": "https://github.com/ryh842487118-bot/orbit",
+  "commit": "fb2316a8e679244b594e4679d9448937964967ad",
+  "textures": [
+    {
+      "source": "assets/uranus.jpg",
+      "sourceSha256": "d15239d46f82d3ea13d2b260b5b29b2a382f42f2916dae0694d0387b1204a09d",
+      "output": "src/pkg-space/static/textures/uranus.jpg",
+      "outputSha256": "8f5a23673865d0f9217c4dc88734b063693541dcf87f4a50e69aa9be527b73f6",
+      "bytes": 1959,
+      "modifications": "Resized to 768x384; JPEG quality 68 with mozjpeg."
+    },
+    {
+      "source": "assets/venus-atmosphere.jpg",
+      "sourceSha256": "225012ad4911730605c4e189ca2a3bf674fce50cc48aab4102b936b47d6991ac",
+      "output": "src/pkg-space/static/textures/venus.jpg",
+      "outputSha256": "52f0fab7b6a3bf3e8fc8419cfa4e07de07bab865fe0c88a8d5fb2d56fc0662fe",
+      "bytes": 9203,
+      "modifications": "Resized to 768x384; JPEG quality 68 with mozjpeg."
+    },
+    {
+      "source": "assets/mars.jpg",
+      "sourceSha256": "2d187f3e77a98eaa8cea5f4cc722f633c122ef170b9e94ace6b5fb6cbc3f8e01",
+      "output": "src/pkg-space/static/textures/mars.jpg",
+      "outputSha256": "789648f929e70c9d837fdece49cc3b14fd993396f0c3eef4dcea4d92ad9bf17b",
+      "bytes": 27018,
+      "modifications": "Resized to 768x384; JPEG quality 68 with mozjpeg."
+    },
+    {
+      "source": "assets/jupiter.jpg",
+      "sourceSha256": "b0f04d005350252636b0e3396fc592548cbd9e9126b269d32d5c6abd4b0e4f2b",
+      "output": "src/pkg-space/static/textures/jupiter.jpg",
+      "outputSha256": "cdff33fbcd3da066764b1103663604fe0f8c24837410d9947d930d87984bdf02",
+      "bytes": 20537,
+      "modifications": "Resized to 768x384; JPEG quality 68 with mozjpeg."
+    },
+    {
+      "source": "assets/earth-day.jpg",
+      "sourceSha256": "767ee1dc6eb3802699bfccf6f264880f8acd0b80de3191cd24984fe279b07b7c",
+      "output": "src/pkg-space/static/textures/earth.jpg",
+      "outputSha256": "0e2b64205ed4ed3e65e9a30eda4185a525d2176b0e2bc533e4b08e8ccace1def",
+      "bytes": 23301,
+      "modifications": "Resized to 768x384; JPEG quality 68 with mozjpeg."
+    },
+    {
+      "source": "assets/moon.jpg",
+      "sourceSha256": "2764ba6535ea0481a062846ee033cc7a909dae05b31a8fd13f3e98f3a7fd92bd",
+      "output": "src/pkg-space/static/textures/moon.jpg",
+      "outputSha256": "98bf5d72245a4a71e3eb94f8769adb8b4afe61e627db6a3beb1d4a030706130b",
+      "bytes": 38235,
+      "modifications": "Resized to 768x384; JPEG quality 68 with mozjpeg."
+    },
+    {
+      "source": "assets/neptune.jpg",
+      "sourceSha256": "cb42ea82709741d28b0af44d8b283cbc6dbd0c521a7f0e1e1e010ade00977df6",
+      "output": "src/pkg-space/static/textures/neptune.jpg",
+      "outputSha256": "5676c5a1966c923778b428ee38b44f8d0e5e210e8570203ad0a83246b2c3c66f",
+      "bytes": 4230,
+      "modifications": "Resized to 768x384; JPEG quality 68 with mozjpeg."
+    },
+    {
+      "source": "assets/sun.jpg",
+      "sourceSha256": "ff0f076ba65e03b5ab518451bc96699325be38e3ccbdd5869ee1c00f3a0c8816",
+      "output": "src/pkg-space/static/textures/sun.jpg",
+      "outputSha256": "98204a5703e39235fd3b50b9781da749d8268d6a2f78bb4d5c4b7addedfc4bbd",
+      "bytes": 40933,
+      "modifications": "Resized to 768x384; JPEG quality 68 with mozjpeg."
+    },
+    {
+      "source": "assets/mercury.jpg",
+      "sourceSha256": "5a5c80607f643496bac9a631e71957def35ed788895f18b678ac849c2b38e48a",
+      "output": "src/pkg-space/static/textures/mercury.jpg",
+      "outputSha256": "b4d5f7bc63e51bdce5536db003548a1b8548e930c381cd1145a2ccab42f561a5",
+      "bytes": 28560,
+      "modifications": "Resized to 768x384; JPEG quality 68 with mozjpeg."
+    },
+    {
+      "source": "assets/saturn.jpg",
+      "sourceSha256": "54a900ca9bf7ab62e70f862852759abdf342e6d6436a95a2fe9ebdb6bcd3bbac",
+      "output": "src/pkg-space/static/textures/saturn.jpg",
+      "outputSha256": "10263fc3e4e6e9775808c81d031905a9cc2a61a9670afc86aea81d176036b0ea",
+      "bytes": 8134,
+      "modifications": "Resized to 768x384; JPEG quality 68 with mozjpeg."
+    }
+  ]
+}

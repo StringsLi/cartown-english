@@ -1,0 +1,86 @@
+[
+  {
+    "route": "/pages/vehicles/index",
+    "text": "car. I see a car.",
+    "opened": true,
+    "originalAudioPlayed": true
+  },
+  {
+    "route": "/pkg-reading/book-detail/index?bookId=book_cat_001",
+    "text": "I see a cat.",
+    "opened": true,
+    "originalAudioPlayed": true
+  },
+  {
+    "route": "/pkg-reading/point-read/index?bookId=book_cat_001",
+    "text": "cat",
+    "opened": true,
+    "originalAudioPlayed": true
+  },
+  {
+    "route": "/pkg-learning/playground-game/index?topic=colors",
+    "text": "red",
+    "opened": true,
+    "originalAudioPlayed": true
+  },
+  {
+    "route": "/pkg-music/index/index",
+    "text": "Red car, blue car, drive around! Yellow car, green car, slow down!",
+    "opened": true,
+    "originalAudioPlayed": true
+  },
+  {
+    "route": "/pkg-space/body/index?id=earth",
+    "text": "Earth is our home.",
+    "opened": true,
+    "originalAudioPlayed": true
+  },
+  {
+    "route": "/pkg-adventure/delivery/index",
+    "text": "Take the red car.",
+    "opened": true,
+    "originalAudioPlayed": true
+  },
+  {
+    "route": "/pkg-adventure/roleplay/index",
+    "text": "Hello!",
+    "opened": true,
+    "originalAudioPlayed": true
+  },
+  {
+    "route": "/pkg-world/world/index",
+    "text": "China. I live in China.",
+    "opened": true,
+    "originalAudioPlayed": true
+  },
+  {
+    "route": "/pkg-cars/car-learn/index",
+    "text": "This is the Geely Galaxy Xingyuan.",
+    "opened": true,
+    "originalAudioPlayed": true
+  },
+  {
+    "route": "/pkg-cars/car-logos/index",
+    "text": "Toyota",
+    "opened": true,
+    "originalAudioPlayed": true
+  },
+  {
+    "route": "/pkg-cars/car-colors/index",
+    "text": "Tap the blue car.",
+    "opened": true,
+    "originalAudioPlayed": true
+  },
+  {
+    "route": "/pkg-cars/car-count/index",
+    "text": "Tap two cars.",
+    "opened": true,
+    "originalAudioPlayed": true
+  },
+  {
+    "route": "/pkg-cars/car-traffic/index",
+    "text": "Red light. Stop!",
+    "opened": true,
+    "originalAudioPlayed": true
+  }
+]

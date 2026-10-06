@@ -1,15 +1,17 @@
 <template>
-  <view class="page vehicles-page screen-with-nav">
+  <view class="page vehicles-page ">
+    <PageTopbar section="车车小镇" fallback="/pages/index/index" />
+    <AudioFeedback />
     <view class="topic-header">
       <view>
         <text class="page-title">交通工具 Vehicles</text>
         <text class="page-subtitle">看图认识车辆，点一下听自然英文发音。</text>
       </view>
-      <button class="header-audio" aria-label="播放示范句" @tap="playSentence">▶</button>
+      <button role="button" class="header-audio" aria-label="播放示范句" @tap="playSentence">▶</button>
     </view>
 
     <view class="vehicle-hero soft-card">
-      <CachedImage class="vehicle-hero__image" src="/static/ui/top-selling-car.jpg" mode="aspectFill" aria-label="吉利银河星愿真实车型照片" />
+      <view class="vehicle-hero__image"><CachedImage src="/static/ui/top-selling-car.jpg" mode="aspectFill" aria-label="吉利银河星愿真实车型照片" /></view>
       <view class="vehicle-hero__shade" />
       <view class="vehicle-hero__copy">
         <text class="vehicle-hero__eyebrow">2025 畅销真车 TOP 50</text>
@@ -20,7 +22,7 @@
 
     <scroll-view class="station-scroll" scroll-x>
       <view class="station-scroll__inner">
-        <button v-for="station in stations" :key="station.path" class="station-tab" @tap="goStation(station.path)">
+        <button role="button" v-for="station in stations" :key="station.path" class="station-tab" @tap="goStation(station.path)">
           <text class="station-tab__tag">{{ station.tag }}</text>
           <text class="station-tab__title">{{ station.title }}</text>
         </button>
@@ -32,8 +34,9 @@
       <text class="section-link" @tap="goStation('/pkg-cars/car-learn/index')">学习 50 辆</text>
     </view>
 
+    <view class="vehicle-reading soft-card"><text class="vehicle-reading__word">{{ selectedVehicle.word }} · {{ selectedVehicle.meaning }}</text><text class="vehicle-reading__sentence">{{ selectedVehicle.sentence }}</text><ReadAlongLink :source-key="'vehicle-' + selectedVehicle.id" :title="'交通工具 · ' + selectedVehicle.meaning" :text="selectedVehicle.word + '. ' + selectedVehicle.sentence" :audio="phraseAudioPath(selectedVehicle.word + '. ' + selectedVehicle.sentence)" :listen="true" return-url="/pages/vehicles/index" /></view>
     <view class="vehicle-grid">
-      <button v-for="item in featuredWords" :key="item.id" class="vehicle-word soft-card" @tap="playWord(item)">
+      <button role="button" v-for="item in featuredWords" :key="item.id" class="vehicle-word soft-card" @tap="playWord(item)">
         <view class="vehicle-word__image-wrap">
           <CachedImage class="vehicle-word__image" :src="item.image" mode="aspectFit" />
         </view>
@@ -43,7 +46,7 @@
       </button>
     </view>
 
-    <view class="brand-section soft-card" @tap="goStation('/pkg-learning/car-logos/index')">
+    <button role="button" class="brand-section soft-card" @tap="goStation('/pkg-cars/car-logos/index')">
       <view class="brand-section__head">
         <view>
           <text class="brand-section__eyebrow">品牌认知</text>
@@ -54,15 +57,21 @@
       <view class="brand-row">
         <CartownLogoBadge v-for="logo in featuredLogos" :key="logo.id" :logo-id="logo.id" :name="logo.name" :badge-text="logo.badgeText" :shape="logo.shape" :primary="logo.primary" :secondary="logo.secondary" size="small" :show-name="false" />
       </view>
-    </view>
+    </button>
 
-    <BottomNav active="learn" />
+
   </view>
 </template>
 
 <script setup lang="ts">
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
+import { ref } from "vue";
+import { phraseAudioPath } from "@/services/audioCatalog";
+import AudioFeedback from "@/components/AudioFeedback.vue";
+import PageTopbar from "@/components/PageTopbar.vue";
+import { navigate } from "@/services/navigationService";
 import CachedImage from "@/components/CachedImage.vue";
-import BottomNav from "@/components/BottomNav.vue";
+
 import CartownLogoBadge from "@/components/CartownLogoBadge.vue";
 import { carLogos } from "@/mock/cartown";
 import { vehicleGroups } from "@/mock/topics";
@@ -73,12 +82,12 @@ import { usePageShare } from "@/composables/usePageShare";
 usePageShare();
 const stationItems = [
   ["畅销榜", "50 辆真车", "/pkg-cars/car-learn/index"],
-  ["车标", "品牌认知", "/pkg-learning/car-logos/index"],
-  ["颜色", "听音选车", "/pkg-learning/car-colors/index"],
-  ["数字", "1 到 5", "/pkg-learning/car-count/index"],
-  ["动作", "红绿灯", "/pkg-learning/car-traffic/index"],
-  ["故事", "汽车绘本", "/pkg-learning/car-stories/index"],
-  ["奖励", "我的车库", "/pkg-learning/car-garage/index"]
+  ["车标", "品牌认知", "/pkg-cars/car-logos/index"],
+  ["颜色", "听音选车", "/pkg-cars/car-colors/index"],
+  ["数字", "1 到 5", "/pkg-cars/car-count/index"],
+  ["动作", "红绿灯", "/pkg-cars/car-traffic/index"],
+  ["故事", "汽车绘本", "/pkg-cars/car-stories/index"],
+  ["奖励", "我的车库", "/pkg-cars/car-garage/index"]
 ] as const;
 
 const stations = stationItems.map(([tag, title, path]) => ({ tag, title, path }));
@@ -96,6 +105,7 @@ const featuredWords = featuredVehicleIds.flatMap((id) => {
   const item = allVehicleWords.find((word) => word.id === id);
   return item ? [item] : [];
 });
+const selectedVehicle = ref(featuredWords[0]);
 const featuredLogos = carLogos.slice(0, 4);
 
 function playSentence() {
@@ -103,15 +113,17 @@ function playSentence() {
 }
 
 function playWord(item: TopicWord) {
+  selectedVehicle.value = item;
   speakEnglish(`${item.word}. ${item.sentence}`);
 }
 
 function goStation(path: string) {
-  uni.navigateTo({ url: path });
+  navigate({ url: path });
 }
 </script>
 
 <style scoped lang="scss">
+.vehicle-reading { padding:24rpx; margin-bottom:20rpx; }.vehicle-reading__word,.vehicle-reading__sentence { display:block; line-height:1.6; }.vehicle-reading__word { font-size:28rpx; font-weight:800; }.vehicle-reading__sentence { font-size:24rpx; margin-top:12rpx; }
 .topic-header {
   display: flex;
   align-items: flex-start;

@@ -1,0 +1,62 @@
+[
+  {
+    "overflow": false,
+    "page": "home",
+    "primaryHeight": 48,
+    "smallestDailyHeight": 44,
+    "width": 320,
+    "worldCount": 6
+  },
+  {
+    "overflow": false,
+    "page": "home",
+    "primaryHeight": 48,
+    "smallestDailyHeight": 44,
+    "width": 390,
+    "worldCount": 6
+  },
+  {
+    "overflow": false,
+    "page": "home",
+    "primaryHeight": 48.71875,
+    "smallestDailyHeight": 45.9140625,
+    "width": 430,
+    "worldCount": 6
+  },
+  {
+    "overflow": false,
+    "page": "parent-tasks",
+    "selected": "亲子任务",
+    "width": 320
+  },
+  {
+    "overflow": false,
+    "page": "parent-tasks",
+    "selected": "亲子任务",
+    "width": 390
+  },
+  {
+    "overflow": false,
+    "page": "parent-tasks",
+    "selected": "亲子任务",
+    "width": 430
+  },
+  {
+    "overflow": false,
+    "page": "chants",
+    "playHeight": 44,
+    "width": 320
+  },
+  {
+    "overflow": false,
+    "page": "chants",
+    "playHeight": 44,
+    "width": 390
+  },
+  {
+    "overflow": false,
+    "page": "chants",
+    "playHeight": 44,
+    "width": 430
+  }
+]
