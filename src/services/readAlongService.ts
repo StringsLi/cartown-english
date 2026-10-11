@@ -9,7 +9,7 @@ export interface ReadAlongContext {
 export function parentQuestionAudio(text: string): string { return '/pkg-speaking/static/audio/parent-questions/' + phraseHash(text) + '.mp3'; }
 const CACHE_KEY = 'cartown_read_along_contexts_v1';
 const MAX_CONTEXTS = 40;
-const readingRoutes = new Set(['pages/index/index', 'pages/vehicles/index', 'pkg-reading/book-detail/index', 'pkg-reading/reader/index', 'pkg-reading/point-read/index', 'pkg-learning/playground-game/index', 'pkg-music/index/index', 'pkg-space/body/index', 'pkg-adventure/delivery/index', 'pkg-adventure/roleplay/index', 'pkg-world/world/index', 'pkg-cars/car-learn/index', 'pkg-cars/car-logos/index', 'pkg-cars/car-colors/index', 'pkg-cars/car-count/index', 'pkg-cars/car-traffic/index']);
+const readingRoutes = new Set(['pages/index/index', 'pages/vehicles/index', 'pkg-reading/book-detail/index', 'pkg-reading/reader/index', 'pkg-reading/point-read/index', 'pkg-learning/playground-game/index', 'pkg-learning/playground/index', 'pkg-music/index/index', 'pkg-space/body/index', 'pkg-adventure/delivery/index', 'pkg-adventure/roleplay/index', 'pkg-world/world/index', 'pkg-cars/car-learn/index', 'pkg-cars/car-logos/index', 'pkg-cars/car-colors/index', 'pkg-cars/car-count/index', 'pkg-cars/car-traffic/index']);
 const clean = (value: unknown, max: number) => typeof value === 'string' ? value.trim().slice(0, max) : '';
 export function isReadAlongAudio(value: string): boolean {
   if (/^\/(?:pkg-(?:cars|learning|reading|music|space|adventure|speaking)\/)?static\/audio\/[a-zA-Z0-9/_-]+\.(mp3|wav)$/.test(value)) return true;
