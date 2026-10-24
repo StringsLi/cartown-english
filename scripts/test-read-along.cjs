@@ -9,7 +9,7 @@ function runtime(){
  function load(file,exposed=[]){if(modules.has(file))return modules.get(file).exports;const module={exports:{}};modules.set(file,module);let source=fs.readFileSync(file,'utf8');if(file.endsWith('.vue'))source=source.split('<script setup lang="ts">')[1].split('</script>')[0];source+='\nexports.test={'+exposed.join(',')+'};';
  const local=id=>id==='vue'?{...require('vue'),onBeforeUnmount(){},onDeactivated(){}}:id==='@dcloudio/uni-app'?new Proxy({},{get:(_,name)=>fn=>(hooks[name]||=[]).push(fn)}):id.endsWith('.vue')?{}:id.startsWith('@/')?load(path.join(root,id.slice(2)+'.ts')):require(id);
  vm.runInNewContext(ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText,{module,exports:module.exports,require:local,uni,console,Date,getCurrentPages:()=>pageStack,setTimeout:(fn,ms)=>{timers.set(++next,{fn,ms});return next;},clearTimeout:id=>timers.delete(id),setInterval:fn=>{intervals.set(++next,fn);return next;},clearInterval:id=>intervals.delete(id)},{filename:file});return module.exports;}
- return{load,storage,calls,toasts,hooks,record,intervals,setPages:value=>pageStack=value,failStorage:()=>saveFail=true,session:()=>session,flushTimers:()=>{for(const [id,t] of timers)if(t.ms===350){timers.delete(id);t.fn();}}};
+ return{load,storage,calls,toasts,hooks,record,intervals,setPages:value=>pageStack=value,failStorage:()=>saveFail=true,recoverStorage:()=>saveFail=false,session:()=>session,flushTimers:()=>{for(const [id,t] of timers)if(t.ms===350){timers.delete(id);t.fn();}}};
 }
 const tick=()=>new Promise(r=>setImmediate(r));
 (async()=>{
@@ -31,6 +31,16 @@ const tick=()=>new Promise(r=>setImmediate(r));
  const ending=page.finishRecord();await ending;s.session().finish({filePath:'/saved/story.mp3',durationSeconds:21});await tick();
  const progress=s.load(path.join(root,'services/progressService.ts'));const records=progress.getRepeatRecords();assert.equal(records.length,1);assert.equal(records[0].sentence,base.sentence);assert.equal(records[0].sourceTitle,base.title);assert.equal(records[0].durationSeconds,21);assert.equal(page.recordedPath.value,'/saved/story.mp3');assert.equal(page.isRecording.value,false);assert.equal(page.isFinishing.value,false);
  s.hooks.onLoad.forEach(fn=>fn({practice:encodeURIComponent(key)}));const start2=page.beginRecord();await tick();s.session().start();await start2;const failure=new s.record.RecordSaveError('disk full');failure.tempFilePath='/temp/retry.mp3';failure.durationSeconds=8;s.session().fail(failure);await tick();assert.equal(page.unsavedPath.value,'/temp/retry.mp3');await page.retrySave();assert.equal(page.unsavedPath.value,'');assert.equal(progress.getRepeatRecords().length,2);assert.equal(progress.getRepeatRecords()[0].sourceTitle,base.title);
+ // A saved audio file must not claim success when its library index fails to persist.
+ const start3=page.beginRecord();await tick();s.session().start();await start3;s.failStorage();
+ s.session().finish({filePath:'/saved/pending.mp3',durationSeconds:4});await tick();
+ const storageService=s.load(path.join(root,'utils/storage.ts'));
+ assert.equal(storageService.unsavedStorageCount.value,1);assert.match(s.toasts.at(-1).title,/记录未保存/);
+ assert.equal(progress.getRepeatRecords().length,3);assert.equal(s.storage.get('little_english_book_progress').repeatRecords.length,2);
+ assert.equal(progress.flushLearningState(),false);assert.equal(storageService.retryStorageWrites(),false);
+ s.recoverStorage();assert.equal(storageService.retryStorageWrites(),true);
+ assert.equal(s.storage.get('little_english_book_progress').repeatRecords.length,3,'retry persists the existing recording without making a duplicate');
+ assert.equal(progress.getRepeatRecords()[0].audioUrl,'/saved/pending.mp3');assert.equal(storageService.unsavedStorageCount.value,0);
  const invalid=runtime(),ip=invalid.load(path.join(root,'pkg-speaking/record/index.vue'),['invalidPractice','toggleRecord']).test;invalid.hooks.onLoad.forEach(fn=>fn({practice:'missing-context'}));assert.equal(ip.invalidPractice.value,true);await ip.toggleRecord();assert.equal(invalid.session(),undefined,'invalid or missing shared context never starts microphone');
  // Every published book word/page, country, story/chant and car sentence supports a valid descriptor.
  const all=runtime(),valid=all.load(path.join(root,'services/readAlongService.ts')),books=all.load(path.join(root,'services/bookService.ts')),mock=all.load(path.join(root,'mock/books.ts')),topics=all.load(path.join(root,'mock/playground.ts')),world=all.load(path.join(root,'mock/topics.ts')),cars=all.load(path.join(root,'pkg-cars/bestSellingCars.ts'));

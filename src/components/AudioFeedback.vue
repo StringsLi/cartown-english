@@ -1,4 +1,5 @@
 <template>
+  <StorageFeedback />
   <view v-if="audioPlaybackState.phase !== 'idle'" class="audio-feedback" :class="`audio-feedback--${audioPlaybackState.phase}`" role="status" aria-live="polite">
     <view class="audio-feedback__copy"><text class="native-audiofeedback-text">{{ phaseLabel }}</text><text class="native-audiofeedback-text">{{ audioPlaybackState.label }}</text></view>
     <button class="native-audiofeedback-button" role="button" v-if="active" aria-label="停止播放声音" @tap="stopAudio">停止 ■</button>
@@ -6,6 +7,7 @@
   </view>
 </template>
 <script setup lang="ts">
+import StorageFeedback from "@/components/StorageFeedback.vue";
 import { computed } from "vue";
 import { audioPlaybackState, replayAudio, stopAudio } from "@/services/audioService";
 const active = computed(() => ["loading", "playing"].includes(audioPlaybackState.value.phase));

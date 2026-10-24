@@ -187,8 +187,8 @@ function saveFinished(result: SavedRecording) {
       durationSeconds: result.durationSeconds
     });
     savedRecordCount.value = getRepeatRecords().length;
-    flushLearningState();
-    if (pageVisible) uni.showToast({ title: "录音已保存", icon: "none" });
+    const saved = flushLearningState();
+    if (pageVisible) uni.showToast({ title: saved ? "录音已保存" : "声音已留在本机，记录未保存，请重试", icon: "none" });
 }
 function handleCaptureError(error: unknown) {
   if (error instanceof RecordSaveError) { unsavedPath.value = error.tempFilePath; recordSeconds.value = error.durationSeconds || recordSeconds.value; }

@@ -1,5 +1,6 @@
 <template>
   <view class="space-page">
+    <StorageFeedback />
     <view class="space-nav"><button role="button" @tap="backTo('/pkg-learning/playground/index')">‹ 英语乐园</button><text>SPACE EXPLORER</text><button role="button" aria-label="返回首页" @tap="home">⌂</button></view>
     <view class="title-row"><view><text class="eyebrow">新的小宇宙 · 亲子英语系列</text><text class="space-title">太阳系小旅行</text><text class="subtitle">抬头看星星，也听听它们的英文名字。</text></view><text class="little-star">✦</text></view>
     <view class="map-card">
@@ -28,6 +29,7 @@
   </view>
 </template>
 <script setup lang="ts">
+import StorageFeedback from "@/components/StorageFeedback.vue";
 import { ref } from 'vue';
 import { onShow, onHide, onUnload } from '@dcloudio/uni-app';
 import { navigate, backTo } from '@/services/navigationService';

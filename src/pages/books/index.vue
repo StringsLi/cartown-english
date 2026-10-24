@@ -1,5 +1,6 @@
 <template>
   <view class="page books-page screen-with-nav">
+    <StorageFeedback />
     <view class="books-header">
       <view>
         <text class="page-title">绘本馆</text>
@@ -79,6 +80,7 @@
 </template>
 
 <script setup lang="ts">
+import StorageFeedback from "@/components/StorageFeedback.vue";
 import { navigate } from "@/services/navigationService";
 import CachedImage from "@/components/CachedImage.vue";
 import { computed, ref } from "vue";

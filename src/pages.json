@@ -186,6 +186,12 @@
           "style": {
             "navigationBarTitleText": "我的"
           }
+        },
+        {
+          "path": "wordbook/index",
+          "style": {
+            "navigationBarTitleText": "我的单词本"
+          }
         }
       ]
     },

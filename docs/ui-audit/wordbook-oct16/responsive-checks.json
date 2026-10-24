@@ -1,0 +1,71 @@
+[
+  {
+    "width": 320,
+    "view": "review",
+    "metrics": {
+      "images": [
+        {
+          "loaded": true
+        },
+        {
+          "loaded": true
+        },
+        {
+          "loaded": true
+        },
+        {
+          "loaded": true
+        }
+      ],
+      "minButtonHeight": 44,
+      "scrollWidth": 320,
+      "viewport": 320
+    }
+  },
+  {
+    "width": 390,
+    "view": "review",
+    "metrics": {
+      "images": [
+        {
+          "loaded": true
+        },
+        {
+          "loaded": true
+        },
+        {
+          "loaded": true
+        },
+        {
+          "loaded": true
+        }
+      ],
+      "minButtonHeight": 44,
+      "scrollWidth": 390,
+      "viewport": 390
+    }
+  },
+  {
+    "width": 430,
+    "view": "review",
+    "metrics": {
+      "images": [
+        {
+          "loaded": true
+        },
+        {
+          "loaded": true
+        },
+        {
+          "loaded": true
+        },
+        {
+          "loaded": true
+        }
+      ],
+      "minButtonHeight": 44,
+      "scrollWidth": 430,
+      "viewport": 430
+    }
+  }
+]

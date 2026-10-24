@@ -10,7 +10,13 @@ const uni = {
   showToast: value => toasts.push(value),
   navigateTo: options => calls.push({ mode: 'navigateTo', ...options }), redirectTo: options => calls.push({ mode: 'redirectTo', ...options }), reLaunch: options => calls.push({ mode: 'reLaunch', ...options }), navigateBack: options => calls.push({ mode: 'navigateBack', ...options })
 };
-const audio = { playAudio() {}, speakEnglish() {}, stopAudio() {} };
+let pendingAudio = null;
+const audio = {
+  playAudio(url, label, onStarted) { pendingAudio = onStarted; },
+  speakEnglish() { pendingAudio = null; }, stopAudio() { pendingAudio = null; },
+  getAudioVolume: () => 1, audioPlaybackState: require('vue').ref({ phase: 'idle' })
+};
+const playPrompt = () => pendingAudio?.();
 modules.set(path.join(root, 'services/audioService.ts'), { exports: audio });
 function load(file, exposed = []) {
   if (modules.has(file)) return modules.get(file).exports;
@@ -64,16 +70,18 @@ function page(name, expose) { return load(path.join(root, name, 'index.vue'), ex
 for (const [name, target, choose, argument, counter] of [
   ['car-colors', 'target', 'choose', 'id', 'colorQuestionsDone'], ['car-traffic', 'prompt', 'choose', 'action', 'trafficTurnsDone'], ['car-logos', 'targetLogo', 'chooseLogo', 'id', 'logoQuizDone']
 ]) {
-  const p = page('pkg-cars/' + name, [target, choose, 'answered', 'nextRound']);
+  const p = page('pkg-cars/' + name, [target, choose, 'answered', 'nextRound', 'askAgain', ...(name === 'car-logos' ? ['startQuiz'] : [])]);
   const stars = cartown.getCartownProgress().stars, count = cartown.getCartownProgress()[counter];
   p[choose]('wrong'); assert.equal(p.answered.value, false); p.nextRound(); assert.equal(cartown.getCartownProgress().stars, stars);
+  if (p.startQuiz) p.startQuiz(); else p.askAgain();
+  playPrompt();
   const answer = p[target].value[argument]; p[choose](answer); p[choose](answer);
   assert.equal(cartown.getCartownProgress().stars, stars + 1); assert.equal(cartown.getCartownProgress()[counter], count + 1);
   assert.equal(p.answered.value, true); p.nextRound(); assert.equal(p.answered.value, false);
 }
-const logos = page('pkg-cars/car-logos', ['targetLogo', 'chooseLogo', 'answered', 'nextRound']);
+const logos = page('pkg-cars/car-logos', ['targetLogo', 'chooseLogo', 'answered', 'nextRound', 'askAgain']);
 const seenLogos = new Set();
-for (let n = 0; n < 50; n++) { seenLogos.add(logos.targetLogo.value.id); logos.chooseLogo(logos.targetLogo.value.id); logos.nextRound(); }
+for (let n = 0; n < 50; n++) { logos.askAgain(); playPrompt(); seenLogos.add(logos.targetLogo.value.id); logos.chooseLogo(logos.targetLogo.value.id); logos.nextRound(); }
 assert.equal(seenLogos.size, 50, 'all fifty logos must be eligible quiz targets');
 const count = page('pkg-cars/car-count', ['challenge', 'slots', 'tapped', 'tapCar', 'nextChallenge']);
 assert.equal(count.slots.value.length, count.challenge.value.count);
@@ -130,10 +138,10 @@ home.session.value = { topicId: 'colors', mode: 'learn', wordIndex: 2, questionI
 home.resume(); assert.equal(calls.at(-1).url, '/pkg-learning/playground-game/index?topic=colors&resume=1');
 assert.equal(home.primaryLabel.value, '出发，听 3 个词');
 calls.at(-1).success(); flush(350);
-home.primaryAction(); assert.equal(calls.at(-1).url, '/pkg-learning/playground-game/index?topic=colors&resume=1', 'Matching daily step resumes the saved position');
+home.primaryAction(); assert.equal(calls.at(-1).url, '/pkg-learning/playground-game/index?topic=colors&resume=1&daily=1', 'Matching daily step resumes the saved position');
 calls.at(-1).success(); flush(350);
 home.daily.value = { heardIds: ['colors:red','colors:blue','colors:yellow'], solvedIds: [], adventureIds: [] };
-home.primaryAction(); assert.equal(calls.at(-1).url, '/pkg-learning/playground-game/index?topic=colors&mode=quiz', 'Next daily task stays with the active topic');
+home.primaryAction(); assert.equal(calls.at(-1).url, '/pkg-learning/playground-game/index?topic=colors&mode=quiz&daily=1', 'Next daily task stays with the active topic');
 assert.equal(home.primaryLabel.value, '接着找 2 张图');
 calls.at(-1).success(); flush(350);
 home.daily.value.solvedIds = ['colors:red','colors:blue'];
@@ -215,14 +223,15 @@ atlasLoad({ id: 'earth', series: 'home' }); assert.equal(atlas.journey.value.len
 atlas.move(1); assert.equal(calls.at(-1).url, '/pkg-space/body/index?id=moon&series=home'); calls.at(-1).success(); flush(350);
 atlasLoad({ id: 'moon', series: 'home' }); const end = calls.length; atlas.move(1); assert.equal(calls.length, end);
 atlas.openQuiz(); assert.equal(calls.at(-1).url, '/pkg-space/quiz/index?series=home'); calls.at(-1).success(); flush(350);
-const spaceQuiz = page('pkg-space/quiz', ['series', 'questions', 'question', 'questionIndex', 'solved', 'wrongId', 'finished', 'earnedStar', 'choose', 'next', 'restart']);
+const spaceQuiz = page('pkg-space/quiz', ['series', 'questions', 'question', 'questionIndex', 'solved', 'wrongId', 'finished', 'earnedStar', 'choose', 'next', 'restart', 'playPrompt']);
 hooks.onLoad.at(-1)({ series: ['malformed'] }); assert.equal(spaceQuiz.series.value.id, 'home');
 spaceQuiz.next(); assert.equal(spaceQuiz.questionIndex.value, 0);
 spaceQuiz.choose('invalid'); assert.equal(spaceQuiz.wrongId.value, '');
 const wrong = spaceQuiz.question.value.choices.find(c => c.id !== spaceQuiz.question.value.target.id);
-spaceQuiz.choose(wrong.id); assert.equal(spaceQuiz.solved.value, false); assert.equal(spaceQuiz.wrongId.value, wrong.id);
+spaceQuiz.playPrompt(); playPrompt(); spaceQuiz.choose(wrong.id); assert.equal(spaceQuiz.solved.value, false); assert.equal(spaceQuiz.wrongId.value, wrong.id);
 for (let round = 0; round < 2; round++) {
  for (let i = 0; i < spaceQuiz.questions.value.length; i++) {
+  spaceQuiz.playPrompt(); playPrompt();
   const id = spaceQuiz.question.value.target.id; spaceQuiz.choose(id); spaceQuiz.choose(id);
   assert.equal(spaceQuiz.solved.value, true); spaceQuiz.next();
  }

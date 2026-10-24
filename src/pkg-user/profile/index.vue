@@ -3,6 +3,7 @@
     <PageTopbar section="资料与设置" fallback="/pkg-user/parent/index" />
     <text class="page-title">我的</text>
     <text class="page-subtitle">本地体验版只保存昵称和学习记录，不采集真实姓名、头像和位置。</text>
+    <StorageFeedback />
 
     <view class="profile-card soft-card">
       <text class="profile-card__label">孩子昵称</text>
@@ -24,11 +25,13 @@
 </template>
 
 <script setup lang="ts">
+import StorageFeedback from "@/components/StorageFeedback.vue";
 import PageTopbar from "@/components/PageTopbar.vue";
 import { navigate } from "@/services/navigationService";
 import { ref } from "vue";
 import { getAudioVolume, setAudioVolume } from "@/services/audioService";
 import BigButton from "@/components/BigButton.vue";
+import { clearFavoriteWords } from "@/pkg-user/services/wordbookService";
 import { clearCartownProgress } from "@/services/cartownProgressService";
 import { clearLearningData, getLearningState, updateChildNickname } from "@/services/progressService";
 import { clearMediaCache } from "@/services/mediaCacheService";
@@ -42,8 +45,8 @@ const nickname = ref(getLearningState().childNickname);
 function saveNickname() {
   nickname.value = nickname.value.trim();
   if (!nickname.value) { uni.showToast({ title: "先给宝贝起个昵称吧", icon: "none" }); return; }
-  updateChildNickname(nickname.value.slice(0, 16));
-  uni.showToast({ title: "已保存", icon: "success" });
+  const saved = updateChildNickname(nickname.value.slice(0, 16));
+  uni.showToast({ title: saved ? "已保存" : "昵称还没保存成功，请重新保存", icon: saved ? "success" : "none" });
 }
 
 function clearCache() {
@@ -54,13 +57,14 @@ function clearCache() {
 function clearData() {
   uni.showModal({
     title: "清除学习记录？",
-    content: "将清除昵称、绘本进度、录音索引、游戏记录、主题星星、国家探索记录和太空护照。请先导出录音与备份；音量设置保留。此操作无法撤销。",
+    content: "将清除昵称、绘本进度、录音索引、游戏记录、主题星星、国家探索记录、词汇收藏和太空护照。请先导出录音与备份；音量设置保留。此操作无法撤销。",
     confirmText: "确认清除",
     confirmColor: "#b95f3d",
     success(result) {
       if (!result.confirm) return;
       clearLearningData();
       clearCartownProgress();
+      clearFavoriteWords();
       uni.removeStorageSync("cartown_explored_countries");
       uni.removeStorageSync("cartown_daily_countries");
       nickname.value = getLearningState().childNickname;

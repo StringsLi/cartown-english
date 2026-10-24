@@ -82,20 +82,22 @@ export function saveLearningState(state: LearningState): void {
   }, DEBOUNCE_MS);
 }
 
-export function flushLearningState(): void {
+export function flushLearningState(): boolean {
   if (saveTimer) {
     clearTimeout(saveTimer);
     saveTimer = null;
   }
   if (cachedState) {
-    setStorage(STORAGE_KEY, cachedState);
+    return setStorage(STORAGE_KEY, cachedState);
   }
+  return true;
 }
 
-export function updateChildNickname(childNickname: string): void {
+export function updateChildNickname(childNickname: string): boolean {
   const state = getLearningState();
   state.childNickname = childNickname || defaultState.childNickname;
   saveLearningState(state);
+  return flushLearningState();
 }
 
 export function getProgress(bookId?: string): UserProgress | Record<string, UserProgress> | undefined {

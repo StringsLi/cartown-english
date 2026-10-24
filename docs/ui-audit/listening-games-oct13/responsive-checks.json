@@ -1,0 +1,706 @@
+[
+  {
+    "route": "pkg-space/quiz/index?series=home",
+    "width": 320,
+    "metrics": {
+      "buttons": [
+        {
+          "height": 44,
+          "text": "‹ 太阳系"
+        },
+        {
+          "height": 44,
+          "text": "♫正在准备声音…▶"
+        },
+        {
+          "height": 117.609375,
+          "text": "太阳"
+        },
+        {
+          "height": 117.609375,
+          "text": "月球"
+        },
+        {
+          "height": 117.609375,
+          "text": "地球"
+        }
+      ],
+      "scrollWidth": 320,
+      "viewport": 320
+    }
+  },
+  {
+    "route": "pkg-space/quiz/index?series=home",
+    "width": 430,
+    "metrics": {
+      "buttons": [
+        {
+          "height": 44,
+          "text": "‹ 太阳系"
+        },
+        {
+          "height": 57.328125,
+          "text": "♫正在准备声音…▶"
+        },
+        {
+          "height": 157.34375,
+          "text": "太阳"
+        },
+        {
+          "height": 157.34375,
+          "text": "月球"
+        },
+        {
+          "height": 157.34375,
+          "text": "地球"
+        }
+      ],
+      "scrollWidth": 430,
+      "viewport": 430
+    }
+  },
+  {
+    "route": "pkg-cars/car-colors/index",
+    "width": 320,
+    "metrics": {
+      "buttons": [
+        {
+          "height": 44,
+          "text": "‹上一页"
+        },
+        {
+          "height": 44,
+          "text": "⌂"
+        },
+        {
+          "height": 44,
+          "text": "● 录音跟读"
+        },
+        {
+          "height": 44,
+          "text": "先听英文提示"
+        },
+        {
+          "height": 128,
+          "text": "◌purple紫色"
+        },
+        {
+          "height": 128,
+          "text": "◌green绿色"
+        },
+        {
+          "height": 128,
+          "text": "◌blue蓝色"
+        },
+        {
+          "height": 44,
+          "text": "下一题"
+        }
+      ],
+      "scrollWidth": 320,
+      "viewport": 320
+    }
+  },
+  {
+    "route": "pkg-cars/car-colors/index",
+    "width": 430,
+    "metrics": {
+      "buttons": [
+        {
+          "height": 44,
+          "text": "‹上一页"
+        },
+        {
+          "height": 44,
+          "text": "⌂"
+        },
+        {
+          "height": 44,
+          "text": "● 录音跟读"
+        },
+        {
+          "height": 44,
+          "text": "先听英文提示"
+        },
+        {
+          "height": 164.515625,
+          "text": "purple紫色"
+        },
+        {
+          "height": 164.515625,
+          "text": "green绿色"
+        },
+        {
+          "height": 164.515625,
+          "text": "blue蓝色"
+        },
+        {
+          "height": 44,
+          "text": "下一题"
+        }
+      ],
+      "scrollWidth": 430,
+      "viewport": 430
+    }
+  },
+  {
+    "route": "pkg-cars/car-traffic/index",
+    "width": 320,
+    "metrics": {
+      "buttons": [
+        {
+          "height": 44,
+          "text": "‹上一页"
+        },
+        {
+          "height": 44,
+          "text": "⌂"
+        },
+        {
+          "height": 44,
+          "text": "● 录音跟读"
+        },
+        {
+          "height": 44,
+          "text": "先听英文提示"
+        },
+        {
+          "height": 44,
+          "text": "Stop"
+        },
+        {
+          "height": 44,
+          "text": "Slow"
+        },
+        {
+          "height": 44,
+          "text": "Go"
+        },
+        {
+          "height": 44,
+          "text": "下一题"
+        }
+      ],
+      "scrollWidth": 320,
+      "viewport": 320
+    }
+  },
+  {
+    "route": "pkg-cars/car-traffic/index",
+    "width": 430,
+    "metrics": {
+      "buttons": [
+        {
+          "height": 44,
+          "text": "‹上一页"
+        },
+        {
+          "height": 44,
+          "text": "⌂"
+        },
+        {
+          "height": 44,
+          "text": "● 录音跟读"
+        },
+        {
+          "height": 44,
+          "text": "先听英文提示"
+        },
+        {
+          "height": 44,
+          "text": "Stop"
+        },
+        {
+          "height": 44,
+          "text": "Slow"
+        },
+        {
+          "height": 44,
+          "text": "Go"
+        },
+        {
+          "height": 44,
+          "text": "下一题"
+        }
+      ],
+      "scrollWidth": 430,
+      "viewport": 430
+    }
+  },
+  {
+    "route": "pkg-cars/car-logos/index",
+    "width": 320,
+    "metrics": {
+      "buttons": [
+        {
+          "height": 44,
+          "text": "‹上一页"
+        },
+        {
+          "height": 44,
+          "text": "⌂"
+        },
+        {
+          "height": 44,
+          "text": "学习"
+        },
+        {
+          "height": 44,
+          "text": "游戏"
+        },
+        {
+          "height": 44,
+          "text": "● 录音跟读"
+        },
+        {
+          "height": 44,
+          "text": "听名字"
+        },
+        {
+          "height": 44,
+          "text": "下一个"
+        },
+        {
+          "height": 131.046875,
+          "text": "Toyota"
+        },
+        {
+          "height": 131.046875,
+          "text": "Honda"
+        },
+        {
+          "height": 131.046875,
+          "text": "Nissan"
+        },
+        {
+          "height": 131.046875,
+          "text": "Ford"
+        },
+        {
+          "height": 131.046875,
+          "text": "Chevrolet"
+        },
+        {
+          "height": 131.046875,
+          "text": "Volkswagen"
+        },
+        {
+          "height": 131.046875,
+          "text": "BMW"
+        },
+        {
+          "height": 131.046875,
+          "text": "Mercedes-Benz"
+        },
+        {
+          "height": 131.046875,
+          "text": "Audi"
+        },
+        {
+          "height": 131.046875,
+          "text": "Porsche"
+        },
+        {
+          "height": 131.046875,
+          "text": "Tesla"
+        },
+        {
+          "height": 131.046875,
+          "text": "Hyundai"
+        },
+        {
+          "height": 131.046875,
+          "text": "Kia"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Volvo"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Lexus"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Mazda"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Subaru"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Mitsubishi"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Peugeot"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Citroen"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Renault"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Fiat"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Jeep"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Land Rover"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Jaguar"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Mini"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Rolls-Royce"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Bentley"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Ferrari"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Lamborghini"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Maserati"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Bugatti"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌McLaren"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Aston Martin"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Alfa Romeo"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Cadillac"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Buick"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Lincoln"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Dodge"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Ram"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Acura"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Infiniti"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Genesis"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌BYD"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Geely"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Chery"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌NIO"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌XPeng"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Li Auto"
+        },
+        {
+          "height": 131.046875,
+          "text": "◌Smart"
+        }
+      ],
+      "scrollWidth": 320,
+      "viewport": 320
+    }
+  },
+  {
+    "route": "pkg-cars/car-logos/index",
+    "width": 430,
+    "metrics": {
+      "buttons": [
+        {
+          "height": 44,
+          "text": "‹上一页"
+        },
+        {
+          "height": 44,
+          "text": "⌂"
+        },
+        {
+          "height": 44,
+          "text": "学习"
+        },
+        {
+          "height": 44,
+          "text": "游戏"
+        },
+        {
+          "height": 44,
+          "text": "● 录音跟读"
+        },
+        {
+          "height": 44,
+          "text": "听名字"
+        },
+        {
+          "height": 44,
+          "text": "下一个"
+        },
+        {
+          "height": 172.296875,
+          "text": "Toyota"
+        },
+        {
+          "height": 172.296875,
+          "text": "Honda"
+        },
+        {
+          "height": 172.296875,
+          "text": "Nissan"
+        },
+        {
+          "height": 172.296875,
+          "text": "Ford"
+        },
+        {
+          "height": 172.296875,
+          "text": "Chevrolet"
+        },
+        {
+          "height": 172.296875,
+          "text": "Volkswagen"
+        },
+        {
+          "height": 172.296875,
+          "text": "BMW"
+        },
+        {
+          "height": 172.296875,
+          "text": "Mercedes-Benz"
+        },
+        {
+          "height": 172.296875,
+          "text": "Audi"
+        },
+        {
+          "height": 172.296875,
+          "text": "Porsche"
+        },
+        {
+          "height": 172.296875,
+          "text": "Tesla"
+        },
+        {
+          "height": 172.296875,
+          "text": "Hyundai"
+        },
+        {
+          "height": 172.296875,
+          "text": "Kia"
+        },
+        {
+          "height": 172.296875,
+          "text": "Volvo"
+        },
+        {
+          "height": 172.296875,
+          "text": "Lexus"
+        },
+        {
+          "height": 172.296875,
+          "text": "Mazda"
+        },
+        {
+          "height": 172.296875,
+          "text": "Subaru"
+        },
+        {
+          "height": 172.296875,
+          "text": "Mitsubishi"
+        },
+        {
+          "height": 172.296875,
+          "text": "Peugeot"
+        },
+        {
+          "height": 172.296875,
+          "text": "Citroen"
+        },
+        {
+          "height": 172.296875,
+          "text": "Renault"
+        },
+        {
+          "height": 172.296875,
+          "text": "Fiat"
+        },
+        {
+          "height": 172.296875,
+          "text": "Jeep"
+        },
+        {
+          "height": 172.296875,
+          "text": "Land Rover"
+        },
+        {
+          "height": 172.296875,
+          "text": "Jaguar"
+        },
+        {
+          "height": 172.296875,
+          "text": "Mini"
+        },
+        {
+          "height": 172.296875,
+          "text": "Rolls-Royce"
+        },
+        {
+          "height": 172.296875,
+          "text": "Bentley"
+        },
+        {
+          "height": 172.296875,
+          "text": "Ferrari"
+        },
+        {
+          "height": 172.296875,
+          "text": "Lamborghini"
+        },
+        {
+          "height": 172.296875,
+          "text": "Maserati"
+        },
+        {
+          "height": 172.296875,
+          "text": "Bugatti"
+        },
+        {
+          "height": 172.296875,
+          "text": "McLaren"
+        },
+        {
+          "height": 172.296875,
+          "text": "Aston Martin"
+        },
+        {
+          "height": 172.296875,
+          "text": "Alfa Romeo"
+        },
+        {
+          "height": 172.296875,
+          "text": "Cadillac"
+        },
+        {
+          "height": 172.296875,
+          "text": "Buick"
+        },
+        {
+          "height": 172.296875,
+          "text": "Lincoln"
+        },
+        {
+          "height": 172.296875,
+          "text": "Dodge"
+        },
+        {
+          "height": 172.296875,
+          "text": "Ram"
+        },
+        {
+          "height": 172.296875,
+          "text": "Acura"
+        },
+        {
+          "height": 172.296875,
+          "text": "Infiniti"
+        },
+        {
+          "height": 172.296875,
+          "text": "Genesis"
+        },
+        {
+          "height": 172.296875,
+          "text": "BYD"
+        },
+        {
+          "height": 172.296875,
+          "text": "Geely"
+        },
+        {
+          "height": 172.296875,
+          "text": "Chery"
+        },
+        {
+          "height": 172.296875,
+          "text": "NIO"
+        },
+        {
+          "height": 172.296875,
+          "text": "XPeng"
+        },
+        {
+          "height": 172.296875,
+          "text": "Li Auto"
+        },
+        {
+          "height": 172.296875,
+          "text": "Smart"
+        }
+      ],
+      "scrollWidth": 430,
+      "viewport": 430
+    }
+  }
+]

@@ -9,7 +9,7 @@
       <view class="today-trip__heading"><text class="today-trip__tag">今天的小旅程</text><text class="today-trip__progress">{{ finishedSteps }} / 3 个小活动</text></view>
       <view class="today-trip__body"><view class="today-trip__copy"><text class="today-trip__title">{{ primaryTitle }}</text><text class="today-trip__note">{{ primaryNote }}</text></view><image class="today-trip__car" src="/static/ui/home-red-car.png" mode="aspectFit" /></view>
       <button role="button" class="home-primary" @tap="primaryAction"><text>{{ primaryLabel }}</text><text class="home-primary__arrow">›</text></button>
-      <button v-if="resumeTopic && session" role="button" class="resume-trip" @tap="resume"><view class="resume-trip__copy"><text class="resume-trip__title">上次玩到 · {{ resumeTopic.title }}</text><text class="resume-trip__note">{{ resumeNote }}</text></view><text class="resume-trip__link">继续 ›</text></button>
+      <button v-if="resumeTopic && session" role="button" class="resume-trip" @tap="resume()"><view class="resume-trip__copy"><text class="resume-trip__title">上次玩到 · {{ resumeTopic.title }}</text><text class="resume-trip__note">{{ resumeNote }}</text></view><text class="resume-trip__link">继续 ›</text></button>
       <view class="daily-steps"><button role="button" v-for="(step, index) in dailySteps" :key="step.title" class="daily-step" :class="{ 'daily-step--done': step.done }" :aria-label="step.title + '，' + step.detail + (step.done ? '，已完成' : '')" @tap="openStep(index)"><text class="daily-step__mark">{{ step.done ? '✓' : index + 1 }}</text><view class="daily-step__copy"><text class="daily-step__title">{{ step.title }}</text><text class="daily-step__detail">{{ step.detail }}</text></view></button></view>
     </view>
     <AudioFeedback />
@@ -87,8 +87,8 @@ const primaryNote = computed(() => todayDone.value ? "今天玩到这里也很�
 const primaryLabel = computed(() => todayDone.value ? "再玩一个车车故事" : ["出发，听 3 个词", "接着找 2 张图", "去玩车车小故事"][nextStep.value]);
 const resumeNote = computed(() => !session.value ? "" : session.value.mode === "learn" ? "点读第 " + (session.value.wordIndex + 1) + " 个小伙伴" : (session.value.reviewOnly ? "复习" : "找图") + "第 " + (session.value.questionIndex + 1) + " / " + session.value.questionIds.length + " 题");
 function startToday() { openStep(todayDone.value ? 2 : dailySteps.value.findIndex(s => !s.done)); }
-function openStep(index: number) { if (index === 2) return goAdventure(); if (session.value && !session.value.reviewOnly && session.value.topicId === dailyTopic.value.id && session.value.mode === (index === 1 ? "quiz" : "learn")) return resume(); stopAudio(); navigate({ url: `/pkg-learning/playground-game/index?topic=${dailyTopic.value.id}${index === 1 ? '&mode=quiz' : ''}` }); }
-function resume() { if (session.value) navigate({ url: `/pkg-learning/playground-game/index?topic=${session.value.topicId}&resume=1` }); }
+function openStep(index: number) { if (index === 2) return goAdventure(); if (session.value && !session.value.reviewOnly && session.value.topicId === dailyTopic.value.id && session.value.mode === (index === 1 ? "quiz" : "learn")) return resume(true); stopAudio(); navigate({ url: `/pkg-learning/playground-game/index?topic=${dailyTopic.value.id}${index === 1 ? '&mode=quiz' : ''}&daily=1` }); }
+function resume(dailyJourney = false) { if (session.value) navigate({ url: `/pkg-learning/playground-game/index?topic=${session.value.topicId}&resume=1${dailyJourney ? '&daily=1' : ''}` }); }
 function openReview() { if (reviewTopic.value) navigate({ url: `/pkg-learning/playground-game/index?topic=${reviewTopic.value.id}&mode=quiz&review=1` }); }
 function goAdventure() { navigate({ url: "/pkg-adventure/index/index" }); }
 function goGarage() { navigate({ url: "/pkg-cars/car-garage/index" }); }

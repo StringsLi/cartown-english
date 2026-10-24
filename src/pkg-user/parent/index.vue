@@ -1,5 +1,6 @@
 <template>
   <view class="page parent-page screen-with-nav">
+    <StorageFeedback />
     <view class="parent-header">
       <text class="page-title">家长中心</text>
       <button role="button" class="settings-button" aria-label="打开孩子资料" @tap="goProfile">⌁</button>
@@ -13,6 +14,8 @@
       </view>
       <button role="button" class="child-card__switch" @tap="goProfile">编辑资料</button>
     </view>
+
+    <button role="button" class="playground-report soft-card wordbook-entry" @tap="goWordbook"><view><text class="playground-report__title">我的单词本</text><text class="playground-report__detail">{{ playgroundWordCount }} 个主题词 · 听过 {{ wordSummary.heard }} 个 · 收藏、点读和复习</text></view><text class="playground-report__more">打开 ›</text></button>
 
     <view class="week-card soft-card">
       <view>
@@ -98,7 +101,7 @@
       <text class="playground-report__more">查看 ›</text>
     </button>
 
-    <view class="playground-report soft-card"><view><text class="playground-report__title">小耳朵的找图记录</text><text class="playground-report__detail">听过 {{ wordSummary.heard }} 个词 · 独立找对 {{ wordSummary.independent }} 个词 · 待复习 {{ wordSummary.review }} 个词</text><text class="playground-report__detail">独立找对指第一次就选对；重试后的正确答案不算独立找对。</text></view><button role="button" v-if="wordSummary.review" class="playground-report__more" @tap="goReview">陪孩子复习 ›</button></view>
+    <view class="playground-report soft-card"><view><text class="playground-report__title">小耳朵的找图记录</text><text class="playground-report__detail">听过 {{ wordSummary.heard }} 个词 · 独立找对 {{ wordSummary.independent }} 个词 · 待复习 {{ wordSummary.review }} 个词</text><text class="playground-report__detail">新记录需先播放本题英语提示，再第一次选对；重试后的正确答案不算独立找对。已有记录保留。</text></view><button role="button" v-if="wordSummary.review" class="playground-report__more" @tap="goReview">陪孩子复习 ›</button></view>
 
     <button role="button" class="playground-report adventure-report soft-card" @tap="goAdventure"><view><text class="playground-report__title">车车英语小冒险</text><text class="playground-report__detail">已送达 {{ deliveryDoneCount }} / {{ deliveryMissions.length }} 个故事 · 已表演 {{ roleplayDoneCount }} / {{ roleplayScenes.length }} 个场景</text><text class="playground-report__detail">陪玩完成记录，随时可以换角色再演。</text></view><text class="playground-report__more">去玩 ›</text></button>
 
@@ -117,6 +120,7 @@
 </template>
 
 <script setup lang="ts">
+import StorageFeedback from "@/components/StorageFeedback.vue";
 import { navigate } from "@/services/navigationService";
 import CachedImage from "@/components/CachedImage.vue";
 import { computed, ref } from "vue";
@@ -180,6 +184,8 @@ function refreshReport() {
   cartownProgress.value = getCartownProgress();
   weekActivity.value = getCurrentWeekActivity();
 }
+
+function goWordbook() { navigate({ url: "/pkg-user/wordbook/index" }); }
 
 function goProfile() {
   navigate({ url: "/pkg-user/profile/index" });

@@ -1,7 +1,7 @@
 import { readFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 
-const outputRoot = path.join(process.cwd(), "dist", "build", "mp-weixin");
+const outputRoot = process.argv[2] ? path.resolve(process.argv[2]) : path.join(process.cwd(), "dist", "build", "mp-weixin");
 const appConfig = JSON.parse(await readFile(path.join(outputRoot, "app.json"), "utf8"));
 const packageRoots = (appConfig.subPackages || []).map((item) => item.root);
 const packageLimit = 2 * 1024 * 1024;
