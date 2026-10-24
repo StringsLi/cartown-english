@@ -4,8 +4,16 @@
     <view class="game-heading"><text class="section-kicker">LET'S PLAY TOGETHER</text><text class="page-title">{{ reviewOnly ? '老朋友，再见面' : topic.title }}</text><text class="page-subtitle">{{ mode === 'learn' ? '点点图片，听听它的英语名字。' : '听一听，找到正确的图片。' }}</text></view>
     <AudioFeedback /><view v-if="reviewOnly" class="review-note">先听一遍，再找图片。想听几遍都可以。</view>
     <view v-else class="mode-tabs"><button role="button" :class="{ 'mode-tabs__active': mode === 'learn' }" @tap="switchMode('learn')">① 点图听词</button><button role="button" :class="{ 'mode-tabs__active': mode === 'quiz' }" @tap="switchMode('quiz')">② 听音找图</button></view>
+    <view v-if="dailyJourney" class="daily-activity" role="status">今天的活动 · {{ mode === 'learn' ? '听 3 个词' : '找对 2 张图' }} · {{ dailyCount }} / {{ mode === 'learn' ? 3 : 2 }}</view>
 
-    <view v-if="mode === 'learn'" class="learn-panel">
+    <view v-if="showDailyMilestone" class="daily-milestone" role="status" aria-live="polite">
+      <text class="daily-milestone__title">{{ mode === 'learn' ? '今天的听词活动完成啦！' : '今天的找图活动完成啦！' }}</text>
+      <text class="daily-milestone__note">{{ mode === 'learn' ? '已经听过 3 个词，可以去玩下一项活动。' : '已经找对 2 张图，可以去玩车车小故事。' }}</text>
+      <BigButton :label="mode === 'learn' && daily.solvedIds.length < 2 ? '接着找 2 张图 ›' : '去玩一个车车故事 ›'" @tap="nextDailyActivity" />
+      <button role="button" class="daily-milestone__continue" @tap="continueDailyActivity">{{ mode === 'learn' ? '继续听这个主题' : '继续完成这个主题，收集印章' }}</button>
+      <button role="button" class="daily-milestone__continue" @tap="goHome">回首页，今天先玩到这里</button>
+    </view>
+    <view v-else-if="mode === 'learn'" class="learn-panel">
       <view class="flashcard" :style="{ backgroundColor: topic.tint }">
         <view class="flashcard__top"><text>认识新朋友</text><text>{{ wordIndex + 1 }} / {{ topic.items.length }}</text></view>
         <button role="button" class="flashcard__picture" :aria-label="`听${learningItem.word}的发音`" @tap="playWord"><image :src="learningItem.art" mode="aspectFit" /></button>
@@ -22,12 +30,12 @@
       <view class="question-card__head"><text>小耳朵，准备好了吗？</text><text>{{ questionIndex + 1 }} / {{ questionOrder.length }}</text></view>
       <view class="question-progress"><view v-for="(item, index) in questionOrder" :key="item.id" :class="{ 'question-progress__done': index < questionIndex || (index === questionIndex && answered), 'question-progress__current': index === questionIndex }" /></view>
       <text class="question-card__prompt">{{ currentItem.prompt }}</text><button role="button" class="listen-button" @tap="playPrompt"><text class="listen-button__icon">▶</text><text>听英语提示</text><text class="listen-button__again">可以反复听</text></button>
-      <ReadAlongLink :source-key="'topic-prompt-' + topic.id + '-' + currentItem.id" :title="topic.title" :text="currentItem.prompt" :audio="currentItem.audio" :return-url="'/pkg-learning/playground-game/index?topic=' + topic.id + '&mode=quiz'" /><view class="choice-grid"><button role="button" v-for="choice in choices" :key="choice.id" class="choice-card" :class="{ 'choice-card--correct': answered && choice.id === currentItem.id, 'choice-card--wrong': wrongChoiceId === choice.id }" :disabled="answered" :aria-label="choice.label" @tap="choose(choice.id)"><image class="choice-card__art" :src="choice.art" mode="aspectFit" /><text class="choice-card__label">{{ choice.label }}</text><text v-if="answered && choice.id === currentItem.id" class="choice-card__check">✓</text></button></view>
-      <view class="question-card__feedback" :class="{ 'question-card__feedback--retry': wrongChoiceId && !answered }" aria-live="polite"><text>{{ feedback || '选一张图片，试一试吧。' }}</text></view>
+      <ReadAlongLink :source-key="'topic-prompt-' + topic.id + '-' + currentItem.id" :title="topic.title" :text="currentItem.prompt" :audio="currentItem.audio" :return-url="'/pkg-learning/playground-game/index?topic=' + topic.id + '&mode=quiz'" /><view class="choice-grid"><button role="button" v-for="choice in choices" :key="choice.id" class="choice-card" :class="{ 'choice-card--correct': answered && choice.id === currentItem.id, 'choice-card--wrong': wrongChoiceId === choice.id }" :disabled="answered || !promptHeard" :aria-label="choice.label" @tap="choose(choice.id)"><image class="choice-card__art" :src="choice.art" mode="aspectFit" /><text class="choice-card__label">{{ choice.label }}</text><text v-if="answered && choice.id === currentItem.id" class="choice-card__check">✓</text></button></view>
+      <view class="question-card__feedback" :class="{ 'question-card__feedback--retry': wrongChoiceId && !answered }" aria-live="polite"><text>{{ feedback || (promptHeard ? '选一张图片，试一试吧。' : '先点“听英语提示”，再选图片。') }}</text></view>
       <BigButton v-if="answered" :label="isLastQuestion ? (reviewOnly ? '复习好了 ✓' : '完成冒险，收集印章 ★') : '下一题 ›'" variant="warm" @tap="next" />
     </view>
 
-    <view v-else class="complete-card"><view class="complete-card__medal"><image :src="topic.items[0].art" mode="aspectFit" /><text>★</text></view><text class="complete-card__title">{{ reviewOnly ? '老朋友，复习好了！' : '冒险完成啦！' }}</text><text class="complete-card__subtitle">{{ reviewOnly ? '今天先玩到这里，明天可以再见面。' : earnedStar ? '新印章 +1 · 获得一颗星星' : '又探索了一次，真棒！' }}</text><view class="offline-task"><text class="offline-task__heading">♡ 现在，到生活里玩一玩</text><text class="offline-task__body">{{ topic.offlineTask }}</text></view><BigButton :label="`下一站：${nextTopic.title} ›`" @tap="goNextTopic" /><button role="button" class="replay-button" @tap="goHome">回首页，看看今天的旅程 ›</button><button role="button" v-if="!reviewOnly" class="replay-button" @tap="restart">↻ 再玩一次这个主题</button></view>
+    <view v-else class="complete-card"><view class="complete-card__medal"><image :src="topic.items[0].art" mode="aspectFit" /><text>★</text></view><text class="complete-card__title">{{ reviewOnly ? '老朋友，复习好了！' : '冒险完成啦！' }}</text><text class="complete-card__subtitle">{{ reviewOnly ? '今天先玩到这里，明天可以再见面。' : earnedStar ? '新印章 +1 · 获得一颗星星' : '又探索了一次，真棒！' }}</text><view class="offline-task"><text class="offline-task__heading">♡ 现在，到生活里玩一玩</text><text class="offline-task__body">{{ topic.offlineTask }}</text></view><BigButton label="回首页，看看今天的旅程 ›" @tap="goHome" /><button role="button" class="replay-button" @tap="goNextTopic">还想玩？下一站：{{ nextTopic.title }} ›</button><button role="button" v-if="!reviewOnly" class="replay-button" @tap="restart">↻ 再玩一次这个主题</button></view>
 
     <view class="section-head"><text class="section-title">③ 听故事，唱儿歌</text><text class="section-caption">和家长一起</text></view>
     <view class="story-card"><view class="media-heading"><view class="media-heading__icon">▤</view><view><text class="media-heading__kicker">MINI STORY · 迷你故事</text><text class="media-heading__title">{{ topic.storyTitle }}</text></view><button role="button" class="round-play" aria-label="播放迷你故事" @tap="playStory">▶</button></view><text class="story-card__body">{{ topic.story }}</text><ReadAlongLink :source-key="'topic-story-' + topic.id" :title="topic.storyTitle" :text="topic.story" :audio="topic.storyAudio" :return-url="'/pkg-learning/playground-game/index?topic=' + topic.id" :text-cn="topic.storyTranslation" /><button role="button" class="translation-toggle" @tap="showTranslation = !showTranslation">{{ showTranslation ? '收起中文提示 −' : '家长看中文提示 +' }}</button><text v-if="showTranslation" class="story-card__translation">{{ topic.storyTranslation }}</text></view>
@@ -41,13 +49,13 @@
 import ReadAlongLink from "@/components/ReadAlongLink.vue";
 import { navigate } from "@/services/navigationService";
 import { computed, ref } from "vue";
-import { onHide, onLoad, onUnload } from "@dcloudio/uni-app";
+import { onHide, onLoad, onShow, onUnload } from "@dcloudio/uni-app";
 import BigButton from "@/components/BigButton.vue";
 import AudioFeedback from "@/components/AudioFeedback.vue";
 import { getPlaygroundTopic, getSuggestedPlaygroundTopic, playgroundTopics, type PlaygroundItem } from "@/mock/playground";
-import { playAudio, stopAudio } from "@/services/audioService";
+import { getAudioVolume, playAudio, stopAudio } from "@/services/audioService";
 import { completePlaygroundTopic, getCartownProgress, recordPlaygroundWord } from "@/services/cartownProgressService";
-import { getPlaygroundLearning, getReviewItems, recordPlaygroundAnswer, savePlaygroundSession, flushPlaygroundLearning } from "@/services/playgroundLearningService";
+import { getPlaygroundLearning, getReviewItems, getTodayPlay, recordPlaygroundAnswer, savePlaygroundSession, flushPlaygroundLearning } from "@/services/playgroundLearningService";
 import { usePageShare } from "@/composables/usePageShare";
 usePageShare();
 const topic = ref(playgroundTopics[0]);
@@ -56,6 +64,11 @@ const wordIndex = ref(0), heardIds = ref([...getCartownProgress().playgroundHear
 const questionIndex = ref(0), questionOrder = ref<PlaygroundItem[]>([...topic.value.items]), choices = ref<PlaygroundItem[]>([]);
 const answered = ref(false), hadWrong = ref(false), finished = ref(false), earnedStar = ref(false);
 const wrongChoiceId = ref(""), feedback = ref(""), showTranslation = ref(false);
+const promptHeard = ref(false), dailyJourney = ref(false), dailyContinue = ref(false);
+const daily = ref({ ...getTodayPlay() });
+let pageVisible = true;
+const dailyCount = computed(() => Math.min(mode.value === "learn" ? 3 : 2, mode.value === "learn" ? daily.value.heardIds.length : daily.value.solvedIds.length));
+const showDailyMilestone = computed(() => dailyJourney.value && !dailyContinue.value && !finished.value && dailyCount.value >= (mode.value === "learn" ? 3 : 2));
 const learningItem = computed(() => topic.value.items[wordIndex.value]);
 const currentItem = computed(() => questionOrder.value[questionIndex.value]);
 const isLastQuestion = computed(() => questionIndex.value === questionOrder.value.length - 1);
@@ -64,6 +77,8 @@ onLoad(query => {
   const session = query?.resume === "1" ? getPlaygroundLearning().session : null;
   topic.value = getPlaygroundTopic(session?.topicId || String(query?.topic || "")) || playgroundTopics[0];
   reviewOnly.value = session?.reviewOnly ?? query?.review === "1";
+  dailyJourney.value = !reviewOnly.value && (query?.daily === "1" || session?.dailyJourney === true);
+  dailyContinue.value = dailyJourney.value && session?.dailyContinueDate === daily.value.date;
   if (session) {
     mode.value = session.mode; wordIndex.value = session.wordIndex;
     questionOrder.value = session.questionIds.map(id => topic.value.items.find(i => i.id === id)!).filter(Boolean);
@@ -76,10 +91,18 @@ onLoad(query => {
   }
   remember();
 });
-onHide(() => { remember(); stopAudio(); flushPlaygroundLearning(); });
-onUnload(stopAudio);
+onShow(() => { pageVisible = true; refreshDaily(); });
+onHide(() => { pageVisible = false; promptHeard.value = false; remember(); stopAudio(); flushPlaygroundLearning(); });
+onUnload(() => { pageVisible = false; stopAudio(); });
 function remember() {
-  savePlaygroundSession(finished.value ? null : { topicId: topic.value.id, mode: mode.value, wordIndex: wordIndex.value, questionIds: questionOrder.value.map(i => i.id), questionIndex: questionIndex.value, answered: answered.value, hadWrong: hadWrong.value, reviewOnly: reviewOnly.value });
+  savePlaygroundSession(finished.value ? null : { topicId: topic.value.id, mode: mode.value, wordIndex: wordIndex.value, questionIds: questionOrder.value.map(i => i.id), questionIndex: questionIndex.value, answered: answered.value, hadWrong: hadWrong.value, reviewOnly: reviewOnly.value, ...(dailyJourney.value ? { dailyJourney: true, ...(dailyContinue.value ? { dailyContinueDate: daily.value.date } : {}) } : {}) });
+}
+function refreshDaily() { const today = getTodayPlay(); if (daily.value.date !== today.date) dailyContinue.value = false; daily.value = { ...today }; }
+function continueDailyActivity() { dailyContinue.value = true; remember(); }
+function nextDailyActivity() {
+  stopAudio();
+  if (mode.value === "learn" && daily.value.solvedIds.length < 2) switchMode("quiz");
+  else navigate({ url: "/pkg-adventure/index/index" }, "redirectTo");
 }
 function shuffled<T>(items: T[]): T[] {
   const result = [...items];
@@ -87,6 +110,7 @@ function shuffled<T>(items: T[]): T[] {
   return result;
 }
 function setChoices() {
+  promptHeard.value = false;
   if (!currentItem.value) { choices.value = []; return; }
   choices.value = shuffled([currentItem.value, ...shuffled(topic.value.items.filter(i => i.id !== currentItem.value.id)).slice(0, 2)]);
 }
@@ -96,10 +120,13 @@ function resetQuiz() {
   answered.value = false; hadWrong.value = false; finished.value = !questionOrder.value.length;
   earnedStar.value = false; wrongChoiceId.value = ""; feedback.value = ""; setChoices();
 }
-function switchMode(nextMode: "learn" | "quiz") { stopAudio(); mode.value = nextMode; remember(); }
+function switchMode(nextMode: "learn" | "quiz") { stopAudio(); promptHeard.value = false; dailyContinue.value = false; mode.value = nextMode; refreshDaily(); remember(); }
 function playWord() {
   const item = learningItem.value, topicId = topic.value.id;
-  playAudio(item.wordAudio, item.word, () => { heardIds.value = [...recordPlaygroundWord(topicId, item.id).playgroundHeardWordIds]; });
+  playAudio(item.wordAudio, item.word, () => {
+    if (getAudioVolume() === 0) { uni.showToast({ title: "现在是静音，请调大音量后再听", icon: "none" }); return; }
+    heardIds.value = [...recordPlaygroundWord(topicId, item.id).playgroundHeardWordIds]; refreshDaily();
+  });
 }
 function moveWord(delta: number) {
   const index = wordIndex.value + delta;
@@ -107,16 +134,26 @@ function moveWord(delta: number) {
   stopAudio(); wordIndex.value = index; remember();
 }
 function selectWord(index: number) { wordIndex.value = index; remember(); playWord(); }
-function playPrompt() { playAudio(currentItem.value.audio, currentItem.value.prompt); }
+function playPrompt() {
+  const item = currentItem.value;
+  if (!item) return;
+  playAudio(item.audio, item.prompt, () => {
+    if (!pageVisible || mode.value !== "quiz" || currentItem.value.id !== item.id) return;
+    if (getAudioVolume() === 0) { feedback.value = "现在是静音，请调大音量后再听提示。"; return; }
+    promptHeard.value = true;
+    if (!answered.value && !hadWrong.value) feedback.value = "";
+  });
+}
 function playStory() { playAudio(topic.value.storyAudio, topic.value.storyTitle); }
 function playChant() { playAudio(topic.value.chantAudio, topic.value.chantTitle); }
 function choose(id: string) {
-  if (answered.value) return;
+  if (answered.value || !promptHeard.value || !choices.value.some(choice => choice.id === id)) return;
   if (id !== currentItem.value.id) {
     if (!hadWrong.value) recordPlaygroundAnswer(topic.value.id, currentItem.value.id, false);
     hadWrong.value = true; wrongChoiceId.value = id; feedback.value = "没关系，再听一次，慢慢找。"; remember(); playPrompt(); return;
   }
   recordPlaygroundAnswer(topic.value.id, currentItem.value.id, true, hadWrong.value);
+  refreshDaily();
   answered.value = true; wrongChoiceId.value = ""; remember();
   feedback.value = `找到了！${currentItem.value.word} · ${currentItem.value.label}`;
   playAudio(currentItem.value.wordAudio, currentItem.value.word);
@@ -128,13 +165,19 @@ function next() {
   if (!reviewOnly.value) earnedStar.value = completePlaygroundTopic(topic.value.id).earned;
   finished.value = true; remember();
 }
-function restart() { stopAudio(); resetQuiz(); remember(); }
+function restart() { stopAudio(); dailyContinue.value = true; resetQuiz(); remember(); }
 function goTopics() { stopAudio(); navigate({ url: "/pkg-learning/playground/index" }, "redirectTo"); }
 function goHome() { stopAudio(); navigate({ url: "/pages/index/index" }, "reLaunch"); }
 function goNextTopic() { stopAudio(); navigate({ url: `/pkg-learning/playground-game/index?topic=${nextTopic.value.id}` }, "redirectTo"); }
 </script>
 
 <style scoped lang="scss">
+.daily-activity { margin:18rpx 0; color:#52664d; font-size:24rpx; line-height:1.6; }
+.daily-milestone { padding:28rpx; border-radius:28rpx; background:#e8f0df; }
+.daily-milestone__title,.daily-milestone__note { display:block; line-height:1.6; }
+.daily-milestone__title { font-size:32rpx; font-weight:800; color:#304c41; }
+.daily-milestone__note { margin:12rpx 0 22rpx; font-size:24rpx; color:#52664d; }
+.daily-milestone__continue { display:flex; align-items:center; justify-content:center; width:100%; min-height:44px; margin-top:12rpx; font-size:24rpx; line-height:1.5; color:#52664d; }
 .review-note { padding: 20rpx 24rpx; margin: 20rpx 0; border-radius: 22rpx; background: #eaf1e2; color: #748267; font-size: 24rpx; line-height: 1.6; }
 .playground-game-page { padding-bottom: calc(50rpx + env(safe-area-inset-bottom)); }
 .topbar { display: flex; align-items: center; justify-content: space-between; margin: 8rpx 0 32rpx; }

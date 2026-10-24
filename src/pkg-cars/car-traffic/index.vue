@@ -19,9 +19,10 @@
       </view>
     </view>
 
-    <BigButton class="round-next" label="再听一次" variant="ghost" @tap="speakEnglish(prompt.task)" />
+    <BigButton class="round-next" :label="promptHeard ? '再听一次' : '先听英文提示'" variant="ghost" @tap="askAgain" />
+    <text v-if="!answered" class="prompt-hint" role="status" aria-live="polite">{{ promptHint }}</text>
     <view class="traffic-actions">
-      <BigButton v-for="item in trafficPrompts" :key="item.id" :label="item.action" :variant="item.light === 'yellow' ? 'warm' : 'primary'" @tap="choose(item.action)" />
+      <BigButton v-for="item in trafficPrompts" :key="item.id" :label="answered && item.action === prompt.action ? '✓ ' + item.action : item.action" :disabled="answered || !promptHeard" :variant="item.light === 'yellow' ? 'warm' : 'primary'" @tap="choose(item.action)" />
     </view>
     <BigButton class="round-next" label="下一题" variant="warm" :disabled="!answered" @tap="nextRound" />
   </view>
@@ -38,19 +39,25 @@ import { trafficPrompts } from "@/mock/cartown";
 import { phraseAudioPath } from "@/services/audioCatalog";
 import { speakEnglish } from "@/services/audioService";
 import { addCartownStar, getCartownProgress, saveCartownProgress } from "@/services/cartownProgressService";
+import { useListeningPrompt } from "@/composables/useListeningPrompt";
 import { usePageShare } from "@/composables/usePageShare";
 
 usePageShare();
+const { promptHeard, promptHint, playPromptAudio, resetPrompt } = useListeningPrompt();
 const progress = getCartownProgress();
 const promptIndex = ref(progress.trafficTurnsDone % trafficPrompts.length);
 const answered = ref(false);
 const feedback = ref("Listen and choose!");
 const prompt = computed(() => trafficPrompts[promptIndex.value]);
 
+function askAgain() {
+  playPromptAudio(phraseAudioPath(prompt.value.task), prompt.value.task);
+}
+
 function choose(action: string) {
-  if (answered.value) return;
+  if (answered.value || !promptHeard.value || !trafficPrompts.some(item => item.action === action)) return;
   if (action !== prompt.value.action) {
-    feedback.value = "Try again!";
+    feedback.value = "再听一次，慢慢找。";
     speakEnglish("Try again!");
     return;
   }
@@ -65,15 +72,17 @@ function choose(action: string) {
 }
 function nextRound() {
   if (!answered.value) return;
+  resetPrompt();
   answered.value = false;
   promptIndex.value = (getCartownProgress().trafficTurnsDone) % trafficPrompts.length;
   feedback.value = "先听一遍，再试一试。";
-  speakEnglish(prompt.value.task);
+  askAgain();
 }
 </script>
 
 <style scoped lang="scss">
 .round-next { margin-top:24rpx; }
+.prompt-hint { display:block; margin-top:18rpx; font-size:24rpx; line-height:1.7; color:$color-muted; text-align:center; }
 .traffic-page {
   padding-bottom: calc(56rpx + env(safe-area-inset-bottom));
 }

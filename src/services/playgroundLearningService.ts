@@ -12,6 +12,8 @@ export interface PlaygroundSession {
   topicId: string; mode: "learn" | "quiz"; wordIndex: number;
   questionIds: string[]; questionIndex: number; answered: boolean;
   hadWrong: boolean; reviewOnly: boolean;
+  dailyJourney?: boolean;
+  dailyContinueDate?: string;
 }
 interface DailyPlay {
   date: string; heardIds: string[]; solvedIds: string[]; adventureIds: string[];
@@ -45,7 +47,9 @@ function validSession(s?: PlaygroundSession | null): PlaygroundSession | null {
   const questions = Array.isArray(s.questionIds) ? [...new Set(s.questionIds.filter(id => topic.items.some(i => i.id === id)))] : [];
   if (!questions.length) return null;
   if (!s.reviewOnly && questions.length !== topic.items.length) return null;
-  return { topicId: topic.id, mode: s.mode, wordIndex: Math.min(count(s.wordIndex), topic.items.length - 1), questionIds: questions, questionIndex: Math.min(count(s.questionIndex), questions.length - 1), answered: s.answered === true, hadWrong: s.hadWrong === true, reviewOnly: s.reviewOnly === true };
+  return { topicId: topic.id, mode: s.mode, wordIndex: Math.min(count(s.wordIndex), topic.items.length - 1), questionIds: questions, questionIndex: Math.min(count(s.questionIndex), questions.length - 1), answered: s.answered === true, hadWrong: s.hadWrong === true, reviewOnly: s.reviewOnly === true,
+    ...(s.dailyJourney === true && !s.reviewOnly ? { dailyJourney: true,
+      ...(typeof s.dailyContinueDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s.dailyContinueDate) ? { dailyContinueDate: s.dailyContinueDate } : {}) } : {}) };
 }
 function save(): void {
   if (timer) clearTimeout(timer);

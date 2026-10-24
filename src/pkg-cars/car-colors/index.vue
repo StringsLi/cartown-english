@@ -10,16 +10,18 @@
 
     <view class="quiz-card soft-card">
       <text class="quiz-card__title">Listen and tap!</text>
-      <BigButton label="再听一次" @tap="askAgain" />
+      <BigButton :label="promptHeard ? '再听一次' : '先听英文提示'" @tap="askAgain" />
     </view>
 
+    <text v-if="!answered" class="prompt-hint" role="status" aria-live="polite">{{ promptHint }}</text>
     <view class="choice-grid">
-      <button role="button" v-for="car in choices" :key="car.id" class="choice-card soft-card" @tap="choose(car.id)">
+      <button role="button" v-for="car in choices" :key="car.id" class="choice-card soft-card" :class="{ 'choice-card--correct': answered && car.id === target.id }" :disabled="answered || !promptHeard" :aria-disabled="answered || !promptHeard" @tap="choose(car.id)">
         <view class="choice-card__vehicle">
           <PremiumVehicleImage :name="`color-car-${car.id}`" :alt="`${car.zh}小汽车`" />
         </view>
         <text class="choice-card__word">{{ car.label }}</text>
         <text class="choice-card__zh">{{ car.zh }}</text>
+        <text v-if="answered && car.id === target.id" class="answer-mark">✓ 找到了</text>
       </button>
     </view>
     <BigButton class="round-next" label="下一题" variant="warm" :disabled="!answered" @tap="nextRound" />
@@ -38,9 +40,11 @@ import { colorCars } from "@/mock/cartown";
 import { phraseAudioPath } from "@/services/audioCatalog";
 import { speakEnglish } from "@/services/audioService";
 import { addCartownStar, getCartownProgress, saveCartownProgress } from "@/services/cartownProgressService";
+import { useListeningPrompt } from "@/composables/useListeningPrompt";
 import { usePageShare } from "@/composables/usePageShare";
 
 usePageShare();
+const { promptHeard, promptHint, playPromptAudio, resetPrompt } = useListeningPrompt();
 const progress = getCartownProgress();
 const targetIndex = ref(progress.colorQuestionsDone % colorCars.length);
 const answered = ref(false);
@@ -49,13 +53,13 @@ const target = computed(() => colorCars[targetIndex.value]);
 const choices = computed(() => shuffleChoices([target.value, colorCars[(targetIndex.value + 2) % colorCars.length], colorCars[(targetIndex.value + 4) % colorCars.length]]));
 
 function askAgain() {
-  speakEnglish(target.value.task);
+  playPromptAudio(phraseAudioPath(target.value.task), target.value.task);
 }
 
 function choose(id: string) {
-  if (answered.value) return;
+  if (answered.value || !promptHeard.value || !choices.value.some(car => car.id === id)) return;
   if (id !== target.value.id) {
-    feedback.value = "Try again!";
+    feedback.value = "再听一次，慢慢找。";
     speakEnglish("Try again!");
     return;
   }
@@ -70,15 +74,19 @@ function choose(id: string) {
 }
 function nextRound() {
   if (!answered.value) return;
+  resetPrompt();
   answered.value = false;
   targetIndex.value = (getCartownProgress().colorQuestionsDone) % colorCars.length;
   feedback.value = "先听一遍，再试一试。";
-  speakEnglish(target.value.task);
+  playPromptAudio(phraseAudioPath(target.value.task), target.value.task);
 }
 </script>
 
 <style scoped lang="scss">
 .round-next { margin-top:24rpx; }
+.prompt-hint { display:block; margin-top:18rpx; font-size:24rpx; line-height:1.7; color:$color-muted; text-align:center; }
+.choice-card--correct { outline:3rpx solid #628a68; background:#edf4e9; }
+.answer-mark { display:block; margin-top:10rpx; color:#477254; font-size:24rpx; font-weight:800; }
 .car-page {
   padding-bottom: calc(56rpx + env(safe-area-inset-bottom));
 }
@@ -146,4 +154,6 @@ function nextRound() {
   font-size: 23rpx;
   color: $color-muted;
 }
+.choice-grid .choice-card[disabled] { background:#fffdf8; color:$color-primary-dark; }
+.choice-grid .choice-card--correct[disabled] { background:#edf4e9; }
 </style>

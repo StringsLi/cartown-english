@@ -3,6 +3,7 @@
     <text class="section-kicker">LITTLE VOICES, BIG MEMORIES</text>
     <text class="page-title">孩子的录音小册</text>
     <text class="page-subtitle">把勇敢开口的声音，留作成长纪念。</text>
+    <StorageFeedback />
     <view class="soft-card archive-card">
       <text class="card-title">本机保存 {{ records.length }} 条录音</text>
       <text class="card-note">保留最近 12 条。接近存满时，请先备份声音小纪念。</text>
@@ -40,6 +41,7 @@
   </view>
 </template>
 <script setup lang="ts">
+import StorageFeedback from "@/components/StorageFeedback.vue";
 import { navigate } from "@/services/navigationService";
 import { computed, ref } from "vue";
 import { onShow, onHide, onUnload } from "@dcloudio/uni-app";
@@ -94,7 +96,14 @@ async function saveFile() {
 }
 async function importBackup() {
   if (busy.value) return; clearExportError(); busy.value = true; stopRecordPlayback();
-  try { const archive = await importRepeatRecordArchive(records.value); const result = mergeRepeatRecords(archive.records, true); flushLearningState(); records.value = getRepeatRecords(); if (pageAlive) uni.showModal({ title: "备份恢复完成", content: [`新增 ${result.added} 条录音`, result.repaired ? `修复 ${result.repaired} 条失效录音` : '', archive.duplicates ? `${archive.duplicates} 条已在本机，无需重复保存` : '', archive.skipped ? `跳过 ${archive.skipped} 条无效录音` : '', archive.limited ? `备份超出 12 条，另有 ${archive.limited} 条未处理` : ''].filter(Boolean).join('；') + '。本机保留最近 12 条。', showCancel: false }); }
+  try {
+    const archive = await importRepeatRecordArchive(records.value);
+    const result = mergeRepeatRecords(archive.records, true);
+    const saved = flushLearningState();
+    records.value = getRepeatRecords();
+    if (!saved) { if (pageAlive) uni.showToast({ title: "录音已导入，记录未保存，请重新保存", icon: "none" }); return; }
+    if (pageAlive) uni.showModal({ title: "备份恢复完成", content: [`新增 ${result.added} 条录音`, result.repaired ? `修复 ${result.repaired} 条失效录音` : '', archive.duplicates ? `${archive.duplicates} 条已在本机，无需重复保存` : '', archive.skipped ? `跳过 ${archive.skipped} 条无效录音` : '', archive.limited ? `备份超出 12 条，另有 ${archive.limited} 条未处理` : ''].filter(Boolean).join('；') + '。本机保留最近 12 条。', showCancel: false });
+  }
   catch (e) { showExportError(e); }
   finally { busy.value = false; }
 }

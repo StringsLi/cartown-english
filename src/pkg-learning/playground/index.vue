@@ -40,7 +40,7 @@
           <image class="topic-card__art" :src="sceneArt(topic.id)" mode="aspectFit" />
           <view class="topic-card__head"><text class="topic-card__title">{{ topic.title }}</text><text class="topic-card__arrow" :style="{ color: topic.accent }">↗</text></view>
           <text class="topic-card__english" :style="{ color: topic.accent }">{{ topic.english }}</text>
-          <text class="topic-card__description">{{ topic.description }}</text>
+          <text class="topic-card__description">{{ topic.description }}</text><view class="topic-card__progress" :aria-label="`已听 ${topicHeardCount(topic.id)} / ${topic.items.length} 个词`"><view class="topic-card__track"><view class="topic-card__fill" :style="{ width: `${topicHeardCount(topic.id) / topic.items.length * 100}%`, backgroundColor: topic.accent }" /></view><text class="topic-card__heard">已听 {{ topicHeardCount(topic.id) }} / {{ topic.items.length }}</text></view>
         </button>
       </view>
       <view class="section-head"><text class="section-title">我的探险印章</text><text class="section-caption">每站一枚 ★</text></view>
@@ -58,7 +58,7 @@
       <view class="routine-card"><text class="routine-card__title">今天的陪玩小配方</text><view class="routine-steps"><view><text class="routine-steps__number">01</text><text>点图听词</text></view><text class="routine-steps__arrow">›</text><view><text class="routine-steps__number">02</text><text>听音找图</text></view><text class="routine-steps__arrow">›</text><view><text class="routine-steps__number">03</text><text>离屏玩一玩</text></view></view><text class="section-intro">孩子指出来、做出动作就很好。跟着兴趣走，想停就停。</text></view>
       <view v-for="topic in playgroundTopics" :key="`parent-${topic.id}`" class="parent-topic">
         <view class="parent-topic__head"><image :src="topic.items[0].art" mode="aspectFit" /><text>{{ topic.title }}</text><text class="parent-topic__tag">生活小任务</text></view>
-        <text class="parent-topic__phrase">“{{ topic.parentPhrase }}”</text><text class="parent-topic__tip">{{ topic.parentTip }}</text><view class="parent-topic__task"><text>一起试试</text><text>{{ topic.offlineTask }}</text></view>
+        <text class="parent-topic__phrase">“{{ topic.parentPhrase }}”</text><ReadAlongLink :source-key="'parent-phrase-' + topic.id" :title="topic.title + ' · 亲子英语'" :text="topic.parentPhrase" :audio="topic.parentAudio" :listen="true" return-url="/pkg-learning/playground/index?tab=parent" /><text class="parent-topic__tip">{{ topic.parentTip }}</text><view class="parent-topic__task"><text>一起试试</text><text>{{ topic.offlineTask }}</text></view>
       </view>
     </view>
     <view class="gentle-note"><text>♡</text><text>每天一点点，开心比答对更重要。</text></view>
@@ -70,6 +70,7 @@
 <script setup lang="ts">
 import { navigate } from "@/services/navigationService";
 import { computed, ref } from "vue";
+import ReadAlongLink from "@/components/ReadAlongLink.vue";
 import AudioFeedback from "@/components/AudioFeedback.vue";
 import { getReviewTopic, getReviewItems } from "@/services/playgroundLearningService";
 import { onLoad, onHide, onShow, onUnload } from "@dcloudio/uni-app";
@@ -96,6 +97,7 @@ const stars = ref(0);
 const completedCount = computed(() => playgroundTopics.filter(topic => completedIds.value.includes(topic.id)).length);
 const heardCount = computed(() => playgroundTopics.reduce((count, topic) => count + topic.items.filter(item => heardIds.value.includes(`${topic.id}:${item.id}`)).length, 0));
 const suggestedTopic = computed(() => getSuggestedPlaygroundTopic(completedIds.value));
+function topicHeardCount(id: string) { const topic = playgroundTopics.find(t => t.id === id); return topic?.items.filter(item => heardIds.value.includes(`${id}:${item.id}`)).length || 0; }
 const sceneArt = (id: string) => `/pkg-learning/static/playground/art/${id === "colors" ? "blue-suv" : `scene-${id}`}.png`;
 onShow(() => {
   reviewTopic.value = getReviewTopic();
@@ -155,6 +157,7 @@ function openAdventure() { stopAudio(); navigate({ url: "/pkg-adventure/index/in
 .topic-card__arrow { font-size: 28rpx; }
 .topic-card__english { display: block; margin-top: 9rpx; font-size: 21rpx; font-weight: 700; }
 .topic-card__description { display: block; margin-top: 9rpx; font-size: 18rpx; color: #897e71; line-height: 1.5; }
+.topic-card__progress { display:flex; align-items:center; gap:10rpx; width:100%; margin-top:18rpx; }.topic-card__track { flex:1; min-width:0; height:8rpx; border-radius:8rpx; background:#ffffffa6; overflow:hidden; }.topic-card__fill { height:100%; border-radius:8rpx; }.topic-card__heard { flex:none; font-size:18rpx; color:#5e655b; }
 .stamp-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 14rpx; padding: 22rpx; border: 1rpx solid #eee7dd; border-radius: 28rpx; background: #fffdf9; }
 .stamp { position: relative; display: flex; align-items: center; flex-direction: column; color: #a29a90; font-size: 19rpx; }
 .stamp__art { width: 110rpx; height: 90rpx; opacity: .28; filter: grayscale(1); }

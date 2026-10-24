@@ -1,0 +1,162 @@
+{
+  "responsive": [
+    {
+      "width": 320,
+      "page": "home",
+      "brokenLoadedImages": 0,
+      "document": 305,
+      "pageWidth": 305,
+      "smallNewControls": 0,
+      "viewport": 320
+    },
+    {
+      "width": 320,
+      "page": "books",
+      "brokenLoadedImages": 0,
+      "document": 305,
+      "pageWidth": 305,
+      "smallNewControls": 0,
+      "viewport": 320
+    },
+    {
+      "width": 320,
+      "page": "topics",
+      "brokenLoadedImages": 0,
+      "document": 305,
+      "pageWidth": 305,
+      "smallNewControls": 0,
+      "viewport": 320
+    },
+    {
+      "width": 320,
+      "page": "parent",
+      "brokenLoadedImages": 0,
+      "document": 305,
+      "pageWidth": 305,
+      "smallNewControls": 0,
+      "viewport": 320
+    },
+    {
+      "width": 390,
+      "page": "home",
+      "brokenLoadedImages": 0,
+      "document": 375,
+      "pageWidth": 375,
+      "smallNewControls": 0,
+      "viewport": 390
+    },
+    {
+      "width": 390,
+      "page": "books",
+      "brokenLoadedImages": 0,
+      "document": 375,
+      "pageWidth": 375,
+      "smallNewControls": 0,
+      "viewport": 390
+    },
+    {
+      "width": 390,
+      "page": "topics",
+      "brokenLoadedImages": 0,
+      "document": 375,
+      "pageWidth": 375,
+      "smallNewControls": 0,
+      "viewport": 390
+    },
+    {
+      "width": 390,
+      "page": "parent",
+      "brokenLoadedImages": 0,
+      "document": 375,
+      "pageWidth": 375,
+      "smallNewControls": 0,
+      "viewport": 390
+    },
+    {
+      "width": 430,
+      "page": "home",
+      "brokenLoadedImages": 0,
+      "document": 415,
+      "pageWidth": 415,
+      "smallNewControls": 0,
+      "viewport": 430
+    },
+    {
+      "width": 430,
+      "page": "books",
+      "brokenLoadedImages": 0,
+      "document": 415,
+      "pageWidth": 415,
+      "smallNewControls": 0,
+      "viewport": 430
+    },
+    {
+      "width": 430,
+      "page": "topics",
+      "brokenLoadedImages": 0,
+      "document": 415,
+      "pageWidth": 415,
+      "smallNewControls": 0,
+      "viewport": 430
+    },
+    {
+      "width": 430,
+      "page": "parent",
+      "brokenLoadedImages": 0,
+      "document": 415,
+      "pageWidth": 415,
+      "smallNewControls": 0,
+      "viewport": 430
+    }
+  ],
+  "parentFollow": [
+    {
+      "title": "颜色车车",
+      "phrase": "Find something blue!",
+      "matched": true,
+      "returnedToParent": true
+    },
+    {
+      "title": "动物朋友",
+      "phrase": "Where is the lion?",
+      "matched": true,
+      "returnedToParent": true
+    },
+    {
+      "title": "水果野餐",
+      "phrase": "Do you like apples?",
+      "matched": true,
+      "returnedToParent": true
+    },
+    {
+      "title": "动起来吧",
+      "phrase": "Clap your hands!",
+      "matched": true,
+      "returnedToParent": true
+    },
+    {
+      "title": "数字星球",
+      "phrase": "How many stars?",
+      "matched": true,
+      "returnedToParent": true
+    },
+    {
+      "title": "形状工坊",
+      "phrase": "Can you find a circle?",
+      "matched": true,
+      "returnedToParent": true
+    },
+    {
+      "title": "天气旅行",
+      "phrase": "Is it sunny today?",
+      "matched": true,
+      "returnedToParent": true
+    },
+    {
+      "title": "心情花园",
+      "phrase": "How do you feel?",
+      "matched": true,
+      "returnedToParent": true
+    }
+  ]
+}

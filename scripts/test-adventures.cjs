@@ -16,7 +16,7 @@ function load(file) {
   const module = { exports: {} };
   modules.set(file, module);
   const code = ts.transpileModule(fs.readFileSync(file, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText;
-  const localRequire = id => load(path.resolve(id.startsWith("@/") ? sourceRoot : path.dirname(file), id.replace(/^@\//, "") + ".ts"));
+  const localRequire = id => id.startsWith("@/") || id.startsWith(".") ? load(path.resolve(id.startsWith("@/") ? sourceRoot : path.dirname(file), id.replace(/^@\//, "") + ".ts")) : require(id);
   vm.runInNewContext(code, { module, exports: module.exports, require: localRequire, uni: fakeUni, console, setTimeout, clearTimeout }, { filename: file });
   return module.exports;
 }

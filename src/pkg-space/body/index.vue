@@ -1,5 +1,6 @@
 <template>
   <view class="body-page">
+    <StorageFeedback />
     <view class="body-nav"><button role="button" @tap="backTo('/pkg-space/index/index')">‹ 太阳系</button><text>PLANET ATLAS</text><text>{{ index + 1 }} / {{ journey.length }}</text></view>
     <text v-if="invalidLink" class="link-note">未找到指定天体，先认识太阳吧。</text>
     <view class="planet-stage"><text class="stage-star stage-star--one">✦</text><text class="stage-star stage-star--two">·</text><view class="large-planet"><PlanetArt :body="body" /></view><text class="type-label">{{ kindName }}</text></view>
@@ -15,6 +16,7 @@
   </view>
 </template>
 <script setup lang="ts">
+import StorageFeedback from "@/components/StorageFeedback.vue";
 import ReadAlongLink from "@/components/ReadAlongLink.vue";
 import { ref, computed } from 'vue';
 import { onLoad, onShow } from '@dcloudio/uni-app';

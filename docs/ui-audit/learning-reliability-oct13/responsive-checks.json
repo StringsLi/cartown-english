@@ -1,0 +1,38 @@
+[
+  {
+    "buttons": [
+      {
+        "height": 44,
+        "text": "去玩一个车车故事 ›"
+      },
+      {
+        "height": 44,
+        "text": "继续完成这个主题，收集印章"
+      },
+      {
+        "height": 44,
+        "text": "回首页，今天先玩到这里"
+      }
+    ],
+    "scrollWidth": 320,
+    "width": 320
+  },
+  {
+    "buttons": [
+      {
+        "height": 44,
+        "text": "去玩一个车车故事 ›"
+      },
+      {
+        "height": 44,
+        "text": "继续完成这个主题，收集印章"
+      },
+      {
+        "height": 44,
+        "text": "回首页，今天先玩到这里"
+      }
+    ],
+    "scrollWidth": 430,
+    "width": 430
+  }
+]

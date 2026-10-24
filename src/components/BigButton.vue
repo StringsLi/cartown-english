@@ -76,4 +76,7 @@ function handleTap() {
   opacity: 0.55;
   box-shadow: none;
 }
+.big-button.big-button--primary.big-button--disabled { background:$color-primary; color:#fff; }
+.big-button.big-button--warm.big-button--disabled { background:#c48a28; color:#fff; }
+.big-button.big-button--ghost.big-button--disabled { background:#f3eee6; color:$color-primary-dark; }
 </style>

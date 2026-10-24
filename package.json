@@ -5,15 +5,16 @@
   "description": "Little English Book | Parent-child English picture book mini program.",
   "scripts": {
     "dev:mp-weixin": "uni -p mp-weixin",
-    "build:mp-weixin": "node scripts/clean-build.mjs mp-weixin && uni build -p mp-weixin && node scripts/check-mp-package-size.mjs",
+    "build:mp-weixin": "node scripts/build-mp-weixin.mjs",
     "generate:car-audio": "node scripts/generate-car-name-audio.mjs",
     "generate:phrase-audio": "node scripts/generate-phrase-audio.mjs",
     "type-check": "vue-tsc --noEmit",
     "validate:content": "node scripts/validate-content.mjs",
     "check:release": "node scripts/validate-content.mjs --release",
     "test:adventures": "node scripts/test-adventures.cjs",
-    "test": "npm run type-check && npm run validate:content && npm run test:adventures && npm run test:learning && npm run test:record-export && npm run test:record-capture && npm run test:pages && npm run test:media-cache && npm run test:h5-images && npm run test:space && npm run test:packages && npm run test:read-along && npm run test:china-map",
+    "test": "npm run type-check && npm run validate:content && npm run test:adventures && npm run test:learning && npm run test:learning-reliability && npm run test:record-export && npm run test:record-capture && npm run test:pages && npm run test:media-cache && npm run test:h5-images && npm run test:space && npm run test:packages && npm run test:read-along && npm run test:china-map && npm run test:build-publish && npm run test:wordbook",
     "test:learning": "node scripts/test-learning.cjs",
+    "test:learning-reliability": "node scripts/test-learning-reliability.cjs",
     "test:record-export": "node scripts/test-record-export.cjs",
     "test:record-capture": "node scripts/test-record-capture.cjs",
     "test:pages": "node scripts/test-pages.cjs",
@@ -24,7 +25,9 @@
     "test:space": "node scripts/test-space.cjs",
     "test:packages": "node scripts/test-packages.cjs",
     "test:read-along": "node scripts/test-read-along.cjs",
-    "test:china-map": "node scripts/test-china-map.cjs"
+    "test:china-map": "node scripts/test-china-map.cjs",
+    "test:build-publish": "node scripts/test-build-publish.mjs",
+    "test:wordbook": "node scripts/test-wordbook.cjs"
   },
   "dependencies": {
     "@dcloudio/uni-app": "3.0.0-alpha-1000920260626810",

@@ -12,7 +12,7 @@
     </view>
 
     <view class="mode-tabs">
-      <BigButton :variant="mode === 'learn' ? 'warm' : 'ghost'" label="学习" @tap="mode = 'learn'" />
+      <BigButton :variant="mode === 'learn' ? 'warm' : 'ghost'" label="学习" @tap="learnMode" />
       <BigButton :variant="mode === 'play' ? 'warm' : 'ghost'" label="游戏" @tap="startQuiz" />
     </view>
 
@@ -32,15 +32,17 @@
         <text class="quiz-head__title">Tap {{ targetLogo.name }}</text>
         <text class="quiz-head__feedback">{{ feedback }}</text>
       </view>
+      <BigButton class="logo-quiz__listen" :label="promptHeard ? '再听一次' : '先听英文提示'" @tap="askAgain" />
+      <text v-if="!answered" class="prompt-hint" role="status" aria-live="polite">{{ promptHint }}</text>
       <view class="logo-options">
-        <button role="button" v-for="logo in quizOptions" :key="logo.id" class="logo-option soft-card" @tap="chooseLogo(logo.id)">
+        <button role="button" v-for="logo in quizOptions" :key="logo.id" class="logo-option soft-card" :class="{ 'logo-option--correct': answered && logo.id === targetLogo.id }" :disabled="answered || !promptHeard" :aria-disabled="answered || !promptHeard" @tap="chooseLogo(logo.id)">
           <CartownLogoBadge :logo-id="logo.id" :name="logo.name" :badge-text="logo.badgeText" :shape="logo.shape" :primary="logo.primary" :secondary="logo.secondary" size="small" :show-name="false" />
           <text class="logo-option__name">{{ logo.name }}</text>
           <text class="logo-option__zh">{{ logo.zh }}</text>
+          <text v-if="answered && logo.id === targetLogo.id" class="answer-mark">✓ 找到了</text>
         </button>
       </view>
       <BigButton class="round-next" label="下一题" variant="warm" :disabled="!answered" @tap="nextRound" />
-      <BigButton class="logo-quiz__listen" label="再听一次" @tap="speakLogo(`Tap ${targetLogo.name}.`)" />
     </view>
 
     <text class="section-title">Logo Wall</text>
@@ -65,9 +67,11 @@ import { carLogos } from "@/mock/cartown";
 import { phraseAudioPath } from "@/services/audioCatalog";
 import { speakEnglish } from "@/services/audioService";
 import { addCartownStar, getCartownProgress, saveCartownProgress } from "@/services/cartownProgressService";
+import { useListeningPrompt } from "@/composables/useListeningPrompt";
 import { usePageShare } from "@/composables/usePageShare";
 
 usePageShare();
+const { promptHeard, promptHint, playPromptAudio, resetPrompt } = useListeningPrompt();
 const mode = ref<"learn" | "play">("learn");
 const activeIndex = ref(Math.min(getCartownProgress().logoIndex, carLogos.length - 1));
 const targetIndex = ref(0);
@@ -81,8 +85,18 @@ function speakLogo(text: string) {
   speakEnglish(text);
 }
 
-function selectLogo(index: number) {
+function learnMode() {
+  resetPrompt();
   mode.value = "learn";
+}
+
+function askAgain() {
+  const text = `Tap ${targetLogo.value.name}.`;
+  playPromptAudio(phraseAudioPath(text), text);
+}
+
+function selectLogo(index: number) {
+  learnMode();
   activeIndex.value = index;
   saveCartownProgress({ logoIndex: index });
   speakLogo(carLogos[index].name);
@@ -95,17 +109,18 @@ function nextLogo() {
 }
 
 function startQuiz() {
+  resetPrompt();
   answered.value = false;
   mode.value = "play";
   targetIndex.value = (getCartownProgress().logoQuizDone * 7) % carLogos.length;
   feedback.value = "Listen and tap!";
-  speakLogo(`Tap ${targetLogo.value.name}.`);
+  askAgain();
 }
 
 function chooseLogo(id: string) {
-  if (answered.value) return;
+  if (mode.value !== "play" || answered.value || !promptHeard.value || !quizOptions.value.some(logo => logo.id === id)) return;
   if (id !== targetLogo.value.id) {
-    feedback.value = "Try again!";
+    feedback.value = "再听一次，慢慢找。";
     speakEnglish("Try again!");
     return;
   }
@@ -123,6 +138,9 @@ function nextRound() { if (!answered.value) return; startQuiz(); }
 
 <style scoped lang="scss">
 .round-next { margin-top:24rpx; }
+.prompt-hint { display:block; margin-top:18rpx; font-size:24rpx; line-height:1.7; color:$color-muted; text-align:center; }
+.logo-option--correct { outline:3rpx solid #628a68; background:#edf4e9; }
+.answer-mark { display:block; margin-top:10rpx; color:#477254; font-size:24rpx; font-weight:800; }
 .logos-page {
   padding-bottom: calc(56rpx + env(safe-area-inset-bottom));
 }
@@ -226,4 +244,6 @@ function nextRound() { if (!answered.value) return; startQuiz(); }
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+.logo-options .logo-option[disabled] { background:#fffdf8; color:$color-primary-dark; }
+.logo-options .logo-option--correct[disabled] { background:#edf4e9; }
 </style>
