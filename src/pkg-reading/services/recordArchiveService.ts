@@ -3,7 +3,7 @@ import { prepareRecordFile, recordFileStamp, type PreparedRecordFile } from "./r
 declare const wx: { env: { USER_DATA_PATH: string } };
 
 const ARCHIVE_VERSION = 1;
-const MAX_ARCHIVE_RECORDS = 12;
+const MAX_ARCHIVE_RECORDS = 30;
 const MAX_AUDIO_BYTES = 3 * 1024 * 1024;
 
 type ArchiveAudio =
@@ -93,7 +93,7 @@ export async function restoreArchive(content: string, existingRecords: RepeatRec
       ...(typeof record.sourceTitle === "string" && record.sourceTitle.trim() ? { sourceTitle: record.sourceTitle.trim().slice(0, 80) } : {}),
       sentence: record.sentence,
       audioUrl,
-      durationSeconds: typeof record.durationSeconds === "number" && Number.isFinite(record.durationSeconds) ? Math.max(1, Math.min(60, record.durationSeconds)) : undefined,
+      durationSeconds: typeof record.durationSeconds === "number" && Number.isFinite(record.durationSeconds) ? Math.max(1, Math.min(90, record.durationSeconds)) : undefined,
       createdAt: record.createdAt
     });
     seen.add(identity);

@@ -1,0 +1,167 @@
+{
+  "sizes": [
+    {
+      "cues": 3,
+      "minButtonHeight": 44,
+      "paragraphs": 4,
+      "scrollWidth": 305,
+      "width": 320
+    },
+    {
+      "cues": 3,
+      "minButtonHeight": 44,
+      "paragraphs": 4,
+      "scrollWidth": 375,
+      "width": 390
+    },
+    {
+      "cues": 3,
+      "minButtonHeight": 44,
+      "paragraphs": 4,
+      "scrollWidth": 415,
+      "width": 430
+    }
+  ],
+  "lessons": [
+    {
+      "language": "中文 · 10 篇",
+      "title": "这就是我",
+      "cues": 3,
+      "voice": "活泼亲切的故事女声",
+      "meta": "第 1 / 10 篇 · 示范 56 秒 · 介绍自己与表达喜好"
+    },
+    {
+      "language": "中文 · 10 篇",
+      "title": "我的玩具朋友",
+      "cues": 3,
+      "voice": "活泼亲切的故事女声",
+      "meta": "第 2 / 10 篇 · 示范 60 秒 · 描述物品与讲一件小事"
+    },
+    {
+      "language": "中文 · 10 篇",
+      "title": "我家的温暖时刻",
+      "cues": 3,
+      "voice": "活泼亲切的故事女声",
+      "meta": "第 3 / 10 篇 · 示范 55 秒 · 回忆经历与表达感受"
+    },
+    {
+      "language": "中文 · 10 篇",
+      "title": "我也能帮一点忙",
+      "cues": 3,
+      "voice": "活泼亲切的故事女声",
+      "meta": "第 4 / 10 篇 · 示范 58 秒 · 按顺序讲述行动"
+    },
+    {
+      "language": "中文 · 10 篇",
+      "title": "一颗种子的等待",
+      "cues": 3,
+      "voice": "活泼亲切的故事女声",
+      "meta": "第 5 / 10 篇 · 示范 56 秒 · 观察变化与耐心等待"
+    },
+    {
+      "language": "中文 · 10 篇",
+      "title": "我的心情小天气",
+      "cues": 3,
+      "voice": "活泼亲切的故事女声",
+      "meta": "第 6 / 10 篇 · 示范 60 秒 · 命名情绪与表达需要"
+    },
+    {
+      "language": "中文 · 10 篇",
+      "title": "轮到你，也轮到我",
+      "cues": 3,
+      "voice": "活泼亲切的故事女声",
+      "meta": "第 7 / 10 篇 · 示范 60 秒 · 协商与表达边界"
+    },
+    {
+      "language": "中文 · 10 篇",
+      "title": "雨天也有小发现",
+      "cues": 3,
+      "voice": "活泼亲切的故事女声",
+      "meta": "第 8 / 10 篇 · 示范 60 秒 · 用感官描述观察"
+    },
+    {
+      "language": "中文 · 10 篇",
+      "title": "我想问一个为什么",
+      "cues": 3,
+      "voice": "活泼亲切的故事女声",
+      "meta": "第 9 / 10 篇 · 示范 56 秒 · 提出问题与探索答案"
+    },
+    {
+      "language": "中文 · 10 篇",
+      "title": "我的小小愿望",
+      "cues": 3,
+      "voice": "活泼亲切的故事女声",
+      "meta": "第 10 / 10 篇 · 示范 57 秒 · 表达愿望与具体计划"
+    },
+    {
+      "language": "English · 10 篇",
+      "title": "This Is Me",
+      "cues": 3,
+      "voice": "清晰童趣的英语女童声",
+      "meta": "第 1 / 10 篇 · 示范 62 秒 · 介绍自己与表达喜好"
+    },
+    {
+      "language": "English · 10 篇",
+      "title": "My Toy Friend",
+      "cues": 3,
+      "voice": "清晰童趣的英语女童声",
+      "meta": "第 2 / 10 篇 · 示范 58 秒 · 描述物品与讲一件小事"
+    },
+    {
+      "language": "English · 10 篇",
+      "title": "A Happy Time at Home",
+      "cues": 3,
+      "voice": "清晰童趣的英语女童声",
+      "meta": "第 3 / 10 篇 · 示范 56 秒 · 回忆经历与表达感受"
+    },
+    {
+      "language": "English · 10 篇",
+      "title": "I Can Help",
+      "cues": 3,
+      "voice": "清晰童趣的英语女童声",
+      "meta": "第 4 / 10 篇 · 示范 58 秒 · 按顺序讲述行动"
+    },
+    {
+      "language": "English · 10 篇",
+      "title": "A Little Seed",
+      "cues": 3,
+      "voice": "清晰童趣的英语女童声",
+      "meta": "第 5 / 10 篇 · 示范 59 秒 · 观察变化与耐心等待"
+    },
+    {
+      "language": "English · 10 篇",
+      "title": "My Feelings Are Like Weather",
+      "cues": 3,
+      "voice": "清晰童趣的英语女童声",
+      "meta": "第 6 / 10 篇 · 示范 59 秒 · 命名情绪与表达需要"
+    },
+    {
+      "language": "English · 10 篇",
+      "title": "Your Turn, My Turn",
+      "cues": 3,
+      "voice": "清晰童趣的英语女童声",
+      "meta": "第 7 / 10 篇 · 示范 56 秒 · 协商与表达边界"
+    },
+    {
+      "language": "English · 10 篇",
+      "title": "A Rainy Day Adventure",
+      "cues": 3,
+      "voice": "清晰童趣的英语女童声",
+      "meta": "第 8 / 10 篇 · 示范 59 秒 · 用感官描述观察"
+    },
+    {
+      "language": "English · 10 篇",
+      "title": "My Wonderful Questions",
+      "cues": 3,
+      "voice": "清晰童趣的英语女童声",
+      "meta": "第 9 / 10 篇 · 示范 63 秒 · 提出问题与探索答案"
+    },
+    {
+      "language": "English · 10 篇",
+      "title": "My Little Dream",
+      "cues": 3,
+      "voice": "清晰童趣的英语女童声",
+      "meta": "第 10 / 10 篇 · 示范 60 秒 · 表达愿望与具体计划"
+    }
+  ]
+}

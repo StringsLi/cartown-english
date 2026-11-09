@@ -49,7 +49,7 @@ function failCapture(error: unknown): void {
   session.rejectStart(error); session.rejectFinish(error);
 }
 export async function startRecord(maxSeconds = 10): Promise<RecordSession> {
-  maxSeconds = maxSeconds === 30 ? 30 : 10;
+  maxSeconds = [10, 30, 90].includes(maxSeconds) ? maxSeconds : 10;
   if (pendingStart || active) throw new Error("上一段录音正在处理，请稍等");
   // #ifdef H5
   throw new Error("网页可回听和导出，录制请打开微信小程序");

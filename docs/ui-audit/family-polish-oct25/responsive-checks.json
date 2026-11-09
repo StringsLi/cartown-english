@@ -1,0 +1,85 @@
+{
+  "routines": [
+    {
+      "scrollWidth": 320,
+      "smallestButton": 44,
+      "width": 320
+    },
+    {
+      "scrollWidth": 390,
+      "smallestButton": 44,
+      "width": 390
+    },
+    {
+      "scrollWidth": 430,
+      "smallestButton": 44,
+      "width": 430
+    }
+  ],
+  "listening": [
+    {
+      "scrollWidth": 320,
+      "smallestButton": 44,
+      "width": 320
+    },
+    {
+      "scrollWidth": 390,
+      "smallestButton": 44,
+      "width": 390
+    },
+    {
+      "scrollWidth": 430,
+      "smallestButton": 44,
+      "width": 430
+    }
+  ],
+  "scenes": [
+    {
+      "progress": "今天一起做过 0 / 3 步从第一步开始 ↓",
+      "steps": 3,
+      "title": "穿衣出发"
+    },
+    {
+      "progress": "今天一起做过 0 / 3 步从第一步开始 ↓",
+      "steps": 3,
+      "title": "一起吃饭"
+    },
+    {
+      "progress": "今天一起做过 0 / 3 步从第一步开始 ↓",
+      "steps": 3,
+      "title": "玩具回家"
+    },
+    {
+      "progress": "今天一起做过 0 / 3 步从第一步开始 ↓",
+      "steps": 3,
+      "title": "洗手泡泡"
+    },
+    {
+      "progress": "今天一起做过 0 / 3 步从第一步开始 ↓",
+      "steps": 3,
+      "title": "晚安时间"
+    },
+    {
+      "progress": "今天一起做过 2 / 3 步继续第 3 步 ↓",
+      "steps": 3,
+      "title": "刷牙小队"
+    }
+  ],
+  "queueEdits": [
+    {
+      "action": "开始",
+      "title": "彩色车车歌",
+      "status": "正在陪你听，想停就停。"
+    },
+    {
+      "action": "添加其他曲目",
+      "title": "彩色车车歌",
+      "status": "正在陪你听，想停就停。"
+    },
+    {
+      "action": "移除其他曲目",
+      "title": "彩色车车歌",
+      "status": "正在陪你听，想停就停。"
+    }
+  ]
+}

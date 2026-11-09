@@ -54,6 +54,7 @@
     <view v-else-if="activeTab === 'chants'" class="routine-card" id="chants-panel" role="tabpanel"><text class="routine-card__title">小小儿歌电台</text><text class="section-intro">8 首小儿歌，和孩子一起念、一起动。</text><button class="stop-button" @tap="openChants()">打开儿歌电台 ›</button></view>
 
     <view v-else id="parent-panel" role="tabpanel">
+      <button role="button" class="town-entry" @tap="navigate({ url: '/pkg-family/routines/index' })"><view><text>☀ 生活里的英语</text><text>刷牙、穿衣、吃饭、收玩具、洗手、晚安 · 每天一句小任务</text></view><text>›</text></button>
       <view class="section-head"><text class="section-title">英语，玩进生活里</text></view>
       <view class="routine-card"><text class="routine-card__title">今天的陪玩小配方</text><view class="routine-steps"><view><text class="routine-steps__number">01</text><text>点图听词</text></view><text class="routine-steps__arrow">›</text><view><text class="routine-steps__number">02</text><text>听音找图</text></view><text class="routine-steps__arrow">›</text><view><text class="routine-steps__number">03</text><text>离屏玩一玩</text></view></view><text class="section-intro">孩子指出来、做出动作就很好。跟着兴趣走，想停就停。</text></view>
       <view v-for="topic in playgroundTopics" :key="`parent-${topic.id}`" class="parent-topic">
