@@ -4,6 +4,7 @@
     <text class="welcome-subtitle">听一小段，唱一小段，快乐就是进步。</text>
     <view class="content-tabs"><button role="button" class="content-tabs__tab" @tap="openTopics">主题小世界</button><button role="button" class="content-tabs__tab content-tabs__tab--active" aria-current="page">儿歌电台</button><button role="button" class="content-tabs__tab" @tap="openParent">亲子任务</button></view>
     <AudioFeedback />
+    <button role="button" class="stop-button" style="margin-top: 24rpx; background: #e5ecdF; color: #45674d" @tap="navigate({ url: '/pkg-family/listen/index' })">☾ 打开故事陪听室 · 排队播放与定时停止 ›</button>
     <view id="chants-panel">
       <view class="section-head"><text class="section-title">小小儿歌电台</text><text class="section-caption">{{ playgroundTopics.length }} 首原创跟读儿歌</text></view>
       <text class="section-intro">听着轻柔的旋律，和孩子一起念、一起动。</text>

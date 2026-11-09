@@ -271,6 +271,45 @@
           }
         }
       ]
+    },
+    {
+      "root": "pkg-family",
+      "pages": [
+        {
+          "path": "listen/index",
+          "style": {
+            "navigationBarTitleText": "故事陪听室"
+          }
+        },
+        {
+          "path": "routines/index",
+          "style": {
+            "navigationBarTitleText": "生活里的英语"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pkg-speech",
+      "pages": [
+        {
+          "path": "index/index",
+          "style": {
+            "navigationBarTitleText": "小小演说家"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pkg-voice",
+      "pages": [
+        {
+          "path": "index/index",
+          "style": {
+            "navigationBarTitleText": "英文演说小书架"
+          }
+        }
+      ]
     }
   ],
   "preloadRule": {

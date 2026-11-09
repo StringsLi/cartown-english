@@ -5,7 +5,7 @@ import { getStorage, removeStorage, setStorage } from "@/utils/storage";
 
 const STORAGE_KEY = "little_english_book_progress";
 const DEFAULT_USER_ID = "local_child";
-const MAX_REPEAT_RECORDS = 12;
+const MAX_REPEAT_RECORDS = 30;
 const DEBOUNCE_MS = 300;
 
 let cachedState: LearningState | null = null;

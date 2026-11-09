@@ -12,7 +12,7 @@
     "validate:content": "node scripts/validate-content.mjs",
     "check:release": "node scripts/validate-content.mjs --release",
     "test:adventures": "node scripts/test-adventures.cjs",
-    "test": "npm run type-check && npm run validate:content && npm run test:adventures && npm run test:learning && npm run test:learning-reliability && npm run test:record-export && npm run test:record-capture && npm run test:pages && npm run test:media-cache && npm run test:h5-images && npm run test:space && npm run test:packages && npm run test:read-along && npm run test:china-map && npm run test:build-publish && npm run test:wordbook",
+    "test": "npm run type-check && npm run validate:content && npm run test:adventures && npm run test:learning && npm run test:learning-reliability && npm run test:record-export && npm run test:record-capture && npm run test:pages && npm run test:media-cache && npm run test:h5-images && npm run test:space && npm run test:packages && npm run test:read-along && npm run test:china-map && npm run test:build-publish && npm run test:wordbook && npm run test:family && npm run test:speech",
     "test:learning": "node scripts/test-learning.cjs",
     "test:learning-reliability": "node scripts/test-learning-reliability.cjs",
     "test:record-export": "node scripts/test-record-export.cjs",
@@ -27,7 +27,11 @@
     "test:read-along": "node scripts/test-read-along.cjs",
     "test:china-map": "node scripts/test-china-map.cjs",
     "test:build-publish": "node scripts/test-build-publish.mjs",
-    "test:wordbook": "node scripts/test-wordbook.cjs"
+    "test:wordbook": "node scripts/test-wordbook.cjs",
+    "generate:routine-audio": "node scripts/generate-routine-audio.mjs",
+    "test:family": "node scripts/test-family.cjs",
+    "test:speech": "node scripts/test-speech.cjs",
+    "generate:speech-audio": "python3 scripts/generate-speech-audio.py"
   },
   "dependencies": {
     "@dcloudio/uni-app": "3.0.0-alpha-1000920260626810",

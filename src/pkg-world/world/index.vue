@@ -120,7 +120,7 @@ import { todayKey } from "@/utils/date";
 usePageShare();
 
 const COUNTRY_VIEW_STORAGE_KEY = "cartown_country_view";
-const heroWorldImage = "/static/ui/world-road-trip.jpg";
+const heroWorldImage = "/pkg-world/static/ui/world-road-trip.jpg";
 const allCountries = worldGroups.flatMap((group) => group.words);
 const selectedCountry = ref(allCountries.find(item => item.word === "China") || allCountries[0]);
 const DAILY_COUNTRY_COUNT = 3;

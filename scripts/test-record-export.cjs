@@ -56,5 +56,8 @@ const record=(audioUrl="/saved/voice.mp3")=>({userId:"local_child",bookId:"mom",
  const browserRestore=await browserArchive.restoreArchive(json);assert.equal(browserRestore.records.length,2);
  const downloaded=await browserArchive.prepareRepeatRecordAudio(browserRestore.records[0]);assert.equal(Buffer.from(await (await fetch(downloaded.filePath)).arrayBuffer()).toString(),"ID3-original-audio");
  await browserOutput.savePreparedRecord(downloaded);assert.equal(h5.links[0].name,downloaded.fileName);browserOutput.releasePreparedRecord(downloaded);
+ const speeches=Array.from({length:31},(_,i)=>({...record(),bookId:'speech:zh-'+i,sentence:'演说 '+i,sourceTitle:'小小演说家',durationSeconds:90,createdAt:'2026-11-07 10:'+String(i).padStart(2,'0')+':00'}));
+ const speechBackup=await archive.prepareRepeatRecordArchive(speeches);assert.equal(speechBackup.count,30,'all twenty speeches fit in the archive');
+ const speechRestore=await archive.restoreArchive(env.files.get(speechBackup.filePath).toString());assert.equal(speechRestore.records.length,30);assert.equal(speechRestore.records[0].durationSeconds,90,'long speech durations survive backup and restore');
  console.log("Recording export checks passed: exact audio bytes, MP3/WAV formats, two-step sharing, synchronous user gesture through the installed uni-app dispatcher, cancellation/failure, missing-file counts, JSON round trip, unique restore paths, safe cleanup and H5 download.");
 })().catch(e=>{console.error(e);process.exitCode=1;});

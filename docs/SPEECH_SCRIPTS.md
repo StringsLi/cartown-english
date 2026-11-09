@@ -1,0 +1,283 @@
+# 小小演说家 · 中英文各 10 篇
+
+面向 4–5 岁亲子表达练习的原创示范稿。每篇四个短段落；先听，再选择自己想说的部分。孩子可以替换经历，不要求背诵或凑时长。
+
+## 第 1 天：这就是我 / This Is Me
+
+表达重点：介绍自己与表达喜好。
+
+三张提示卡：打个招呼 → 说说我喜欢什么 → 邀请大家一起玩。
+
+### 中文
+
+大家好！今天，我想介绍一个特别的人。这个人会笑，会跑，还会问好多为什么。你们猜到了吗？对啦，这个人就是我！我有自己的想法，也有很多想学的事情。
+
+我喜欢用积木搭房子。有时候，我的房子会倒下来。我会看看哪里没有放稳，再试一次。房子终于站稳的时候，我就想为自己拍拍手。
+
+我也喜欢听故事。听到有趣的地方，我会笑；听到不明白的地方，我会问一问。我的问题，有时也会让大人想一想。
+
+我还在一点一点长大。今天学会一点，明天再学一点。我愿意认识新朋友，也想听听你的故事。这就是我，一个爱玩、爱问、愿意试一试的小朋友。谢谢大家！
+
+### English
+
+Hello, everyone! Today I want to tell you about me. I am little, but I have big ideas. I like to play, and I like to ask questions.
+
+I like building with blocks. Sometimes my tower falls down. I look at the blocks and try again. When it stands up, I clap for myself.
+
+I like stories, too. Funny stories make me laugh. When I do not understand, I can ask for help.
+
+I am learning something new every day. I do not have to know everything yet. I can listen, try, and grow. I would love to hear about you. Thank you for listening!
+
+给家长的开放提问：如果换成你，你最想介绍自己的哪一件事？
+
+## 第 2 天：我的玩具朋友 / My Toy Friend
+
+表达重点：描述物品与讲一件小事。
+
+三张提示卡：介绍一个玩具 → 讲它的小故事 → 说说为什么喜欢。
+
+### 中文
+
+大家好！今天，我想介绍我的玩具朋友。它是一辆小车，有四个圆圆的轮子。我轻轻推一下，它就向前跑，好像真的要去旅行。
+
+我给它搭过一条长长的路。路的一边是积木房子，另一边是玩具小树。我请小车慢慢开，因为前面还有一只正在过路的小熊。
+
+有一次，小车卡在积木旁边。我没有使劲拉，而是挪开一块积木，给它留出空间。看，小车又能向前开了！我也跟着开心起来。
+
+玩完以后，我会把小车放回盒子。这样，明天就能找到它，再想一个新的故事。我喜欢它，不只是因为它会跑，还因为我们一起想出了好多玩法。你最喜欢的玩具是什么？谢谢大家！
+
+### English
+
+Hello, everyone! This is my toy friend, a little car. It has four round wheels. When I give it a gentle push, it rolls across the floor.
+
+I build a road with my blocks. There is a house on one side and a tree on the other. My car goes slowly. A teddy bear is crossing the road!
+
+One day, my car gets stuck. I move a block and make more room. Now it can go again. Hooray!
+
+When I finish playing, I put my car in its box. Tomorrow we can have a new adventure. What toy do you like? Thank you!
+
+给家长的开放提问：拿一个真实玩具，说说它的样子和你们一起玩的事情。
+
+## 第 3 天：我家的温暖时刻 / A Happy Time at Home
+
+表达重点：回忆经历与表达感受。
+
+三张提示卡：说一个家里的时刻 → 讲大家做了什么 → 说出我的感受。
+
+### 中文
+
+大家好！今天，我想讲一个在家里的温暖时刻。那天晚上，我拿来一本喜欢的书，坐在照顾我的人身边。我们把书打开，小小的故事时间就开始了。
+
+书里有一只找不到帽子的小熊。我指着画面说：帽子会不会藏在树后面？我们一起找，一页一页地翻。找到帽子的时候，我们都笑了。
+
+后来，我想自己讲一页。我讲得有一点慢，也漏掉了几个地方。身边的人没有催我，而是认真听，还问我：接下来发生了什么？
+
+那一刻，我觉得自己的话被听见了。温暖不一定是很大的礼物，也可以是一起看一本书，或者安安静静听对方说话。今天回家，我也想听一听家人的故事。谢谢大家！
+
+### English
+
+Hello, everyone! I want to share a happy time at home. One evening, I bring a book to someone who takes care of me. We sit close and open it together.
+
+In the story, a bear cannot find its hat. I point at a tree. Is the hat behind it? We turn the page and look. There it is! We both laugh.
+
+Then I tell part of the story. I speak slowly, and my listener waits for me.
+
+That makes me feel loved. A happy time can be very small: a book, a smile, and someone who listens. Thank you!
+
+给家长的开放提问：照顾你的人是谁？你想讲一起吃饭、读书，还是散步的时刻？
+
+## 第 4 天：我也能帮一点忙 / I Can Help
+
+表达重点：按顺序讲述行动。
+
+三张提示卡：发现一件小事 → 讲我怎么帮忙 → 说帮忙后的心情。
+
+### 中文
+
+大家好！我以前觉得，帮忙是大人的事情。后来我发现，小朋友也能帮一点忙。不需要搬很重的东西，一件小小的事情也很有用。
+
+有一天，地上散着好多玩具。我想，先送小车回盒子吧。我捡起一辆，再捡起一辆。然后，我把积木放在一起，把绘本放回书架。
+
+刚开始，我不知道小熊应该放哪里。我就问了一声：小熊的家在哪里？有人告诉我以后，我轻轻把小熊送回去。原来，帮忙的时候也可以问问题。
+
+收好以后，地上空出来了，我们又能舒服地走路。我看着整齐的小角落，心里很开心。我不是一下子做完所有事情，而是从能做的一点开始。今天，我还想再帮一个小忙。谢谢大家！
+
+### English
+
+Hello, everyone! I am small, but I can help. I do not need to carry something heavy. A little job can make a big difference.
+
+One day, toys are all over the floor. First, I put the cars in a box. Next, I gather the blocks. Then I put the books on the shelf.
+
+I do not know where the bear belongs, so I ask. Asking for help is part of learning, too.
+
+Now there is room to walk and play. I feel happy when I look at our tidy corner. I can choose one small job today. What can you help with? Thank you!
+
+给家长的开放提问：今天你愿意选哪一件安全的小事来帮忙？
+
+## 第 5 天：一颗种子的等待 / A Little Seed
+
+表达重点：观察变化与耐心等待。
+
+三张提示卡：介绍一颗种子 → 说说我怎么照顾 → 讲发现的变化。
+
+### 中文
+
+大家好！今天，我想讲一颗小种子的故事。我和大人一起，把种子放进花盆里的土中，再轻轻浇一点水。我好奇地想：它什么时候会长出来呢？
+
+第二天，我跑去看，土上还是什么也没有。我有一点着急，差点想把种子挖出来看看。大人说，我们先按它需要的方式照顾，再给它一些时间。
+
+于是，我每天看一看，和大人一起照顾它。有一天，土里真的冒出一点绿色！小芽那么小，我却看了好久，好像发现了一件了不起的事情。
+
+我发现，有些变化需要慢慢等。学穿鞋、学画画，也不是一下子就会的。我愿意像照顾小芽那样，给自己一点时间，今天试一点，明天再试一点。谢谢大家！
+
+### English
+
+Hello, everyone! I have a story about a little seed. With a grown-up, I put it in a pot of soil. We give it a little water. When will it grow?
+
+The next day, I look. I cannot see anything green. I want to dig it up, but I decide to wait and care for it.
+
+One day, a tiny green shoot comes out! It is small, but it makes me smile.
+
+Some things take time. Learning to put on my shoes takes time, too. I can care, wait, and try again. Little by little, a seed grows. So do I. Thank you!
+
+给家长的开放提问：你观察过什么慢慢变化的东西？没种过种子，也可以讲一片叶子。
+
+## 第 6 天：我的心情小天气 / My Feelings Are Like Weather
+
+表达重点：命名情绪与表达需要。
+
+三张提示卡：用天气比喻心情 → 讲一次不开心 → 说出我需要什么。
+
+### 中文
+
+大家好！我觉得，心情有时候很像天气。开心的时候，心里像有小太阳。不开心的时候，也许像一朵小乌云。不同的心情，都会来做客。
+
+有一次，我搭好的积木倒了。我很生气，握紧了小拳头。我先把手放下来，和身边的大人说：我现在有点生气，因为我搭了很久。
+
+说出来以后，我慢慢呼吸了几下。我可以选择休息一下，也可以请人陪我重新搭。我不用马上变开心，也不用把不开心藏起来。
+
+我发现，心情不是好孩子和坏孩子的标签。每个人都有开心、难过和生气的时候。我能学习用话告诉别人自己的感受，也听听别人需要什么。谢谢大家听我说！
+
+### English
+
+Hello, everyone! My feelings can be like the weather. When I feel happy, I have sunshine inside. When I feel sad, a little cloud may come. All feelings can visit me.
+
+One day, my block tower falls down. I feel angry. I tell a grown-up, I am upset. I worked hard on my tower.
+
+Then I take a few slow breaths. I can rest, or ask someone to build with me. I do not have to smile right away.
+
+I can use words to share my feelings. I can listen to your feelings, too. Thank you for listening to mine!
+
+给家长的开放提问：你现在的心情像什么天气？你希望别人怎样陪你？
+
+## 第 7 天：轮到你，也轮到我 / Your Turn, My Turn
+
+表达重点：协商与表达边界。
+
+三张提示卡：说出一起玩的愿望 → 讲讲怎么商量 → 说一个友好的邀请。
+
+### 中文
+
+大家好！今天，我想讲一件和朋友一起玩的小事。我们都想玩同一辆玩具车。我很想马上拿到它，朋友也很喜欢，怎么办呢？
+
+我先说出了自己的想法：我也想玩这辆车。然后，我听朋友说完。我们商量，一人开过这条积木路，就换另一个人试一试。
+
+等朋友玩的时候，我给小车搭了一座桥。轮到我时，朋友又帮忙放好小树。原来，一起想办法，比一直抢来抢去更好玩。
+
+如果是我还不想分享的特别玩具，我也可以好好说清楚，再邀请朋友玩别的。交朋友不是每次都要让给别人，而是把话说清楚，听听对方，一起找办法。你愿意和我一起玩吗？谢谢大家！
+
+### English
+
+Hello, everyone! My friend and I both want the same toy car. I want it now, and my friend wants it, too. What can we do?
+
+I say, I would like a turn. Then I listen. We make a plan. My friend drives along the road, and then it is my turn.
+
+While I wait, I build a bridge. We make the game bigger together. It is fun to have ideas with a friend.
+
+I can also say if I am not ready to share a special toy. We can choose another game. We can talk, listen, and find a kind plan. Thank you!
+
+给家长的开放提问：如果两个人都想先玩，你会怎样开口商量？自己的特别玩具可以暂时不分享。
+
+## 第 8 天：雨天也有小发现 / A Rainy Day Adventure
+
+表达重点：用感官描述观察。
+
+三张提示卡：听见雨的声音 → 说看见的小发现 → 用一句话分享感受。
+
+### 中文
+
+大家好！你喜欢晴天，还是雨天呢？我以前觉得，下雨就不能出去玩了。后来有一天，我站在窗边，发现雨天也藏着好多小事情。
+
+我听见雨点落在窗上，轻轻地，滴答滴答。我看见小水滴往下滑，有的快，有的慢。它们好像在窗玻璃上画出了细细的线。
+
+雨停以后，我和大人一起散步。叶子上亮着小水珠，地上的水洼里，竟然也有一片天空！我蹲下来看看，云和树都在水里轻轻摇。
+
+我没有发现很大的宝藏，却发现了平时没有认真看的东西。原来，慢一点，听一听，看一看，普通的一天也能变成小小的旅行。我想把这个发现讲给你听。谢谢大家！
+
+### English
+
+Hello, everyone! Do you like rainy days? I used to think rain meant no fun. Then I looked out of my window and found a little adventure.
+
+I heard rain tapping on the glass. Tap, tap, tap! I saw drops sliding down. Some were fast, and some were slow. They made little lines on the window.
+
+After the rain, I walked with a grown-up. I saw drops on leaves. In a puddle, I saw the sky! The clouds seemed to float under my feet.
+
+I can find interesting things when I slow down and look. What have you noticed today? Thank you!
+
+给家长的开放提问：回想一个雨天，你听见、看见了什么？不用真的出门淋雨。
+
+## 第 9 天：我想问一个为什么 / My Wonderful Questions
+
+表达重点：提出问题与探索答案。
+
+三张提示卡：提出一个真实问题 → 讲讲可以怎样找答案 → 保留新的问题。
+
+### 中文
+
+大家好！我的脑袋里住着好多小问号。影子为什么会变长？小鸟为什么有羽毛？我每天都会遇见一些还不知道答案的事情。
+
+有一天，我在灯下摆摆手，墙上也出现了一只大手。我往前挪一点，再往后挪一点，发现影子的样子会变。我觉得太有意思了！
+
+我问大人，这是怎么回事。我们一起看看、试试，还找了一本介绍影子的书。有些话我暂时不太明白，就先记住自己看到的变化，下次再接着问。
+
+我发现，不知道并不丢脸。一个好问题，可以带我们去观察、读书，或者请教别人。今天，我也想邀请大家想一想：你最想问的为什么是什么？我们一起慢慢找答案吧。谢谢大家！
+
+### English
+
+Hello, everyone! I have lots of questions. Why does my shadow change? Why do birds have feathers? There are so many things I want to know.
+
+One day, I move my hand near a lamp. I see a big hand on the wall! I move closer, and then farther away. My shadow changes. That makes me curious.
+
+I ask a grown-up. We look, try, and find a book together. I do not understand every answer yet. I can keep wondering.
+
+It is all right to say, I do not know. A question can start an adventure. What is your question today? Thank you!
+
+给家长的开放提问：让孩子选一个真正好奇的问题。没有马上找到答案也没关系。
+
+## 第 10 天：我的小小愿望 / My Little Dream
+
+表达重点：表达愿望与具体计划。
+
+三张提示卡：说一个自己的愿望 → 想象要怎么做 → 从今天的一小步开始。
+
+### 中文
+
+大家好！如果有一辆想象的小巴士，你想带它去哪里呢？我的小小愿望，是当一天巴士司机，带大家去一个有树、有花、可以慢慢玩的地方。
+
+我想先和每一位乘客打招呼，再等大家坐好。小熊要去公园，小兔想看大树。我会听听他们想去哪里，然后和大家一起想一条合适的路线。
+
+现在，我还不能开真正的巴士。不过，我能用椅子排一辆小巴士，画一张车票，请家人来做乘客。我的愿望，可以先在游戏里出发。
+
+以后，我的愿望也许还会改变。我可以今天喜欢这个，明天再发现别的兴趣。重要的是，把自己的想法说出来，再试一件现在能做的小事。你的小小愿望是什么？谢谢大家！
+
+### English
+
+Hello, everyone! I have a little dream. I would like to drive a pretend bus and take my toy friends to a lovely park.
+
+First, I say hello to every passenger. Then I wait until everyone is sitting down. Bear wants to see flowers. Rabbit wants to see a tall tree. I listen and plan our trip.
+
+I cannot drive a real bus yet. But I can line up chairs, draw tickets, and invite my family to play.
+
+My dream may change as I grow. That is all right. Today I can share my idea and take one little step. What is your dream? Thank you!
+
+给家长的开放提问：愿望可以很小，也可以改变。让孩子换成自己真正想做的事情。

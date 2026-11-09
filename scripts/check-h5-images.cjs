@@ -18,3 +18,11 @@ for (const group of ["books", "topic-icons", "cartown-logos", "audio"]) {
   walk(originals);
 }
 console.log(`H5 image build checks passed: all ${checked} original images and audio files included with matching bytes.`);
+const speeches = JSON.parse(fs.readFileSync(path.join(root,'src/pkg-speech/audio-manifest.json')));
+assert.equal(speeches.length,20);
+for(const speech of speeches) {
+  const file=path.join(root,'src',speech.audio),output=path.join(root,'dist/build/h5',speech.audio);
+  assert.ok(fs.existsSync(output),`Missing speech audio: ${speech.id}`);
+  assert.ok(fs.readFileSync(file).equals(fs.readFileSync(output)),`Incomplete speech audio: ${speech.id}`);
+}
+console.log('H5 speech checks passed: all 20 offline demonstrations included with matching bytes.');

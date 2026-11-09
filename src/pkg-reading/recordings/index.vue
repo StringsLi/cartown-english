@@ -6,8 +6,8 @@
     <StorageFeedback />
     <view class="soft-card archive-card">
       <text class="card-title">本机保存 {{ records.length }} 条录音</text>
-      <text class="card-note">保留最近 12 条。接近存满时，请先备份声音小纪念。</text>
-      <text v-if="records.length >= 10" class="capacity-note">已保存 {{ records.length }} / 12 条，录新声音前可以先备份。</text>
+      <text class="card-note">保留最近 30 条。接近存满时，请先备份声音小纪念。</text>
+      <text v-if="records.length >= 27" class="capacity-note">已保存 {{ records.length }} / 30 条，录新声音前可以先备份。</text>
       <view class="action-row"><BigButton label="备份全部录音" :disabled="busy || !records.length" @tap="prepareBackup" /><BigButton label="导入备份" variant="ghost" :disabled="busy" @tap="importBackup" /></view>
     </view>
     <view v-if="exportError" class="soft-card export-error" role="alert"><text class="card-title">{{ exportError }}</text><text v-if="exportDetail && exportDetail !== exportError" class="error-detail">微信返回：{{ exportDetail }}</text><text class="card-note">录音仍保留在本机，可以重试或先回听确认。</text></view>
@@ -102,7 +102,7 @@ async function importBackup() {
     const saved = flushLearningState();
     records.value = getRepeatRecords();
     if (!saved) { if (pageAlive) uni.showToast({ title: "录音已导入，记录未保存，请重新保存", icon: "none" }); return; }
-    if (pageAlive) uni.showModal({ title: "备份恢复完成", content: [`新增 ${result.added} 条录音`, result.repaired ? `修复 ${result.repaired} 条失效录音` : '', archive.duplicates ? `${archive.duplicates} 条已在本机，无需重复保存` : '', archive.skipped ? `跳过 ${archive.skipped} 条无效录音` : '', archive.limited ? `备份超出 12 条，另有 ${archive.limited} 条未处理` : ''].filter(Boolean).join('；') + '。本机保留最近 12 条。', showCancel: false });
+    if (pageAlive) uni.showModal({ title: "备份恢复完成", content: [`新增 ${result.added} 条录音`, result.repaired ? `修复 ${result.repaired} 条失效录音` : '', archive.duplicates ? `${archive.duplicates} 条已在本机，无需重复保存` : '', archive.skipped ? `跳过 ${archive.skipped} 条无效录音` : '', archive.limited ? `备份超出 30 条，另有 ${archive.limited} 条未处理` : ''].filter(Boolean).join('；') + '。本机保留最近 30 条。', showCancel: false });
   }
   catch (e) { showExportError(e); }
   finally { busy.value = false; }

@@ -17,6 +17,11 @@
 
     <button role="button" class="playground-report soft-card wordbook-entry" @tap="goWordbook"><view><text class="playground-report__title">我的单词本</text><text class="playground-report__detail">{{ playgroundWordCount }} 个主题词 · 听过 {{ wordSummary.heard }} 个 · 收藏、点读和复习</text></view><text class="playground-report__more">打开 ›</text></button>
 
+    <button role="button" class="playground-report soft-card" @tap="navigate({ url: '/pkg-family/routines/index' })"><view><text class="playground-report__title">生活里的英语</text><text class="playground-report__detail">6 个生活场景 · 一句示范、一个动作与七天陪玩足迹</text></view><text class="playground-report__more">打开 ›</text></button>
+    <button role="button" class="playground-report soft-card" @tap="navigate({ url: '/pkg-family/listen/index' })"><view><text class="playground-report__title">故事陪听室</text><text class="playground-report__detail">故事和儿歌的播放列表 · 定时停止与继续听</text></view><text class="playground-report__more">打开 ›</text></button>
+
+    <button role="button" class="playground-report soft-card" @tap="navigate({ url: '/pkg-speech/index/index' })"><view><text class="playground-report__title">小小演说家 · 4–5 岁</text><text class="playground-report__detail">每天一分钟 · 中英各 10 篇 · 先听示范，再录音回听</text></view><text class="playground-report__more">打开 ›</text></button>
+
     <view class="week-card soft-card">
       <view>
         <text class="week-card__label">本周阅读时长</text>
